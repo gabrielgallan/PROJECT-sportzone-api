@@ -1,14 +1,13 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import z from "zod";
-import { MaxBookingsPerDayError } from "root/src/use-cases/errors/max-bookings-per-day-error.ts";
-import { makeCreateBookingUseCase } from "root/src/use-cases/factories/make-create-booking-use-case.ts";
-import { ResourceNotFound } from "root/src/use-cases/errors/resource-not-found.ts";
-import { InvalidTimestampBookingInterval } from "root/src/use-cases/errors/invalid-timestamp-booking-interval.ts";
-import { SportCourtDateAlreadyOccupied } from "root/src/use-cases/errors/sport-courts-date-already-occupied.ts";
-import { makeRegisterPaymentUseCase } from "root/src/use-cases/factories/make-register-payment-use-case.ts";
-import { SportCourtUnavailable } from "root/src/use-cases/errors/sport-court-unavailable.ts";
-import { SportCourtDateBlocked } from "root/src/use-cases/errors/sport-court-date-blocked.ts";
-import { makeCreateCheckoutSessionUseCase } from "root/src/use-cases/factories/make-create-checkout-session-use-case.ts";
+import { MaxBookingsPerDayError } from "@/domain/use-cases/errors/max-bookings-per-day-error.ts";
+import { makeCreateBookingUseCase } from "@/domain/use-cases/factories/make-create-booking-use-case.ts";
+import { ResourceNotFound } from "@/domain/use-cases/errors/resource-not-found.ts";
+import { InvalidTimestampBookingInterval } from "@/domain/use-cases/errors/invalid-timestamp-booking-interval.ts";
+import { SportCourtDateAlreadyOccupied } from "@/domain/use-cases/errors/sport-courts-date-already-occupied.ts";
+import { makeCreatePaymentIntentUseCase } from "@/domain/use-cases/factories/make-create-payment-intent-use-case.ts";
+import { SportCourtUnavailable } from "@/domain/use-cases/errors/sport-court-unavailable.ts";
+import { SportCourtDateBlocked } from "@/domain/use-cases/errors/sport-court-date-blocked.ts";
 
 export async function create(request: FastifyRequest, reply: FastifyReply) {
     const bodySchema = z.object({
@@ -22,12 +21,11 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
 
     const { startTime, endTime } = bodySchema.parse(request.body)
     const { sportCourtId } = paramsSchema.parse(request.params)
+
+    const createBookingUseCase = makeCreateBookingUseCase()
+    const createPaymentIntentUseCase = makeCreatePaymentIntentUseCase()
     
     try {
-        const createBookingUseCase = makeCreateBookingUseCase()
-        const registerPaymentUseCase = makeRegisterPaymentUseCase()
-        const createCheckoutSessionUseCase = makeCreateCheckoutSessionUseCase()
-
         const { booking } = await createBookingUseCase.execute({
             userId: request.user.sub,
             sportCourtId,
@@ -35,15 +33,11 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
             endTime
         })
 
-        const { payment } = await registerPaymentUseCase.execute({
-            booking
-        })
+        const {
+            payment, paymentSessionId, paymentSessionUrl 
+        } = await createPaymentIntentUseCase.execute({ booking })
 
-        const { sessionUrl } = await createCheckoutSessionUseCase.execute({
-            payment
-        })
-
-        return reply.status(201).send({ sessionUrl })
+        return reply.status(201).send({ paymentSessionUrl })
     } catch (err) {
         if (err instanceof ResourceNotFound) {
             return reply.status(404).send({ error: err.message })    

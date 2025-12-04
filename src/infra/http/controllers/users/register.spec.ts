@@ -1,5 +1,5 @@
 import request from 'supertest'
-import app from 'root/src/app.ts'
+import app from '@/app.ts'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 describe('Register (E2E)', async () => {

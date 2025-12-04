@@ -1,5 +1,5 @@
 import { hash } from "bcryptjs";
-import type { UsersRepository } from "root/src/repositories/users-repository.ts";
+import type { UsersRepository } from "@/domain/repositories/users-repository.ts";
 
 
 export async function makeUser (

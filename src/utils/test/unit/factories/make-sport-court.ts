@@ -1,5 +1,5 @@
 import type { User } from "@prisma/client";
-import type { SportCourtsRepository } from "root/src/repositories/sport-courts-repository.ts";
+import type { SportCourtsRepository } from "@/domain/repositories/sport-courts-repository";
 
 export async function makeSportCourt(
     repository: SportCourtsRepository,

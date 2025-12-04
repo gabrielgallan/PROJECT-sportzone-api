@@ -34,8 +34,3 @@
 - [x] Os dados da aplicação devem ser persistidos em um banco PostgreSQL;
 - [x] Todos os dados da aplicação devem ser paginados em até 20 items;
 - [x] O usuário deve ser identificado por um JWT (JSON Web Token);
-- [ ] A reserva deve ser confirmada em até 15 minutos por uma API de pagamento;
-
-# To Remember
-- Create Sport court use case tests;
-- 

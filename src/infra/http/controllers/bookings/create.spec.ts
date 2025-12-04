@@ -1,12 +1,12 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import request from 'supertest'
-import app from 'root/src/app.ts'
-import { registerAndAuthenticateUser } from 'root/src/utils/test/e2e/register-and-authenticate-user.ts'
-import { createSportCourt } from 'root/src/utils/test/e2e/create-sport-court.ts'
+import app from '@/app.ts'
+import { registerAndAuthenticateUser } from '@/utils/test/e2e/register-and-authenticate-user.ts'
+import { createSportCourt } from '@/utils/test/e2e/create-sport-court.ts'
 import dayjs from 'dayjs'
 
 // 1. Mock do stripe.ts (cliente stripe)
-vi.mock("root/src/lib/stripe.ts", () => ({
+vi.mock("@/infra/lib/stripe.ts", () => ({
   default: {
     webhooks: {
       constructEvent: vi.fn(),
@@ -20,7 +20,7 @@ vi.mock("root/src/lib/stripe.ts", () => ({
 }))
 
 // 2. Mock CORRETO da classe StripePaymentsGateway
-vi.mock("root/src/infra/payments-gateway/stripe/stripe-payments-gateway.ts", () => {
+vi.mock("@/infra/payment/stripe/stripe-payments-gateway.ts", () => {
   return {
     StripePaymentsGateway: vi.fn().mockImplementation(function () {
       // precisa ser function, não arrow
@@ -58,6 +58,7 @@ describe('Create booking (E2E)', async () => {
                 endTime,
             })
         
-        expect(response.body.sessionUrl).toEqual(expect.any(String))
+        expect(response.body.paymentSessionUrl).toEqual("cs_test_123")
+        expect(response.body.paymentSessionId).toEqual("https://stripe.test/session")
     })
 })

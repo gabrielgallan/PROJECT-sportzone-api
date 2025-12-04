@@ -1,11 +1,12 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import env from "root/src/env/config.ts";
-import stripe from "root/src/lib/stripe.ts";
-import { makeConfirmBookingUseCase } from "root/src/use-cases/factories/make-confirm-booking-use-case.ts";
-import { makeThrowErrorOnBookingUseCase } from "root/src/use-cases/factories/make-throw-error-on-booing-use-case.ts";
-import { makeValidatePaymentUseCase } from "root/src/use-cases/factories/make-validate-payment-use-case.ts";
 import type Stripe from "stripe";
+import stripe from "@/infra/lib/stripe.ts";
 import z from "zod";
+
+import env from "@/infra/env/config.ts";
+import { makeConfirmBookingUseCase } from "@/domain/use-cases/factories/make-confirm-booking-use-case.ts";
+import { makeValidatePaymentUseCase } from "@/domain/use-cases/factories/make-validate-payment-use-case.ts";
+import { makeUpdateBookingStatusUseCase } from "@/domain/use-cases/factories/make-update-booking-status-use-case.ts";
 
 export async function webhook(
     request: FastifyRequest,
@@ -30,6 +31,7 @@ export async function webhook(
     }
 
     const session = event.data.object as Stripe.Checkout.Session
+    const eventType = event.type
 
     const metadataSchema = z.object({
         bookingId: z.string(),
@@ -40,9 +42,9 @@ export async function webhook(
 
     const confirmBookingUseCase = makeConfirmBookingUseCase()
     const validatePaymentUseCase = makeValidatePaymentUseCase()
-    const throwErrorOnBookingUseCase = makeThrowErrorOnBookingUseCase()
+    const updateBookingStatusUseCase = makeUpdateBookingStatusUseCase()
 
-    switch (event.type) {
+    switch (eventType) {
         case 'checkout.session.completed':
             await validatePaymentUseCase.execute({
                 paymentId,
@@ -54,14 +56,16 @@ export async function webhook(
 
             return reply.status(200).send()
         case 'checkout.session.async_payment_failed':
-            await throwErrorOnBookingUseCase.execute({
-                bookingId
+            await updateBookingStatusUseCase.execute({
+                bookingId,
+                bookingStatus: 'ERROR'
             })
 
             return reply.status(200).send()
         case 'checkout.session.expired':
-            await throwErrorOnBookingUseCase.execute({
-                bookingId
+            await updateBookingStatusUseCase.execute({
+                bookingId,
+                bookingStatus: 'ERROR'
             })
             
             return reply.status(200).send()

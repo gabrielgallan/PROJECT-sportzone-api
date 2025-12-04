@@ -9,7 +9,7 @@ jobs:
     env:
       JWT_SECRET: ''
       DATABASE_URL: ''
-      LOCATIONIQ_API_KEY: ${{ secrets.LOCATIONIQ_API_KEY }}
+      LOCATIONIQ_API_KEY: ''
       STRIPE_SECRET_API_KEY: ''
       STRIPE_WEBHOOK_SECRET: ''
       FRONT_END_URL: ''

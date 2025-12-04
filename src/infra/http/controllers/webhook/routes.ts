@@ -12,5 +12,4 @@ export async function webhookRoutes(app: FastifyInstance) {
         },
         handler: webhook
     })
-
 }

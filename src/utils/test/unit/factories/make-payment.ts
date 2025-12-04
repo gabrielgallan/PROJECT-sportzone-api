@@ -1,5 +1,5 @@
 import type { Booking, User } from "@prisma/client";
-import type { PaymentsRepository } from "root/src/repositories/payments-repository.ts";
+import type { PaymentsRepository } from "@/domain/repositories/payments-repository.ts";
 
 export async function makePayment(
     repository: PaymentsRepository,
