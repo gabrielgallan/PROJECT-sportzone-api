@@ -1,7 +1,7 @@
 import request from 'supertest'
-import app from 'root/src/app.ts'
+import app from '@/app.ts'
 import { afterAll, beforeAll, describe, it } from 'vitest'
-import { registerAndAuthenticateUser } from 'root/src/utils/test/e2e/register-and-authenticate-user.ts'
+import { registerAndAuthenticateUser } from '@/utils/test/e2e/register-and-authenticate-user.ts'
 
 describe('Disable sport court (E2E)', async () => {
     beforeAll(async () => {

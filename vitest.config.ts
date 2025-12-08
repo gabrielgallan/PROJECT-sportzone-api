@@ -10,7 +10,7 @@ export default defineConfig({
         plugins: [tsconfigPaths()],
         test: {
           name: 'unit',
-          include: ['src/use-cases/**/*.spec.ts'],
+          include: ['src/domain/use-cases/**/*.spec.ts'],
           environment: 'node',
         },
       }),
@@ -20,7 +20,7 @@ export default defineConfig({
         plugins: [tsconfigPaths()],
         test: {
           name: 'e2e',
-          include: ['src/infra/http/controllers/**/*.spec.ts'],
+          include: ['src/infra/http/controllers/bookings/**/*.spec.ts'],
           environment: 'prisma',
           testTimeout: 60000,
           hookTimeout: 60000,

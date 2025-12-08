@@ -2,7 +2,7 @@ services:
   sportzone_pg:
     image: bitnami/postgresql
     ports:
-      - 5430:5432
+      - 5432:5432
     environment:
       - POSTGRES_USERNAME=docker
       - POSTGRES_PASSWORD=docker

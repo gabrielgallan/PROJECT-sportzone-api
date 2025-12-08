@@ -1,7 +1,7 @@
 import fastify from 'fastify'
 import fastifyJwt from '@fastify/jwt'
 import fastifyCookies from '@fastify/cookie'
-import env from './env/config.ts'
+import env from './infra/env/config.ts'
 import { ZodError } from 'zod'
 import { userRoutes } from './infra/http/controllers/users/routes.ts'
 import { courtRoutes } from './infra/http/controllers/courts/routes.ts'

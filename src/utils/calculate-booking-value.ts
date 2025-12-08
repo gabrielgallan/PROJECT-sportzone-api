@@ -1,4 +1,3 @@
-import type { Booking, SportCourt } from "@prisma/client";
 import dayjs from "dayjs";
 
 export function CalculateBookingPrice(

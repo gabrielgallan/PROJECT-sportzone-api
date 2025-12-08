@@ -1,6 +1,5 @@
 import type { SportCourt, User } from "@prisma/client";
-import type { BookingsRepository } from "root/src/repositories/bookings-repository.ts";
-import { InMemoryBookingsRepository } from "root/src/repositories/in-memory/in-memory-bookings-repository.ts";
+import type { BookingsRepository } from "@/domain/repositories/bookings-repository.ts";
 
 export async function makeBooking (
     repository: BookingsRepository,

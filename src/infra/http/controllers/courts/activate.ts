@@ -1,8 +1,8 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import z from "zod";
-import { ResourceNotFound } from "root/src/use-cases/errors/resource-not-found.ts";
-import { makeActivateSportCourtAvailabilityUseCase } from "root/src/use-cases/factories/make-activate-court-availability-use-case.ts";
-import { UnauthorizedToModifySportCourts } from "root/src/use-cases/errors/unauthorized-to-modify-court.ts";
+import { ResourceNotFound } from "@/domain/use-cases/errors/resource-not-found.ts";
+import { makeActivateSportCourtAvailabilityUseCase } from "@/domain/use-cases/factories/make-activate-court-availability-use-case.ts";
+import { UnauthorizedToModifySportCourts } from "@/domain/use-cases/errors/unauthorized-to-modify-court.ts";
 
 export async function activate(request: FastifyRequest, reply: FastifyReply) {
     const paramsSchema = z.object({

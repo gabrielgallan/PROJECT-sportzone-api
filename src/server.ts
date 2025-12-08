@@ -1,5 +1,5 @@
 import app from './app.ts'
-import env from './env/config.ts'
+import env from './infra/env/config.ts'
 
 app.listen({
     port: env.PORT,

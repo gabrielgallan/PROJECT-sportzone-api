@@ -1,7 +1,22 @@
 import request from 'supertest'
-import app from 'root/src/app.ts'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import { registerAndAuthenticateUser } from 'root/src/utils/test/e2e/register-and-authenticate-user.ts'
+import app from '@/app.ts'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import { registerAndAuthenticateUser } from '@/utils/test/e2e/register-and-authenticate-user.ts'
+
+// 2. Mock CORRETO da classe StripePaymentsGateway
+vi.mock("@/infra/geocoding/locationiq/locationiq-geocoding-provider.ts", () => {
+    return {
+        LocationIqGeocodingProvider: vi.fn().mockImplementation(function () {
+            return {
+                getCordinatesFromAddress: vi.fn().mockResolvedValue({
+                    latitude: -23.5070292,
+                    longitude: -46.603552,
+                    display_name: 'Rua Chico Pontes 921'
+                }),
+            }
+        }),
+    }
+})
 
 describe('Search sport courts by queries (E2E)', async () => {
     beforeAll(async () => {
@@ -13,7 +28,7 @@ describe('Search sport courts by queries (E2E)', async () => {
     })
 
     it('should be able to search sport courts by location address and sport type', async () => {
-        const { token } = await registerAndAuthenticateUser(app, true)  
+        const { token } = await registerAndAuthenticateUser(app, true)
 
         // => Far away
         await request(app.server).post('/sport-courts')

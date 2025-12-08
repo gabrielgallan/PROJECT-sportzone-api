@@ -11,7 +11,7 @@ jobs:
         postgres:
             image: bitnami/postgresql
             ports:
-                - 5430:5432
+                - 5432:5432
             env:
                 POSTGRES_USERNAME: docker
                 POSTGRES_PASSWORD: docker
@@ -31,8 +31,8 @@ jobs:
 
         env:
             JWT_SECRET: 'testing'
-            DATABASE_URL: 'postgresql://docker:docker@localhost:5430/sportzone_pg?schema=public'
-            LOCATIONIQ_API_KEY: ${{ secrets.LOCATIONIQ_API_KEY }}
-            STRIPE_SECRET_API_KEY: ${{ secrets.STRIPE_SECRET_API_KEY }}
-            STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
-            FRONT_END_URL: ${{ secrets.FRONT_END_URL }}
+            DATABASE_URL: 'postgresql://docker:docker@localhost:5432/sportzone_pg?schema=public'
+            LOCATIONIQ_API_KEY: ''
+            STRIPE_SECRET_API_KEY: ''
+            STRIPE_WEBHOOK_SECRET: ''
+            FRONT_END_URL: ''

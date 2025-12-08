@@ -1,7 +1,7 @@
 import { UserRole } from "@prisma/client"
 import { hash } from "bcryptjs"
 import type { FastifyInstance } from "fastify"
-import prisma from "root/src/lib/prisma.ts"
+import prisma from "@/infra/lib/prisma.ts"
 import request from "supertest"
 
 export async function registerAndAuthenticateUser(app: FastifyInstance, isAdmin = false) {
