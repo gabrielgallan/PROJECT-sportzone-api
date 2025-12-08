@@ -15,12 +15,12 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
         endTime: z.coerce.date()
     })
 
-    const paramsSchema = z.object({
+    const routeParamsSchema = z.object({
         sportCourtId: z.string().uuid()
     })
 
     const { startTime, endTime } = bodySchema.parse(request.body)
-    const { sportCourtId } = paramsSchema.parse(request.params)
+    const { sportCourtId } = routeParamsSchema.parse(request.params)
 
     const createBookingUseCase = makeCreateBookingUseCase()
     const createPaymentIntentUseCase = makeCreatePaymentIntentUseCase()

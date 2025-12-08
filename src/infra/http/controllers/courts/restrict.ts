@@ -12,12 +12,12 @@ export async function restrict(request: FastifyRequest, reply: FastifyReply) {
         reason: z.string()
     })
 
-    const paramsSchema = z.object({
+    const routeParamsSchema = z.object({
         sportCourtId: z.string()
     })
 
     const { startDate, endDate, reason } = bodySchema.parse(request.body)
-    const { sportCourtId } = paramsSchema.parse(request.params)
+    const { sportCourtId } = routeParamsSchema.parse(request.params)
 
     try {
         const restrictCourtDateUseCase = makeRestrictCourtDateUseCase()

@@ -1,9 +1,16 @@
-import stripe from "@/infra/lib/stripe.ts"
 import type { ConfirmPaymentRequest, ConfirmPaymentResponse, CreatePaymentIntentRequest, PaymentGatewayProvider, RefundPaymentRequest, RefundPaymentResponse } from "@/domain/contracts/payment-gateway-provider.ts";
+import { makeStripeClient } from "./stripe-client";
+import type Stripe from "stripe";
 
 const timeLimitForExpirationInMinutes = 35
 
 export class StripePaymentsGateway implements PaymentGatewayProvider {
+    private client: Stripe
+    
+    constructor() {
+        this.client = makeStripeClient()
+    }
+
     async createPaymentIntent({
         paymentId,
         bookingId,
@@ -14,7 +21,7 @@ export class StripePaymentsGateway implements PaymentGatewayProvider {
         successUrl,
         cancelUrl
     }: CreatePaymentIntentRequest) {
-        const session = await stripe.checkout.sessions.create({
+        const session = await this.client.checkout.sessions.create({
             mode: 'payment',
             payment_method_types: ['card'],
             customer_email: userEmail,
