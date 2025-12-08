@@ -4,8 +4,10 @@ import { ResourceNotFound } from "./errors/resource-not-found.ts"
 import { InvalidBookingStatus } from "./errors/invalid-booking-status-error.ts"
 import dayjs from "dayjs"
 import { LateBookingCancellation } from "./errors/late-booking-cancellation.ts"
+import { UnauthorizedToModifyBooking } from "./errors/unauthorized-to-modify-booking.ts"
 
 interface CancelBookingUseCaseRequest {
+    userId: string,
     bookingId: string
 }
 
@@ -14,9 +16,12 @@ interface CancelBookingUseCaseResponse {
 }
 
 export class CancelBookingUseCase {
-    constructor(private bookingRepository: BookingsRepository) { }
+    constructor(
+        private bookingRepository: BookingsRepository
+    ) { }
 
     async execute({
+        userId,
         bookingId
     }: CancelBookingUseCaseRequest): Promise<CancelBookingUseCaseResponse> {
         const booking = await this.bookingRepository.findById(bookingId)
@@ -25,7 +30,11 @@ export class CancelBookingUseCase {
             throw new ResourceNotFound()
         }
 
-        if (booking.status === BookingStatus.CANCELLED) {
+        if (booking.user_id !== userId) {
+            throw new UnauthorizedToModifyBooking()
+        }
+
+        if (booking.status !== BookingStatus.CONFIRMED) {
             throw new InvalidBookingStatus()
         }
 

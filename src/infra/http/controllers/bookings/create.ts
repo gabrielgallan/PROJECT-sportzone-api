@@ -37,7 +37,10 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
             payment, paymentSessionId, paymentSessionUrl 
         } = await createPaymentIntentUseCase.execute({ booking })
 
-        return reply.status(201).send({ paymentSessionUrl })
+        return reply.status(201).send({ 
+            paymentSessionUrl,
+            bookingId: booking.id
+         })
     } catch (err) {
         if (err instanceof ResourceNotFound) {
             return reply.status(404).send({ error: err.message })    

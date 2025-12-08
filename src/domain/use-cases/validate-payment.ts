@@ -1,10 +1,11 @@
-import { type Payment } from "@prisma/client"
+import { PaymentStatus, type Payment } from "@prisma/client"
 import type { PaymentsRepository } from "../repositories/payments-repository.ts"
 import { ResourceNotFound } from "./errors/resource-not-found.ts"
 import { PaymentAlreadyPaid } from "./errors/payment-already-paid.ts"
 
 interface ValidatePaymentUseCaseRequest {
     paymentId: string,
+    paymentExternalId?: string
 }
 
 interface ValidatePaymentUseCaseResponse {
@@ -17,7 +18,8 @@ export class ValidatePaymentUseCase {
     ) {}
 
     async execute({
-        paymentId
+        paymentId,
+        paymentExternalId
     }: ValidatePaymentUseCaseRequest): Promise<ValidatePaymentUseCaseResponse>
     {
         const paymentExists = await this.paymentsRepository.findById(paymentId)
@@ -32,6 +34,8 @@ export class ValidatePaymentUseCase {
 
         const payment = await this.paymentsRepository.save({
             ...paymentExists,
+            external_id: paymentExternalId ?? null,
+            status: PaymentStatus.PAID,
             validated_at: new Date()
         })
 

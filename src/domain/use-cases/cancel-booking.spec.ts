@@ -5,6 +5,7 @@ import { BookingStatus } from '@prisma/client'
 import { InvalidBookingStatus } from './errors/invalid-booking-status-error.ts'
 import { CancelBookingUseCase } from './cancel-booking.ts'
 import { LateBookingCancellation } from './errors/late-booking-cancellation.ts'
+import { UnauthorizedToModifyBooking } from './errors/unauthorized-to-modify-booking.ts'
 
 let bookingRepository: BookingsRepository
 let sut: CancelBookingUseCase
@@ -30,15 +31,12 @@ describe('Cancel a booking register Use Case', () => {
             sportCourt_id: 'court-01',
             start_time: new Date(2025, 0, 13, 14, 0, 0),
             end_time: new Date(2025, 0, 13, 16, 0, 0),
-            price: 60
-        })
-
-        await bookingRepository.save({
-            ...createdBooking,
+            price: 60,
             status: 'CONFIRMED'
         })
 
         const { booking } = await sut.execute({
+            userId: 'user-01',
             bookingId: createdBooking.id
         })
 
@@ -53,11 +51,7 @@ describe('Cancel a booking register Use Case', () => {
             sportCourt_id: 'court-01',
             start_time: new Date(2025, 0, 13, 14, 0, 0),
             end_time: new Date(2025, 0, 13, 16, 0, 0),
-            price: 60
-        })
-
-        await bookingRepository.save({
-            ...createdBooking,
+            price: 60,
             status: 'CONFIRMED'
         })
 
@@ -65,6 +59,7 @@ describe('Cancel a booking register Use Case', () => {
 
         await expect(() =>
             sut.execute({
+                userId: 'user-01',
                 bookingId: createdBooking.id
             })
         ).rejects.toBeInstanceOf(LateBookingCancellation)
@@ -86,8 +81,31 @@ describe('Cancel a booking register Use Case', () => {
 
         await expect(() =>
             sut.execute({
+                userId: 'user-01',
                 bookingId: createdBooking.id
             })
         ).rejects.toBeInstanceOf(InvalidBookingStatus)
+    })
+
+    it('should not be able to cancel a booking of another user.', async () => {
+        vi.setSystemTime(new Date(2025, 0, 13, 10, 0))
+
+        const createdBooking = await bookingRepository.create({
+            user_id: 'user-01',
+            sportCourt_id: 'court-01',
+            start_time: new Date(2025, 0, 13, 14, 0, 0),
+            end_time: new Date(2025, 0, 13, 16, 0, 0),
+            price: 60,
+            status: 'CONFIRMED'
+        })
+
+        vi.setSystemTime(new Date(2025, 0, 13, 11, 30))
+
+        await expect(() =>
+            sut.execute({
+                userId: 'user-02',
+                bookingId: createdBooking.id
+            })
+        ).rejects.toBeInstanceOf(UnauthorizedToModifyBooking)
     })
 })
