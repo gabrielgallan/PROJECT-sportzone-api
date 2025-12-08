@@ -23,12 +23,15 @@ vi.mock("@/infra/lib/stripe.ts", () => ({
 vi.mock("@/infra/payment/stripe/stripe-payments-gateway.ts", () => {
   return {
     StripePaymentsGateway: vi.fn().mockImplementation(function () {
-      // precisa ser function, não arrow
       return {
-        createCheckoutSession: vi.fn().mockResolvedValue({
+        createPaymentIntent: vi.fn().mockResolvedValue({
           sessionId: "cs_test_123",
           sessionUrl: "https://stripe.test/session",
         }),
+        refundPayment: vi.fn().mockResolvedValue({
+        }),
+        confirmPayment: vi.fn().mockResolvedValue({
+        })
       }
     }),
   }
@@ -58,7 +61,6 @@ describe('Create booking (E2E)', async () => {
                 endTime,
             })
         
-        expect(response.body.paymentSessionUrl).toEqual("cs_test_123")
-        expect(response.body.paymentSessionId).toEqual("https://stripe.test/session")
+        expect(response.body.paymentSessionUrl).toEqual("https://stripe.test/session")
     })
 })

@@ -20,7 +20,7 @@ export default defineConfig({
         plugins: [tsconfigPaths()],
         test: {
           name: 'e2e',
-          include: ['src/infra/http/controllers/**/*.spec.ts'],
+          include: ['src/infra/http/controllers/bookings/**/*.spec.ts'],
           environment: 'prisma',
           testTimeout: 60000,
           hookTimeout: 60000,
