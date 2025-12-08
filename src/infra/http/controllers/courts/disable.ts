@@ -10,11 +10,11 @@ import { ResourceNotFound } from "@/domain/use-cases/errors/resource-not-found.t
 import { UnauthorizedToModifySportCourts } from "@/domain/use-cases/errors/unauthorized-to-modify-court.ts";
 
 export async function disable(request: FastifyRequest, reply: FastifyReply) {
-    const paramsSchema = z.object({
+    const routeParamsSchema = z.object({
         sportCourtId: z.string().nonempty()
     })
 
-    const { sportCourtId } = paramsSchema.parse(request.params)
+    const { sportCourtId } = routeParamsSchema.parse(request.params)
 
     try {
         const disableSportCourtUseCase = makeDisableSportCourtAvailabilityUseCase()

@@ -5,11 +5,11 @@ import { makeActivateSportCourtAvailabilityUseCase } from "@/domain/use-cases/fa
 import { UnauthorizedToModifySportCourts } from "@/domain/use-cases/errors/unauthorized-to-modify-court.ts";
 
 export async function activate(request: FastifyRequest, reply: FastifyReply) {
-    const paramsSchema = z.object({
+    const routeParamsSchema = z.object({
         sportCourtId: z.string().nonempty()
     })
 
-    const { sportCourtId } = paramsSchema.parse(request.params)
+    const { sportCourtId } = routeParamsSchema.parse(request.params)
 
     try {
         const activateSportCourtUseCase = makeActivateSportCourtAvailabilityUseCase()
