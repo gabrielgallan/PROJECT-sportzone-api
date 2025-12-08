@@ -1,12 +1,12 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type Stripe from "stripe";
-import stripe from "@/infra/lib/stripe.ts";
 import z from "zod";
 
 import env from "@/infra/env/config.ts";
 import { makeConfirmBookingUseCase } from "@/domain/use-cases/factories/make-confirm-booking-use-case.ts";
 import { makeValidatePaymentUseCase } from "@/domain/use-cases/factories/make-validate-payment-use-case.ts";
 import { makeUpdateBookingStatusUseCase } from "@/domain/use-cases/factories/make-update-booking-status-use-case.ts";
+import { makeStripeClient } from "@/infra/payment/stripe/stripe-client";
 
 export async function webhook(
     request: FastifyRequest,
@@ -19,6 +19,8 @@ export async function webhook(
     if (!sig) {
         throw new Error()
     }
+
+    const stripe = makeStripeClient()
 
     try {
         event = stripe.webhooks.constructEvent(
