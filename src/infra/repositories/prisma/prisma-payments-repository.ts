@@ -12,6 +12,16 @@ export class PrismaPaymentsRepository implements PaymentsRepository {
         return payment
     }
     
+    async findByBookingId(bookingId: string) {
+        const payment = await prisma.payment.findUnique({
+            where: { 
+                booking_id: bookingId
+            }
+        })
+
+        return payment
+    }
+
     async findById(id: string) {
         const payment = await prisma.payment.findUnique({
             where: { id }

@@ -11,7 +11,9 @@ export async function makePayment(
         amount: booking?.price ?? 50,
         user_email: user?.email ?? 'gabriel@example.com',
         booking_id: booking?.id ?? 'booking-01',
-        external_id: isValidated ? 'externalId-01' : null
+        external_id: isValidated ? 'externalId-01' : null,
+        validated_at: isValidated ? new Date() : null,
+        status: isValidated ? 'PAID' : 'PENDING'
     })
 
     return payment

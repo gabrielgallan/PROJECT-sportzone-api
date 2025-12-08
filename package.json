@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "stripe": "stripe listen --forward-to localhost:3000/stripe/webhook",
+    "dev:stripe": "stripe listen --forward-to localhost:3000/stripe/webhook",
     "build": "tsup",
-    "start": "node build/server.cjs",
+    "start": "node dist/server.cjs",
     "test:unit": "vitest run --project unit",
     "test:e2e": "vitest run --project e2e",
     "test:unit:coverage": "vitest --project unit --coverage",

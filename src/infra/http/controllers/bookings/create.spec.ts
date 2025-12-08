@@ -5,21 +5,7 @@ import { registerAndAuthenticateUser } from '@/utils/test/e2e/register-and-authe
 import { createSportCourt } from '@/utils/test/e2e/create-sport-court.ts'
 import dayjs from 'dayjs'
 
-// 1. Mock do stripe.ts (cliente stripe)
-vi.mock("@/infra/lib/stripe.ts", () => ({
-  default: {
-    webhooks: {
-      constructEvent: vi.fn(),
-    },
-    checkout: {
-      sessions: {
-        create: vi.fn(),
-      },
-    },
-  },
-}))
-
-// 2. Mock CORRETO da classe StripePaymentsGateway
+// 1. Mock CORRETO da classe StripePaymentsGateway
 vi.mock("@/infra/payment/stripe/stripe-payments-gateway.ts", () => {
   return {
     StripePaymentsGateway: vi.fn().mockImplementation(function () {

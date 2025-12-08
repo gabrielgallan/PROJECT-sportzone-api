@@ -1,4 +1,4 @@
-import type { Prisma, Payment } from "@prisma/client"
+import { type Prisma, type Payment, PaymentStatus } from "@prisma/client"
 import type { PaymentsRepository } from "@/domain/repositories/payments-repository.ts"
 import { randomUUID } from "crypto"
 import { Decimal } from "@prisma/client/runtime/library"
@@ -16,12 +16,21 @@ export class InMemoryPaymentsRepository implements PaymentsRepository {
             description: data.description ?? 'Default Payment',
             currency: data.currency ?? 'brl',
             created_at: new Date(),
+            status: data.status ?? PaymentStatus.PENDING,
             validated_at: null,
             user_email: data.user_email,
             booking_id: data.booking_id ?? randomUUID()
         }
-
+        
         this.items.push(payment)
+        
+        return payment
+    }
+    
+    async findByBookingId(bookingId: string) {
+        const payment = this.items.find(pay => pay.booking_id === bookingId)
+
+        if (!payment) return null
 
         return payment
     }

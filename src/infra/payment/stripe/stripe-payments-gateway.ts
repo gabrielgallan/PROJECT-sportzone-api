@@ -51,10 +51,20 @@ export class StripePaymentsGateway implements PaymentGatewayProvider {
             sessionUrl: session.url!,
         }
     }
-    confirmPayment(params: ConfirmPaymentRequest): Promise<ConfirmPaymentResponse> {
-        throw new Error("Method not implemented.");
+
+    async refundPayment({ paymentIntentId, amount }: RefundPaymentRequest) {
+        const refund = await this.client.refunds.create({
+            payment_intent: paymentIntentId,
+            amount: Math.round(amount * 100)
+        })
+
+        return {
+            refundId: refund.id,
+            refundStatus: refund.status
+        }
     }
-    refundPayment(params: RefundPaymentRequest): Promise<RefundPaymentResponse> {
+
+    confirmPayment(params: ConfirmPaymentRequest): Promise<ConfirmPaymentResponse> {
         throw new Error("Method not implemented.");
     }
 }
