@@ -1,8 +1,8 @@
 {
-  "name": "sportzone",
+  "name": "sportzone-api",
   "version": "1.0.0",
-  "description": "SportZone allow that users rent a sports court nearby",
-  "main": "index.js",
+  "type": "module",
+  "license": "UNLICENSED",
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "dev:stripe": "stripe listen --forward-to localhost:3000/stripe/webhook",
@@ -15,15 +15,13 @@
     "test:unit:ui": "vitest --project unit --ui",
     "test:e2e:ui": "vitest --project e2e --ui"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "module",
   "devDependencies": {
+    "@biomejs/biome": "^2.4.6",
     "@types/node": "24.9.2",
     "@types/supertest": "6.0.3",
     "@vitest/coverage-v8": "4.0.7",
     "@vitest/ui": "4.0.7",
+    "globals": "17.4.0",
     "prisma": "6.18.0",
     "supertest": "7.1.4",
     "tsup": "8.5.0",
