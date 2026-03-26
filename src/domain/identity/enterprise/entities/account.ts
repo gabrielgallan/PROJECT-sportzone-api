@@ -1,5 +1,5 @@
 import { Entity } from "@/core/entities/entity";
-import { UniqueEntityID } from "@/core/entities/unique-entity-id";
+import type { UniqueEntityID } from "@/core/entities/unique-entity-id";
 
 interface AccountProps {
     userId: UniqueEntityID
@@ -13,7 +13,10 @@ export class Account extends Entity<AccountProps> {
         id?: UniqueEntityID,
     ) {
         const account = new Account(
-            props,
+            {
+                ...props,
+                providerUserId: props.providerUserId ?? null,
+            },
             id
         )
 

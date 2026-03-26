@@ -8,15 +8,11 @@
     "dev:stripe": "stripe listen --forward-to localhost:3000/stripe/webhook",
     "build": "tsup",
     "start": "node dist/server.cjs",
-    "test:unit": "vitest run --project unit",
-    "test:e2e": "vitest run --project e2e",
-    "test:unit:coverage": "vitest --project unit --coverage",
-    "test:e2e:coverage": "vitest --project e2e --coverage",
-    "test:unit:ui": "vitest --project unit --ui",
-    "test:e2e:ui": "vitest --project e2e --ui"
+    "test:unit": "vitest run --config ./vitest.config.unit.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.6",
+    "@faker-js/faker": "10.4.0",
     "@types/node": "24.9.2",
     "@types/supertest": "6.0.3",
     "@vitest/coverage-v8": "4.0.7",

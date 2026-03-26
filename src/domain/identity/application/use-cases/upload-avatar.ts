@@ -1,8 +1,7 @@
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
-import { Either, left, right } from '@/core/types/either'
-import { Injectable } from '@nestjs/common'
-import { UsersRepository } from '../repositories/users-repository'
-import { Uploader } from '../storage/uploader'
+import { type Either, left, right } from '@/core/types/either'
+import type { UsersRepository } from '../repositories/users-repository'
+import type { Uploader } from '../storage/uploader'
 
 interface UploadAvatarUseCaseRequest {
     userId: string
@@ -16,7 +15,6 @@ type UploadAvatarUseCaseResponse = Either<
     null
 >
 
-@Injectable()
 export class UploadAvatarUseCase {
     constructor(
         private usersRepository: UsersRepository,

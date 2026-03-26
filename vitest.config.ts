@@ -1,30 +1,18 @@
-import { defineConfig, defineProject } from 'vitest/config'
-import tsconfigPaths from 'vite-tsconfig-paths'
+import tsconfigPaths from "vite-tsconfig-paths";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  test: {
-    globals: true,
-    projects: [
-      // 🧩 Project 1: Unit tests
-      defineProject({
-        plugins: [tsconfigPaths()],
-        test: {
-          name: 'unit',
-          include: ['src/domain/**/*.spec.ts'],
-          environment: 'node',
-        },
-      }),
-
-      // 🧩 Project 2: E2E tests with Prisma
-      defineProject({
-        plugins: [tsconfigPaths()],
-        test: {
-          name: 'e2e',
-          include: ['src/infra/**/*.spec.ts'],
-          setupFiles: ['src/test/e2e/setup.ts'],
-          hookTimeout: 60000,
-        },
-      }),
-    ],
-  },
-})
+	test: {
+		include: ["**/*.spec.ts", "**/*.test.ts"],
+		exclude: ["node_modules", "dist", "src/infra/http/controllers/*"],
+		globals: true,
+		root: "./",
+	},
+	plugins: [tsconfigPaths()],
+	resolve: {
+		alias: {
+			// Ensure Vitest correctly resolves TypeScript path aliases
+			src: "./src",
+		},
+	},
+});

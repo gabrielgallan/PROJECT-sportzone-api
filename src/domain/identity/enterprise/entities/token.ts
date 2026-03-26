@@ -1,6 +1,6 @@
 import { Entity } from "@/core/entities/entity";
-import { UniqueEntityID } from "@/core/entities/unique-entity-id";
-import { Optional } from "@/core/types/optional";
+import type { UniqueEntityID } from "@/core/entities/unique-entity-id";
+import type { Optional } from "@/core/types/optional";
 
 export enum TokenType {
   PASSWORD_RECOVER = 'PASSWORD_RECOVER'
@@ -16,7 +16,7 @@ export interface TokenProps {
 
 export class Token extends Entity<TokenProps> {
   static create(
-    props: Optional<TokenProps, 'createdAt' | 'usedAt' | 'expiresAt'>,
+    props: Optional<TokenProps, 'createdAt' | 'expiresAt'>,
     id?: UniqueEntityID,
   ) {
     const token = new Token(

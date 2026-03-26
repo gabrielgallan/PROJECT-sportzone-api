@@ -1,4 +1,4 @@
-import { Token } from "../../enterprise/entities/token";
+import type { Token } from "../../enterprise/entities/token";
 
 export abstract class TokensRepository {
     abstract create(token: Token): Promise<void>

@@ -1,61 +1,59 @@
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
-import { Either, left, right } from '@/core/types/either'
-import { Hasher } from '../cryptography/hasher'
-import { Injectable } from '@nestjs/common'
-import { UsersRepository } from '../repositories/users-repository'
-import { TokensRepository } from '../repositories/tokens-repository'
-import { InvalidTokenError } from './errors/invalid-token-error'
+import { ResourceNotFoundError } from "@/core/errors/resource-not-found-error";
+import { type Either, left, right } from "@/core/types/either";
+import type { Hasher } from "../cryptography/hasher";
+import type { TokensRepository } from "../repositories/tokens-repository";
+import type { UsersRepository } from "../repositories/users-repository";
+import { InvalidTokenError } from "./errors/invalid-token-error";
 
 interface ResetPasswordUseCaseRequest {
-  recoverCode: string
-  password: string
+	recoverCode: string;
+	password: string;
 }
 
 type ResetPasswordUseCaseResponse = Either<
-  ResourceNotFoundError | InvalidTokenError,
-  null
->
+	ResourceNotFoundError | InvalidTokenError,
+	null
+>;
 
-@Injectable()
 export class ResetPasswordUseCase {
-  constructor(
-    private usersRepository: UsersRepository,
-    private tokensRepository: TokensRepository,
-    private hasher: Hasher
-  ) { }
+	constructor(
+		private usersRepository: UsersRepository,
+		private tokensRepository: TokensRepository,
+		private hasher: Hasher,
+	) {}
 
-  async execute({
-    recoverCode,
-    password,
-  }: ResetPasswordUseCaseRequest): Promise<ResetPasswordUseCaseResponse> {
-    const token = await this.tokensRepository.findById(recoverCode)
+	async execute({
+		recoverCode,
+		password,
+	}: ResetPasswordUseCaseRequest): Promise<ResetPasswordUseCaseResponse> {
+		const token = await this.tokensRepository.findById(recoverCode);
 
-    if (!token) {
-      return left(new ResourceNotFoundError())
-    }
+		if (!token) {
+			return left(new ResourceNotFoundError());
+		}
 
-    const user = await this.usersRepository.findById(token.userId.toString())
+		const user = await this.usersRepository.findById(token.userId.toString());
 
-    if (!user) {
-      return left(new ResourceNotFoundError())
-    }
+		if (!user) {
+			return left(new ResourceNotFoundError());
+		}
 
-    if (token.isExpired()) {
-      return left(new InvalidTokenError('Token is expired'))
-    }
+		if (token.isExpired()) {
+			return left(new InvalidTokenError("Token is expired"));
+		}
 
-    if (token.isUsed()) {
-      return left(new InvalidTokenError('Token is already used'))
-    }
+		if (token.isUsed()) {
+			return left(new InvalidTokenError("Token is already used"));
+		}
 
-    user.passwordHash = await this.hasher.generate(password)
+		user.passwordHash = await this.hasher.generate(password);
 
-    await this.usersRepository.save(user)
+		await this.usersRepository.save(user);
 
-    token.use()
+		token.use();
 
-    await this.tokensRepository.save(token)
+		await this.tokensRepository.save(token);
 
-    return right(null)
-  }
+		return right(null);
+	}
 }

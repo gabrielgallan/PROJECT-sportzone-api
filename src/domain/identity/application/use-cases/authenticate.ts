@@ -1,51 +1,51 @@
-import { InvalidCredentialsError } from './errors/invalid-credentials-error'
-import { Either, left, right } from '@/core/types/either'
-import { Injectable } from '@nestjs/common'
-import { Hasher } from '../cryptography/hasher'
-import { Encrypter } from '../cryptography/encrypter'
-import { UsersRepository } from '../repositories/users-repository'
+import { type Either, left, right } from "@/core/types/either";
+import type { Encrypter } from "../cryptography/encrypter";
+import type { Hasher } from "../cryptography/hasher";
+import type { UsersRepository } from "../repositories/users-repository";
+import { InvalidCredentialsError } from "./errors/invalid-credentials-error";
 
 interface AuthenticateUseCaseRequest {
-  email: string
-  password: string
+	email: string;
+	password: string;
 }
 
 type AuthenticateUseCaseResponse = Either<
-  InvalidCredentialsError,
-  { token: string }
->
+	InvalidCredentialsError,
+	{ token: string }
+>;
 
-@Injectable()
 export class AuthenticateUseCase {
-  constructor(
-    private usersRepository: UsersRepository,
-    private hasher: Hasher,
-    private encrypter: Encrypter
-  ) { }
+	constructor(
+		private usersRepository: UsersRepository,
+		private hasher: Hasher,
+		private encrypter: Encrypter,
+	) {}
 
-  async execute({
-    email,
-    password,
-  }: AuthenticateUseCaseRequest): Promise<AuthenticateUseCaseResponse> {
-    const userFromEmail = await this.usersRepository.findByEmail(email)
+	async execute({
+		email,
+		password,
+	}: AuthenticateUseCaseRequest): Promise<AuthenticateUseCaseResponse> {
+		const userFromEmail = await this.usersRepository.findByEmail(email);
 
-    if (!userFromEmail || !userFromEmail.passwordHash) {
-      return left(new InvalidCredentialsError())
-    }
+		if (!userFromEmail || !userFromEmail.passwordHash) {
+			return left(new InvalidCredentialsError());
+		}
 
-    const isPasswordCorrect = await this.hasher.compare(
-      password,
-      userFromEmail.passwordHash
-    )
+		const isPasswordCorrect = await this.hasher.compare(
+			password,
+			userFromEmail.passwordHash,
+		);
 
-    if (!isPasswordCorrect) {
-      return left(new InvalidCredentialsError())
-    }
+		if (!isPasswordCorrect) {
+			return left(new InvalidCredentialsError());
+		}
 
-    const token = await this.encrypter.encrypt({ sub: userFromEmail.id.toString() })
+		const token = await this.encrypter.encrypt({
+			sub: userFromEmail.id.toString(),
+		});
 
-    return right({
-      token
-    })
-  }
+		return right({
+			token,
+		});
+	}
 }
