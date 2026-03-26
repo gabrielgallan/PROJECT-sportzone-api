@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import z from "zod";
-import { makeSearchCourtsByQueryUseCase } from "@/domain/use-cases/factories/make-search-courts-by-query-use-case.ts";
+import { makeSearchCourtsByQueryUseCase } from "@/domain/booking/application/use-cases/factories/make-search-courts-by-query-use-case";
 import { AddressNotFound } from "@/infra/geocoding/locationiq/errors/address-not-found.ts";
 import { LocationIqServerError } from "@/infra/geocoding/locationiq/errors/locationiq-server-error.ts";
 import { InternalServerError } from "@/infra/geocoding/locationiq/errors/internal-server-error.ts";

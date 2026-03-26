@@ -1,6 +1,6 @@
 import type { Stripe } from "stripe";
 import z from "zod";
-import { makeUpdateBookingStatusUseCase } from "@/domain/use-cases/factories/make-update-booking-status-use-case";
+import { makeUpdateBookingStatusUseCase } from "@/domain/booking/application/use-cases/factories/make-update-booking-status-use-case";
 
 export async function checkoutFaileddHandler(event: Stripe.Event) {
     const session = event.data.object as Stripe.Checkout.Session

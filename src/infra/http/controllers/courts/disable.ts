@@ -2,12 +2,12 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import z from "zod";
 
 // * Factories
-import { makeDisableSportCourtAvailabilityUseCase } from "@/domain/use-cases/factories/make-disable-court-availability-use-case.ts";
+import { makeDisableSportCourtAvailabilityUseCase } from "@/domain/booking/application/use-cases/factories/make-disable-court-availability-use-case";
 
 // * Errors
-import { SportCourtAlreadyDisabled } from "@/domain/use-cases/errors/sport-court-already-disabled.ts";
-import { ResourceNotFound } from "@/domain/use-cases/errors/resource-not-found.ts";
-import { UnauthorizedToModifySportCourts } from "@/domain/use-cases/errors/unauthorized-to-modify-court.ts";
+import { SportCourtAlreadyDisabled } from "@/domain/booking/application/use-cases/errors/sport-court-already-disabled";
+import { ResourceNotFound } from "@/domain/booking/application/use-cases/errors/resource-not-found";
+import { UnauthorizedToModifySportCourts } from "@/domain/booking/application/use-cases/errors/unauthorized-to-modify-court";
 
 export async function disable(request: FastifyRequest, reply: FastifyReply) {
     const routeParamsSchema = z.object({

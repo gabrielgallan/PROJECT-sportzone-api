@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { UserAlreadyExistsError } from "@/domain/use-cases/errors/user-already-exists.ts";
-import { makeRegisterUseCase } from "@/domain/use-cases/factories/make-register-use-case.ts";
+import { UserAlreadyExistsError } from "@/domain/booking/application/use-cases/errors/user-already-exists";
+import { makeRegisterUseCase } from "@/domain/booking/application/use-cases/factories/make-register-use-case";
 import z from "zod";
 
 export async function register(request: FastifyRequest, reply: FastifyReply) {
@@ -9,9 +9,9 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
         email: z.string().email(),
         password: z.string().min(6)
     })
-    
+
     const { name, email, password } = bodySchema.parse(request.body)
-    
+
     try {
         const registerUseCase = makeRegisterUseCase()
 
@@ -20,7 +20,7 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
         return reply.status(201).send()
     } catch (err) {
         if (err instanceof UserAlreadyExistsError) {
-            return reply.status(409).send({ error: err.message })    
+            return reply.status(409).send({ error: err.message })
         }
 
         throw err

@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import z from "zod";
-import { makeCreateSportCourtUseCase } from "@/domain/use-cases/factories/make-create-sport-court-use-case.ts";
+import { makeCreateSportCourtUseCase } from "@/domain/booking/application/use-cases/factories/make-create-sport-court-use-case";
 
 export async function create(request: FastifyRequest, reply: FastifyReply) {
     const bodySchema = z.object({

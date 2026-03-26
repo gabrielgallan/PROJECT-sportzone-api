@@ -1,6 +1,6 @@
 import type { Stripe } from "stripe";
-import { makeConfirmBookingUseCase } from "@/domain/use-cases/factories/make-confirm-booking-use-case";
-import { makeValidatePaymentUseCase } from "@/domain/use-cases/factories/make-validate-payment-use-case";
+import { makeConfirmBookingUseCase } from "@/domain/booking/application/use-cases/factories/make-confirm-booking-use-case";
+import { makeValidatePaymentUseCase } from "@/domain/booking/application/use-cases/factories/make-validate-payment-use-case";
 import z from "zod";
 
 export async function checkoutCompletedHandler(event: Stripe.Event) {

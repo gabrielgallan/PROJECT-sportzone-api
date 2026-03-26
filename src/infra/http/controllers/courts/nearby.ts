@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import z from "zod";
-import { makeSearchForNearbyCourtsUseCase } from "@/domain/use-cases/factories/make-search-for-nearby-courts-use-case.ts";
+import { makeSearchForNearbyCourtsUseCase } from "@/domain/booking/application/use-cases/factories/make-search-for-nearby-courts-use-case";
 
 export async function nearby(request: FastifyRequest, reply: FastifyReply) {
     const querySchema = z.object({

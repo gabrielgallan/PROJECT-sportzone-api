@@ -1,9 +1,9 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import z from "zod";
-import { makeRestrictCourtDateUseCase } from "@/domain/use-cases/factories/make-restrict-court-dates-use-case.ts";
-import { ResourceNotFound } from "@/domain/use-cases/errors/resource-not-found.ts";
-import { IncorrectTimestampInterval } from "@/domain/use-cases/errors/incorrect-timestamp-interval.ts";
-import { UnauthorizedToModifySportCourts } from "@/domain/use-cases/errors/unauthorized-to-modify-court.ts";
+import { makeRestrictCourtDateUseCase } from "@/domain/booking/application/use-cases/factories/make-restrict-court-dates-use-case";
+import { ResourceNotFound } from "@/domain/booking/application/use-cases/errors/resource-not-found";
+import { IncorrectTimestampInterval } from "@/domain/booking/application/use-cases/errors/incorrect-timestamp-interval";
+import { UnauthorizedToModifySportCourts } from "@/domain/booking/application/use-cases/errors/unauthorized-to-modify-court";
 
 export async function restrict(request: FastifyRequest, reply: FastifyReply) {
     const bodySchema = z.object({
