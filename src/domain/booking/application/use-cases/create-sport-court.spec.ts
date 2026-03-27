@@ -2,14 +2,16 @@ import { it, describe, expect, beforeEach } from 'vitest'
 import type { SportCourtsRepository } from '../../../repositories/sport-courts-repository.ts'
 import { CreateSportCourtUseCase } from './create-sport-court.ts'
 import { InMemorySportCourtsRepository } from '@/infra/repositories/in-memory/in-memory-sport-courts-repository.ts'
+import { CourtsRepository } from '../repositories/courts-repository.ts'
 
-let sportCourtsRepository: SportCourtsRepository
+let courtsRepository: CourtsRepository
+
 let sut: CreateSportCourtUseCase
 
 describe('Create Sport Court Use Case', () => {
     beforeEach(() => {
-        sportCourtsRepository = new InMemorySportCourtsRepository()
-        sut = new CreateSportCourtUseCase(sportCourtsRepository)
+        courtsRepository = new InMemorySportCourtsRepository()
+        sut = new CreateSportCourtUseCase(courtsRepository)
     })
 
     it('should be able to create sport court.', async () => {

@@ -18,13 +18,17 @@ export interface CourtProps {
 }
 
 export class Court extends Entity<CourtProps> {
-	static create(props: Optional<CourtProps, "createdAt">, id?: UniqueEntityID) {
+	static create(
+		props: Optional<CourtProps, "createdAt" | "isActive">,
+		id?: UniqueEntityID
+	) {
 		const court = new Court(
 			{
 				...props,
 				phone: props.phone ?? null,
 				createdAt: props.createdAt ?? new Date(),
 				updatedAt: props.updatedAt ?? null,
+				isActive: props.isActive ?? true,
 			},
 			id,
 		);

@@ -1,27 +1,53 @@
-import type { Prisma, SportCourt } from "@prisma/client";
-import type { SportCourtsRepository } from "../../../repositories/sport-courts-repository.ts";
+import { Either, right } from "@/core/types/either"
+import { Court } from "../../enterprise/entities/court"
+import { CourtsRepository } from "../repositories/courts-repository"
+import { UniqueEntityID } from "@/core/entities/unique-entity-id"
+import { Cash } from "../../enterprise/entities/value-objects/cash"
 
 interface CreateSportCourtUseCaseRequest {
-    owner_id: string
+    userId: string
     title: string
     type: string
-    phone: string | null
+    phone?: string
     location: string
     latitude: number
     longitude: number
-    price_per_hour: number
+    pricePerHour: number
 }
 
-interface CreateSportCourtUseCaseResponse {
-    sportCourt: SportCourt
-}
+type CreateSportCourtUseCaseResponse = Either<
+    null,
+    {
+        court: Court
+    }
+>
 
 export class CreateSportCourtUseCase {
-    constructor(private sportCourtsRepository: SportCourtsRepository) { }
+    constructor(private courtsRepository: CourtsRepository) { }
 
-    async execute(data: CreateSportCourtUseCaseRequest): Promise<CreateSportCourtUseCaseResponse> {
-        const sportCourt = await this.sportCourtsRepository.create(data)
+    async execute({
+        userId,
+        title,
+        type,
+        phone,
+        location,
+        latitude,
+        longitude,
+        pricePerHour,
+    }: CreateSportCourtUseCaseRequest): Promise<CreateSportCourtUseCaseResponse> {
+        const court = Court.create({
+            ownerId: new UniqueEntityID(userId),
+            title,
+            type,
+            phone,
+            location,
+            latitude,
+            longitude,
+            pricePerHour: Cash.fromAmount(pricePerHour),
+        })
 
-        return { sportCourt }
+        return right({
+            court
+        })
     }
 }
