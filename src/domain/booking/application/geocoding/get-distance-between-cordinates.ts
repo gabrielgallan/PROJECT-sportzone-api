@@ -1,6 +1,11 @@
 import type { Cordinate } from "./cordinate";
 
-export function getDistanceBetweenCordinates(from: Cordinate, to: Cordinate) {
+interface GetDistanceBetweenCordinatesInput {
+	from: Cordinate
+	to: Cordinate
+}
+
+export function getDistanceBetweenCordinates({ from, to }: GetDistanceBetweenCordinatesInput) {
 	if (from.latitude === to.latitude && from.longitude === to.longitude) {
 		return 0;
 	}

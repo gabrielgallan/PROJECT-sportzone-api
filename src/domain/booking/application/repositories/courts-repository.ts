@@ -2,7 +2,7 @@ import type { Pagination } from "@/core/types/pagination";
 import type { Court } from "../../enterprise/entities/court";
 import type { Cordinate } from "../geocoding/cordinate";
 
-interface CourtSearchQuery {
+export interface CourtSearchQuery {
 	cordinate: Cordinate;
 	sportType?: string;
 	pagination: Pagination;
@@ -11,6 +11,6 @@ interface CourtSearchQuery {
 export interface CourtsRepository {
 	create(court: Court): Promise<void>;
 	findById(id: string): Promise<Court | null>;
-	searchManyByQuery(query: CourtSearchQuery): Promise<Court[]>;
+	searchManyByCordinates(query: CourtSearchQuery): Promise<Court[]>;
 	save(court: Court): Promise<void>;
 }

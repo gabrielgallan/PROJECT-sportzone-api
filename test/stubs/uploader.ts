@@ -6,7 +6,7 @@ interface Upload {
     url: string
 }
 
-export class UploaderStub implements  Uploader {
+export class UploaderStub implements Uploader {
     public uploads: Upload[] = []
 
     async upload({ fileName }: UploadParams): Promise<{ url: string; }> {
@@ -17,6 +17,6 @@ export class UploaderStub implements  Uploader {
             url
         })
 
-        return  { url }
+        return { url }
     }
 }
