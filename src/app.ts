@@ -1,55 +1,84 @@
-import fastify from 'fastify'
-import fastifyJwt from '@fastify/jwt'
-import fastifyCookies from '@fastify/cookie'
-import env from './infra/env/config.ts'
-import { ZodError } from 'zod'
-import { userRoutes } from './infra/http/controllers/users/routes.ts'
-import { courtRoutes } from './infra/http/controllers/courts/routes.ts'
-import { bookingsRoutes } from './infra/http/controllers/bookings/routes.ts'
-import fastifyRawBody from 'fastify-raw-body'
-import { stripeWebhookRoutes } from './infra/http/controllers/webhooks/stripe/route.ts'
+import fastifySwagger from "@fastify/swagger";
+import ScalarApiReference from "@scalar/fastify-api-reference";
+import fastify from "fastify";
+import {
+	jsonSchemaTransform,
+	serializerCompiler,
+	validatorCompiler,
+	ZodTypeProvider,
+} from "fastify-type-provider-zod";
+import z from "zod";
+// import fastifyJwt from '@fastify/jwt'
+// import fastifyCookies from '@fastify/cookie'
+// import env from './infra/env/config.ts'
+// import { ZodError } from 'zod'
+// import { userRoutes } from './infra/http/controllers/users/routes.ts'
+// import { courtRoutes } from './infra/http/controllers/courts/routes.ts'
+// import { bookingsRoutes } from './infra/http/controllers/bookings/routes.ts'
+// import fastifyRawBody from 'fastify-raw-body'
+// import { stripeWebhookRoutes } from './infra/http/controllers/webhooks/stripe/route.ts'
 
-const app = fastify()
+const app = fastify().withTypeProvider<ZodTypeProvider>();
 
-app.register(fastifyJwt, {
-    secret: env.JWT_SECRET,
-    cookie: {
-        cookieName: 'refreshToken',
-        signed: false
-    },
-    sign: {
-        expiresIn: '10m',
-    }
-})
+app.setSerializerCompiler(serializerCompiler);
 
-app.register(fastifyCookies)
+app.setValidatorCompiler(validatorCompiler);
 
-app.register(fastifyRawBody, {
-    field: 'rawBody',
-    global: false,
-    encoding: 'utf8'
-})
+app.register(fastifySwagger, {
+	openapi: {
+		info: {
+			title: "Sportzone API",
+			version: "1.0.0",
+		},
+	},
+	transform: jsonSchemaTransform,
+});
 
-app.register(userRoutes)
-app.register(courtRoutes)
-app.register(bookingsRoutes)
+await app.register(ScalarApiReference, {
+	routePrefix: "/reference",
+	configuration: {
+		theme: "elysiajs",
+	},
+});
 
-app.register(stripeWebhookRoutes)
+// app.register(fastifyJwt, {
+//     secret: env.JWT_SECRET,
+//     cookie: {
+//         cookieName: 'refreshToken',
+//         signed: false
+//     },
+//     sign: {
+//         expiresIn: '10m',
+//     }
+// })
 
-app.setErrorHandler((error, request, reply) => {
-    if (error instanceof ZodError) {
-        return reply.status(400)
-            .send({ message: 'Data validation error!', issues: error.format() })
-    }
+// app.register(fastifyCookies)
 
-    if (env.NODE_ENV !== 'production') {
-        console.error(error)
-    } else {
-        // Here i should send log to an external toll like DataDog/Sentry
-    }
+// app.register(fastifyRawBody, {
+//     field: 'rawBody',
+//     global: false,
+//     encoding: 'utf8'
+// })
 
-    return reply.status(500).send({ message: 'Internal Server Error' })
-})
+// app.register(userRoutes)
+// app.register(courtRoutes)
+// app.register(bookingsRoutes)
 
+// app.register(stripeWebhookRoutes)
 
-export default app
+// app.setErrorHandler((error, request, reply) => {
+//     if (error instanceof ZodError) {
+//         return reply.status(400)
+//             .send({ message: 'Data validation error!', issues: error.format() })
+//     }
+
+//     if (env.NODE_ENV !== 'production') {
+//         console.error(error)
+//     } else {
+//         // Here i should send log to an external toll like DataDog/Sentry
+//     }
+
+//     return reply.status(500).send({ message: 'Internal Server Error' })
+// })
+
+export default app;
