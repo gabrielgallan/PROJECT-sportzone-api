@@ -1,3 +1,4 @@
+import fastifyJwt from "@fastify/jwt";
 import fastifySwagger from "@fastify/swagger";
 import ScalarApiReference from "@scalar/fastify-api-reference";
 import fastify from "fastify";
@@ -7,6 +8,7 @@ import {
 	validatorCompiler,
 	type ZodTypeProvider,
 } from "fastify-type-provider-zod";
+import { env } from "../env";
 import { identityRoutes } from "./routes/identity";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
@@ -14,6 +16,10 @@ const app = fastify().withTypeProvider<ZodTypeProvider>();
 app.setSerializerCompiler(serializerCompiler);
 
 app.setValidatorCompiler(validatorCompiler);
+
+app.register(fastifyJwt, {
+	secret: env.JWT_SECRET,
+});
 
 app.register(fastifySwagger, {
 	openapi: {
