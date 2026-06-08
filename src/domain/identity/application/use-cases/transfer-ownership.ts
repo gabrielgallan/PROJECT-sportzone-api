@@ -8,7 +8,7 @@ import { InsufficientPermissionsError } from "./errors/insufficient-permissions-
 
 interface TransferOwnershipUseCaseRequest {
 	userId: string;
-	organizationId: string;
+	organizationSlug: string;
 	memberId: string;
 }
 
@@ -26,7 +26,7 @@ export class TransferOwnershipUseCase {
 
 	async execute({
 		userId,
-		organizationId,
+		organizationSlug,
 		memberId,
 	}: TransferOwnershipUseCaseRequest): Promise<TransferOwnershipUseCaseResponse> {
 		const user = await this.usersRepository.findById(userId);
@@ -36,7 +36,7 @@ export class TransferOwnershipUseCase {
 		}
 
 		const organization =
-			await this.organizationsRepository.findById(organizationId);
+			await this.organizationsRepository.findBySlug(organizationSlug);
 
 		if (!organization) {
 			return left(new ResourceNotFoundError());
@@ -49,7 +49,7 @@ export class TransferOwnershipUseCase {
 		const currentOwnerMembership =
 			await this.membersRepository.findByUserIdAndOrganizationId(
 				userId,
-				organizationId,
+				organization.id.toString(),
 			);
 
 		if (!currentOwnerMembership) {
@@ -60,7 +60,7 @@ export class TransferOwnershipUseCase {
 
 		if (
 			!targetMembership ||
-			targetMembership.organizationId.toString() !== organizationId
+			targetMembership.organizationId.toString() !== organization.id.toString()
 		) {
 			return left(new ResourceNotFoundError());
 		}

@@ -8,6 +8,7 @@ import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import { MemberRole } from "../../enterprise/entities/member";
 import { InsufficientPermissionsError } from "./errors/insufficient-permissions-error";
 import { RemoveMembershipUseCase } from "./remove-membership";
+import { Slug } from "../../enterprise/entities/value-objects/slug";
 
 let usersRepository: InMemoryUsersRepository;
 let membersRepository: InMemoryMembersRepository;
@@ -41,8 +42,8 @@ describe("Remove membership use case", () => {
 			await makeOrganization(
 				{
 					ownerId: new UniqueEntityID("user-1"),
+					slug: Slug.createFromText('org-1')
 				},
-				new UniqueEntityID("org-1"),
 			),
 		);
 
@@ -59,11 +60,9 @@ describe("Remove membership use case", () => {
 
 		const result = await sut.execute({
 			userId: "user-1",
-			organizationId: "org-1",
+			organizationSlug: "org-1",
 			memberId: "member-1",
 		});
-
-		console.log(result.value);
 
 		expect(result.isRight()).toBe(true);
 		expect(membersRepository.items).toHaveLength(1);
@@ -82,8 +81,8 @@ describe("Remove membership use case", () => {
 			await makeOrganization(
 				{
 					ownerId: new UniqueEntityID("user-1"),
+					slug: Slug.createFromText('org-1')
 				},
-				new UniqueEntityID("org-1"),
 			),
 		);
 
@@ -100,7 +99,7 @@ describe("Remove membership use case", () => {
 
 		const result = await sut.execute({
 			userId: "user-2",
-			organizationId: "org-1",
+			organizationSlug: "org-1",
 			memberId: "member-1",
 		});
 

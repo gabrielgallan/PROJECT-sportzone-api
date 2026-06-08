@@ -6,6 +6,7 @@ import { InMemoryOrganizationsRepository } from "test/unit/repositories/in-memor
 import { InMemoryUsersRepository } from "test/unit/repositories/in-memory-users-repository";
 import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import { MemberRole } from "../../enterprise/entities/member";
+import { Slug } from "../../enterprise/entities/value-objects/slug";
 import { InsufficientPermissionsError } from "./errors/insufficient-permissions-error";
 import { TransferOwnershipUseCase } from "./transfer-ownership";
 
@@ -38,11 +39,11 @@ describe("Transfer ownership use case", () => {
 		);
 
 		await organizationsRepository.create(
-			await makeOrganization(
-				{
-					ownerId: new UniqueEntityID("user-1"),
-				},
-				new UniqueEntityID("org-1"),
+			await makeOrganization({
+				ownerId: new UniqueEntityID("user-1"),
+				slug: Slug.createFromText("org-1"),
+			}, 			
+				new UniqueEntityID('org-1')
 			),
 		);
 
@@ -70,7 +71,7 @@ describe("Transfer ownership use case", () => {
 
 		const result = await sut.execute({
 			userId: "user-1",
-			organizationId: "org-1",
+			organizationSlug: "org-1",
 			memberId: "member-2",
 		});
 
@@ -90,12 +91,10 @@ describe("Transfer ownership use case", () => {
 		);
 
 		await organizationsRepository.create(
-			await makeOrganization(
-				{
-					ownerId: new UniqueEntityID("user-3"),
-				},
-				new UniqueEntityID("org-1"),
-			),
+			await makeOrganization({
+				ownerId: new UniqueEntityID("user-3"),
+				slug: Slug.createFromText("org-1"),
+			}, new UniqueEntityID("org-1")),
 		);
 
 		await membersRepository.create(
@@ -111,7 +110,7 @@ describe("Transfer ownership use case", () => {
 
 		const result = await sut.execute({
 			userId: "user-1",
-			organizationId: "org-1",
+			organizationSlug: "org-1",
 			memberId: "member-2",
 		});
 

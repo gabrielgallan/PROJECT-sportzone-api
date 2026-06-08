@@ -37,9 +37,11 @@ export class ListUserOrganizationsUseCase {
 		}
 
 		const memberships = await this.membersRepository.findManyByUserId(userId);
+		
 		const organizationIds = memberships.map((membership) =>
 			membership.organizationId.toString(),
 		);
+
 		const organizations =
 			await this.organizationsRepository.findManyByIds(organizationIds);
 

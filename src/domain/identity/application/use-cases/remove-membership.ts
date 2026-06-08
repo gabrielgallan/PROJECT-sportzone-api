@@ -7,7 +7,7 @@ import { InsufficientPermissionsError } from "./errors/insufficient-permissions-
 
 interface RemoveMembershipUseCaseRequest {
 	userId: string;
-	organizationId: string;
+	organizationSlug: string;
 	memberId: string;
 }
 
@@ -25,7 +25,7 @@ export class RemoveMembershipUseCase {
 
 	async execute({
 		userId,
-		organizationId,
+		organizationSlug,
 		memberId,
 	}: RemoveMembershipUseCaseRequest): Promise<RemoveMembershipUseCaseResponse> {
 		const user = await this.usersRepository.findById(userId);
@@ -35,7 +35,7 @@ export class RemoveMembershipUseCase {
 		}
 
 		const organization =
-			await this.organizationsRepository.findById(organizationId);
+			await this.organizationsRepository.findBySlug(organizationSlug);
 
 		if (!organization) {
 			return left(new ResourceNotFoundError());

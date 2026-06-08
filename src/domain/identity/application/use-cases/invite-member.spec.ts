@@ -8,6 +8,7 @@ import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import { MemberRole } from "../../enterprise/entities/member";
 import { InviteMemberUseCase } from "./invite-member";
 import { InsufficientPermissionsError } from "./errors/insufficient-permissions-error";
+import { Slug } from "../../enterprise/entities/value-objects/slug";
 
 let usersRepository: InMemoryUsersRepository;
 let invitesRepository: InMemoryInvitesRepository;
@@ -45,14 +46,15 @@ describe("Invite member use case", () => {
 			await makeOrganization(
 				{
 					ownerId: new UniqueEntityID("user-1"),
+					slug: Slug.createFromText('org-1')
 				},
-				new UniqueEntityID("org-1"),
+				new UniqueEntityID('org-1')
 			),
 		);
 
 		const result = await sut.execute({
 			userId: "user-1",
-			organizationId: "org-1",
+			organizationSlug: "org-1",
 			invitedEmail: "member@email.com",
 			role: MemberRole.BILLING,
 		});
@@ -77,14 +79,14 @@ describe("Invite member use case", () => {
 			await makeOrganization(
 				{
 					ownerId: new UniqueEntityID("user-2"),
+					slug: Slug.createFromText('org-1')
 				},
-				new UniqueEntityID("org-1"),
 			),
 		);
 
 		const result = await sut.execute({
 			userId: "user-1",
-			organizationId: "org-1",
+			organizationSlug: "org-1",
 			invitedEmail: "member@email.com",
 			role: MemberRole.MEMBER,
 		});

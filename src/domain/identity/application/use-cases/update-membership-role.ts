@@ -9,7 +9,7 @@ import { InvalidMembershipRoleError } from "./errors/invalid-membership-role-err
 
 interface UpdateMembershipRoleUseCaseRequest {
 	userId: string;
-	organizationId: string;
+	organizationSlug: string;
 	memberId: string;
 	role: MemberRole;
 }
@@ -28,7 +28,7 @@ export class UpdateMembershipRoleUseCase {
 
 	async execute({
 		userId,
-		organizationId,
+		organizationSlug,
 		memberId,
 		role,
 	}: UpdateMembershipRoleUseCaseRequest): Promise<UpdateMembershipRoleUseCaseResponse> {
@@ -39,7 +39,7 @@ export class UpdateMembershipRoleUseCase {
 		}
 
 		const organization =
-			await this.organizationsRepository.findById(organizationId);
+			await this.organizationsRepository.findBySlug(organizationSlug);
 
 		if (!organization) {
 			return left(new ResourceNotFoundError());
@@ -55,7 +55,7 @@ export class UpdateMembershipRoleUseCase {
 
 		const member = await this.membersRepository.findById(memberId);
 
-		if (!member || member.organizationId.toString() !== organizationId) {
+		if (!member || member.organizationId.toString() !== organization.id.toString()) {
 			return left(new ResourceNotFoundError());
 		}
 

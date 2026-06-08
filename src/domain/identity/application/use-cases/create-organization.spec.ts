@@ -1,3 +1,4 @@
+import { makeOrganization } from "test/unit/factories/make-organization";
 import { makeUser } from "test/unit/factories/make-user";
 import { InMemoryMembersRepository } from "test/unit/repositories/in-memory-members-repository";
 import { InMemoryOrganizationsRepository } from "test/unit/repositories/in-memory-organizations-reporitory";
@@ -5,7 +6,9 @@ import { InMemoryUsersRepository } from "test/unit/repositories/in-memory-users-
 import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import { ResourceNotFoundError } from "@/core/errors/resource-not-found-error";
 import { MemberRole } from "../../enterprise/entities/member";
+import { Slug } from "../../enterprise/entities/value-objects/slug";
 import { CreateOrganizationUseCase } from "./create-organization";
+import { OrganizationAlreadyExistsError } from "./errors/organization-already-exists-error";
 
 let usersRepository: InMemoryUsersRepository;
 let organizationsRepository: InMemoryOrganizationsRepository;
@@ -62,5 +65,27 @@ describe("Create organization use case", () => {
 
 		expect(result.isLeft()).toBe(true);
 		expect(result.value).toBeInstanceOf(ResourceNotFoundError);
+	});
+
+	it("should not be able to create an organization with a slug that already used", async () => {
+		await usersRepository.create(
+			await makeUser({}, new UniqueEntityID("user-1")),
+		);
+
+		await organizationsRepository.create(
+			await makeOrganization({
+				name: "Sportzone Org",
+				slug: Slug.createFromText("sportzone-org"),
+			}),
+		);
+
+		const result = await sut.execute({
+			userId: "user-1",
+			name: "Sportzone Org",
+			avatarUrl: null,
+		});
+
+		expect(result.isLeft()).toBe(true);
+		expect(result.value).toBeInstanceOf(OrganizationAlreadyExistsError);
 	});
 });

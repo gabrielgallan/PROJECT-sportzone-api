@@ -6,6 +6,7 @@ import { InMemoryOrganizationsRepository } from "test/unit/repositories/in-memor
 import { InMemoryUsersRepository } from "test/unit/repositories/in-memory-users-repository";
 import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import { MemberRole } from "../../enterprise/entities/member";
+import { Slug } from "../../enterprise/entities/value-objects/slug";
 import { InsufficientPermissionsError } from "./errors/insufficient-permissions-error";
 import { InvalidMembershipRoleError } from "./errors/invalid-membership-role-error";
 import { UpdateMembershipRoleUseCase } from "./update-membership-role";
@@ -35,12 +36,10 @@ describe("Update membership role use case", () => {
 		);
 
 		await organizationsRepository.create(
-			await makeOrganization(
-				{
-					ownerId: new UniqueEntityID("user-1"),
-				},
-				new UniqueEntityID("org-1"),
-			),
+			await makeOrganization({
+				ownerId: new UniqueEntityID("user-1"),
+				slug: Slug.createFromText("org-1"),
+			}, new UniqueEntityID('org-1')),
 		);
 
 		await membersRepository.create(
@@ -56,7 +55,7 @@ describe("Update membership role use case", () => {
 
 		const result = await sut.execute({
 			userId: "user-1",
-			organizationId: "org-1",
+			organizationSlug: "org-1",
 			memberId: "member-1",
 			role: MemberRole.BILLING,
 		});
@@ -71,12 +70,10 @@ describe("Update membership role use case", () => {
 		);
 
 		await organizationsRepository.create(
-			await makeOrganization(
-				{
-					ownerId: new UniqueEntityID("user-2"),
-				},
-				new UniqueEntityID("org-1"),
-			),
+			await makeOrganization({
+				ownerId: new UniqueEntityID("user-2"),
+				slug: Slug.createFromText("org-1"),
+			}, new UniqueEntityID('org-1')),
 		);
 
 		await membersRepository.create(
@@ -92,7 +89,7 @@ describe("Update membership role use case", () => {
 
 		const result = await sut.execute({
 			userId: "user-1",
-			organizationId: "org-1",
+			organizationSlug: "org-1",
 			memberId: "member-1",
 			role: MemberRole.BILLING,
 		});
@@ -108,12 +105,10 @@ describe("Update membership role use case", () => {
 		);
 
 		await organizationsRepository.create(
-			await makeOrganization(
-				{
-					ownerId: new UniqueEntityID("user-1"),
-				},
-				new UniqueEntityID("org-1"),
-			),
+			await makeOrganization({
+				ownerId: new UniqueEntityID("user-1"),
+				slug: Slug.createFromText("org-1"),
+			}),
 		);
 
 		await membersRepository.create(
@@ -129,7 +124,7 @@ describe("Update membership role use case", () => {
 
 		const result = await sut.execute({
 			userId: "user-1",
-			organizationId: "org-1",
+			organizationSlug: "org-1",
 			memberId: "member-1",
 			role: MemberRole.OWNER,
 		});

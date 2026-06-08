@@ -9,7 +9,7 @@ import { InsufficientPermissionsError } from "./errors/insufficient-permissions-
 
 interface ListOrganizationMembersUseCaseRequest {
 	userId: string;
-	organizationId: string;
+	organizationSlug: string;
 	pagination: Pagination;
 }
 
@@ -27,7 +27,7 @@ export class ListOrganizationMembersUseCase {
 
 	async execute({
 		userId,
-		organizationId,
+		organizationSlug,
 		pagination,
 	}: ListOrganizationMembersUseCaseRequest): Promise<ListOrganizationMembersUseCaseResponse> {
 		const user = await this.usersRepository.findById(userId);
@@ -37,7 +37,7 @@ export class ListOrganizationMembersUseCase {
 		}
 
 		const organization =
-			await this.organizationsRepository.findById(organizationId);
+			await this.organizationsRepository.findBySlug(organizationSlug);
 
 		if (!organization) {
 			return left(new ResourceNotFoundError());
@@ -49,7 +49,7 @@ export class ListOrganizationMembersUseCase {
 
 		const membersWithProfile =
 			await this.membersRepository.listByOrganizationId(
-				organizationId,
+				organization.id.toString(),
 				pagination,
 			);
 

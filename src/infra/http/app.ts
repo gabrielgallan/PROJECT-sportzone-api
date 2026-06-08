@@ -27,6 +27,15 @@ app.register(fastifySwagger, {
 			title: "sportzone api",
 			version: "1.0.0",
 		},
+		components: {
+			securitySchemes: {
+				bearerAuth: {
+				type: "http",
+				scheme: "bearer",
+				bearerFormat: "JWT",
+				},
+			},
+			},
 	},
 	transform: jsonSchemaTransform,
 });

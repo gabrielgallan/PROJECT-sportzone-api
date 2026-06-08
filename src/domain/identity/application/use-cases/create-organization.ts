@@ -2,9 +2,11 @@ import { ResourceNotFoundError } from "@/core/errors/resource-not-found-error";
 import { type Either, left, right } from "@/core/types/either";
 import { Member, MemberRole } from "../../enterprise/entities/member";
 import { Organization } from "../../enterprise/entities/organization";
+import { Slug } from "../../enterprise/entities/value-objects/slug";
 import type { MembersRepository } from "../repositories/members-repository";
 import type { OrganizationsRepository } from "../repositories/organizations-repository";
 import type { UsersRepository } from "../repositories/users-repository";
+import { OrganizationAlreadyExistsError } from "./errors/organization-already-exists-error";
 
 interface CreateOrganizationUseCaseRequest {
 	userId: string;
@@ -13,7 +15,7 @@ interface CreateOrganizationUseCaseRequest {
 }
 
 type CreateOrganizationUseCaseResponse = Either<
-	ResourceNotFoundError,
+	ResourceNotFoundError | OrganizationAlreadyExistsError,
 	{ organization: Organization }
 >;
 
@@ -35,9 +37,19 @@ export class CreateOrganizationUseCase {
 			return left(new ResourceNotFoundError());
 		}
 
+		const slug = Slug.createFromText(name);
+
+		const organizationAlreadyExists =
+			await this.organizationsRepository.findBySlug(slug.value);
+
+		if (organizationAlreadyExists) {
+			return left(new OrganizationAlreadyExistsError());
+		}
+
 		const organization = Organization.create({
 			ownerId: user.id,
 			name,
+			slug,
 			avatarUrl,
 		});
 

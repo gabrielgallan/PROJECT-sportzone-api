@@ -6,7 +6,7 @@ export class FastifyJwtEncrypter implements Encrypter {
 
 	async encrypt(payload: Record<string, unknown>): Promise<string> {
 		return this.app.jwt.sign(payload, {
-			expiresIn: "7d",
+			expiresIn: "1h",
 		});
 	}
 }

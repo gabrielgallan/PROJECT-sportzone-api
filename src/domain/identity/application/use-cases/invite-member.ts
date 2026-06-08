@@ -10,7 +10,7 @@ import { InsufficientPermissionsError } from "./errors/insufficient-permissions-
 
 interface InviteMemberUseCaseRequest {
 	userId: string;
-	organizationId: string;
+	organizationSlug: string;
 	invitedEmail: string;
 	role: MemberRole;
 }
@@ -30,7 +30,7 @@ export class InviteMemberUseCase {
 
 	async execute({
 		userId,
-		organizationId,
+		organizationSlug,
 		invitedEmail,
 		role,
 	}: InviteMemberUseCaseRequest): Promise<InviteMemberUseCaseResponse> {
@@ -41,7 +41,7 @@ export class InviteMemberUseCase {
 		}
 
 		const organization =
-			await this.organizationsRepository.findById(organizationId);
+			await this.organizationsRepository.findBySlug(organizationSlug);
 
 		if (!organization) {
 			return left(new ResourceNotFoundError());

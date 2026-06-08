@@ -8,6 +8,7 @@ import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import { MemberRole } from "../../enterprise/entities/member";
 import { InsufficientPermissionsError } from "./errors/insufficient-permissions-error";
 import { ListOrganizationMembersUseCase } from "./list-organization-members";
+import { Slug } from "../../enterprise/entities/value-objects/slug";
 
 let usersRepository: InMemoryUsersRepository;
 let membersRepository: InMemoryMembersRepository;
@@ -63,8 +64,9 @@ describe("List organization members use case", () => {
 			await makeOrganization(
 				{
 					ownerId: new UniqueEntityID("user-1"),
+					slug: Slug.createFromText('org-1')
 				},
-				new UniqueEntityID("org-1"),
+				new UniqueEntityID('org-1')
 			),
 		);
 
@@ -88,7 +90,7 @@ describe("List organization members use case", () => {
 
 		const result = await sut.execute({
 			userId: "user-1",
-			organizationId: "org-1",
+			organizationSlug: "org-1",
 			pagination: {
 				page: 1,
 				limit: 20,
@@ -113,14 +115,14 @@ describe("List organization members use case", () => {
 			await makeOrganization(
 				{
 					ownerId: new UniqueEntityID("user-2"),
+					slug: Slug.createFromText('org-1')
 				},
-				new UniqueEntityID("org-1"),
 			),
 		);
 
 		const result = await sut.execute({
 			userId: "user-1",
-			organizationId: "org-1",
+			organizationSlug: "org-1",
 			pagination: {
 				page: 1,
 				limit: 20,

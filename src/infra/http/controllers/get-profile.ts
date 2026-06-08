@@ -1,49 +1,57 @@
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { InvalidCredentialsError } from "@/domain/identity/application/use-cases/errors/invalid-credentials-error";
-import { makeAuthenticateUseCase } from "@/domain/identity/application/use-cases/factories/make-authenticate-use-case";
+import { ResourceNotFoundError } from "@/core/errors/resource-not-found-error";
+import { makeGetProfileUseCase } from "@/domain/booking/application/use-cases/factories/make-get-profile-use-case";
 
 export function getProfileController(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().get(
-		"/profile",
+		"/me",
 		{
 			schema: {
-				summary: "Authenticate with credentials",
+				summary: "Get user profile",
 				tags: ["auth"],
-				body: z.object({
-					email: z.email(),
-					password: z.string(),
-				}),
+				security: [{ bearerAuth: [] }],
 				response: {
-					200: z.object({ token: z.string() }),
-					401: z.object({ message: z.string() }),
+					200: z.object({
+						user: z.object({
+							email: z.string(),
+							name: z.string().nullable(),
+							avatarUrl: z.string().nullable(),
+						}),
+					}),
+					404: z.object({ message: z.string() }),
 				},
 			},
 		},
 		async (request, reply) => {
-			const { email, password } = request.body;
+			const userId = await request.getUserId();
 
-			const authenticate = makeAuthenticateUseCase();
+			const getProfile = makeGetProfileUseCase();
 
-			const result = await authenticate.execute({
-				email,
-				password,
+			const result = await getProfile.execute({
+				userId,
 			});
 
 			if (result.isLeft()) {
 				const error = result.value;
 
 				switch (error.constructor) {
-					case InvalidCredentialsError:
-						return reply.status(401).send({ message: error.message });
+					case ResourceNotFoundError:
+						return reply.status(404).send({ message: error.message });
 
 					default:
 						throw error;
 				}
 			}
 
-			reply.status(200).send(result.value);
+			reply.status(200).send({
+				user: {
+					name: result.value.user.name ?? null,
+					email: result.value.user.email,
+					avatarUrl: result.value.user.avatarUrl ?? null,
+				},
+			});
 		},
 	);
 }

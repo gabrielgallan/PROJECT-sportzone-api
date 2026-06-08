@@ -20,6 +20,14 @@ export class InMemoryOrganizationsRepository
 		return organization ?? null;
 	}
 
+	async findBySlug(slug: string) {
+		const organization = this.items.find(
+			(o) => o.slug.value === slug,
+		);
+
+		return organization ?? null;
+	}
+
 	async findManyByIds(organizationIds: string[]) {
 		const organizations = this.items.filter((o) =>
 			organizationIds.includes(o.id.toString()),

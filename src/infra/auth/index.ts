@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import fastifyPlugin from "fastify-plugin";
 
-export const authMiddleware = fastifyPlugin(async (app: FastifyInstance) => {
+export const authModule = fastifyPlugin(async (app: FastifyInstance) => {
 	app.addHook("preHandler", async (request, reply) => {
 		request.getUserId = async () => {
 			try {
@@ -9,7 +9,7 @@ export const authMiddleware = fastifyPlugin(async (app: FastifyInstance) => {
 
 				return sub;
 			} catch {
-				reply.status(401).send({ message: "Invalid auth token" });
+				return reply.status(401).send({ message: "Invalid auth token" });
 			}
 		};
 	});
