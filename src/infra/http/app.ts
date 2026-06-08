@@ -10,6 +10,7 @@ import {
 } from "fastify-type-provider-zod";
 import { env } from "../env";
 import { identityRoutes } from "./routes/identity";
+import { paginationPlugin } from "./middlewares/pagination";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -46,6 +47,8 @@ await app.register(ScalarApiReference, {
 		theme: "elysiajs",
 	},
 });
+
+await app.register(paginationPlugin)
 
 await app.register(
 	() => {

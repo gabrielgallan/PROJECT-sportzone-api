@@ -19,8 +19,8 @@ let sut: TransferOwnershipUseCase;
 describe("Transfer ownership use case", () => {
 	beforeEach(() => {
 		usersRepository = new InMemoryUsersRepository();
-		membersRepository = new InMemoryMembersRepository(usersRepository);
 		organizationsRepository = new InMemoryOrganizationsRepository();
+		membersRepository = new InMemoryMembersRepository(usersRepository, organizationsRepository);
 
 		sut = new TransferOwnershipUseCase(
 			usersRepository,

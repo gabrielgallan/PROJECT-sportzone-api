@@ -19,8 +19,8 @@ let sut: ListOrganizationMembersUseCase;
 describe("List organization members use case", () => {
 	beforeEach(() => {
 		usersRepository = new InMemoryUsersRepository();
-		membersRepository = new InMemoryMembersRepository(usersRepository);
 		organizationsRepository = new InMemoryOrganizationsRepository();
+		membersRepository = new InMemoryMembersRepository(usersRepository, organizationsRepository);
 
 		sut = new ListOrganizationMembersUseCase(
 			usersRepository,
@@ -100,9 +100,9 @@ describe("List organization members use case", () => {
 		expect(result.isRight()).toBe(true);
 
 		if (result.isRight()) {
-			expect(result.value.members).toHaveLength(2);
-			expect(result.value.members[0].user.email).toBe("jane@email.com");
-			expect(result.value.members[1].user.name).toBe("John Doe");
+			expect(result.value.members.data).toHaveLength(2);
+			expect(result.value.members.data[0].user.email).toBe("jane@email.com");
+			expect(result.value.members.data[1].user.name).toBe("John Doe");
 		}
 	});
 

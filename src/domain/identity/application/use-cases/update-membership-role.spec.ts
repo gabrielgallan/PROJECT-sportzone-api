@@ -20,8 +20,8 @@ let sut: UpdateMembershipRoleUseCase;
 describe("Update membership role use case", () => {
 	beforeEach(() => {
 		usersRepository = new InMemoryUsersRepository();
-		membersRepository = new InMemoryMembersRepository(usersRepository);
 		organizationsRepository = new InMemoryOrganizationsRepository();
+		membersRepository = new InMemoryMembersRepository(usersRepository, organizationsRepository);
 
 		sut = new UpdateMembershipRoleUseCase(
 			usersRepository,

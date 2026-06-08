@@ -21,8 +21,8 @@ describe("Accept invite use case", () => {
 	beforeEach(() => {
 		usersRepository = new InMemoryUsersRepository();
 		invitesRepository = new InMemoryInvitesRepository();
-		membersRepository = new InMemoryMembersRepository(usersRepository);
 		organizationsRepository = new InMemoryOrganizationsRepository();
+		membersRepository = new InMemoryMembersRepository(usersRepository, organizationsRepository);
 
 		sut = new AcceptInviteUseCase(
 			usersRepository,

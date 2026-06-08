@@ -20,7 +20,7 @@ describe("Create organization use case", () => {
 	beforeEach(() => {
 		usersRepository = new InMemoryUsersRepository();
 		organizationsRepository = new InMemoryOrganizationsRepository();
-		membersRepository = new InMemoryMembersRepository(usersRepository);
+		membersRepository = new InMemoryMembersRepository(usersRepository, organizationsRepository);
 
 		sut = new CreateOrganizationUseCase(
 			usersRepository,

@@ -1,6 +1,6 @@
 import { ResourceNotFoundError } from "@/core/errors/resource-not-found-error";
 import { type Either, left, right } from "@/core/types/either";
-import type { Pagination } from "@/core/types/pagination";
+import type { PaginatedList, PaginationInput } from "@/core/types/pagination";
 import type { MemberWithProfile } from "../../enterprise/entities/value-objects/member-with-profile";
 import type { MembersRepository } from "../repositories/members-repository";
 import type { OrganizationsRepository } from "../repositories/organizations-repository";
@@ -10,12 +10,12 @@ import { InsufficientPermissionsError } from "./errors/insufficient-permissions-
 interface ListOrganizationMembersUseCaseRequest {
 	userId: string;
 	organizationSlug: string;
-	pagination: Pagination;
+	pagination?: PaginationInput;
 }
 
 type ListOrganizationMembersUseCaseResponse = Either<
 	ResourceNotFoundError | InsufficientPermissionsError,
-	{ members: MemberWithProfile[] }
+	{ members: PaginatedList<MemberWithProfile[]> }
 >;
 
 export class ListOrganizationMembersUseCase {
@@ -28,7 +28,7 @@ export class ListOrganizationMembersUseCase {
 	async execute({
 		userId,
 		organizationSlug,
-		pagination,
+		pagination = { page: 1, limit: 10 },
 	}: ListOrganizationMembersUseCaseRequest): Promise<ListOrganizationMembersUseCaseResponse> {
 		const user = await this.usersRepository.findById(userId);
 

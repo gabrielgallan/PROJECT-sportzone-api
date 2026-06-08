@@ -1,16 +1,18 @@
-import { ResourceNotFoundError } from "@/core/errors/resource-not-found-error";
-import { type Either, left, right } from "@/core/types/either";
-import type { Invite } from "../../enterprise/entities/invite";
-import type { InvitesRepository } from "../repositories/invites-repository";
-import type { UsersRepository } from "../repositories/users-repository";
+import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
+import { type Either, left, right } from '@/core/types/either';
+import type { PaginatedList, PaginationInput } from '@/core/types/pagination';
+import type { Invite } from '../../enterprise/entities/invite';
+import type { InvitesRepository } from '../repositories/invites-repository';
+import type { UsersRepository } from '../repositories/users-repository';
 
 interface ListInvitesUseCaseRequest {
 	userId: string;
+	pagination?: PaginationInput;
 }
 
 type ListInvitesUseCaseResponse = Either<
 	ResourceNotFoundError,
-	{ invites: Invite[] }
+	{ invites: PaginatedList<Invite[]> }
 >;
 
 export class ListInvitesUseCase {
@@ -21,6 +23,7 @@ export class ListInvitesUseCase {
 
 	async execute({
 		userId,
+		pagination = { page: 1, limit: 10 },
 	}: ListInvitesUseCaseRequest): Promise<ListInvitesUseCaseResponse> {
 		const user = await this.usersRepository.findById(userId);
 
@@ -28,9 +31,7 @@ export class ListInvitesUseCase {
 			return left(new ResourceNotFoundError());
 		}
 
-		const invites = await this.invitesRepository.findManyByUserEmail(
-			user.email,
-		);
+		const invites = await this.invitesRepository.findManyByUserEmail(user.email, pagination);
 
 		return right({
 			invites,

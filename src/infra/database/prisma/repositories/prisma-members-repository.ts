@@ -1,9 +1,10 @@
-import type { Pagination } from '@/core/types/pagination';
+import type { PaginationInput } from '@/core/types/pagination';
 import type { MembersRepository } from '@/domain/identity/application/repositories/members-repository';
 import type { Member } from '@/domain/identity/enterprise/entities/member';
 import { prisma } from '..';
 import { PrismaMemberMapper } from '../mappers/prisma-member-mapper';
 import { PrismaMemberWithProfileMapper } from '../mappers/prisma-member-with-profile-mapper';
+import { PrismaOrganizationWithRoleMapper } from '../mappers/prisma-organization-with-role-mapper';
 
 export class PrismaMembersRepository implements MembersRepository {
 	async create(member: Member) {
@@ -53,28 +54,68 @@ export class PrismaMembersRepository implements MembersRepository {
 		return PrismaMemberMapper.toDomain(member);
 	}
 
-	async listByOrganizationId(organizationId: string, pagination: Pagination) {
-		const { page, limit } = pagination;
+	async listWithOrganizationByUserId(userId: string, { page, limit }: PaginationInput) {
+		const [organizationsWithRole, total] = await Promise.all([
+			prisma.member.findMany({
+				where: { userId },
+				skip: (page - 1) * limit,
+				take: limit,
+				select: {
+					createdAt: true,
+					role: true,
+					organization: true,
+				},
+			}),
 
-		const memberships = await prisma.member.findMany({
-			where: { organizationId },
-			skip: (page - 1) * limit,
-			take: limit,
-			select: {
-				role: true,
-				createdAt: true,
-				user: {
-					select: {
-						id: true,
-						name: true,
-						email: true,
-						avatarUrl: true,
+			prisma.member.count({
+				where: { userId },
+			}),
+		]);
+
+		return {
+			data: organizationsWithRole.map(PrismaOrganizationWithRoleMapper.toDomain),
+			meta: {
+				page,
+				limit,
+				total,
+			},
+		};
+	}
+
+	async listByOrganizationId(organizationId: string, { page, limit }: PaginationInput) {
+		const [memberships, total] = await Promise.all([
+			prisma.member.findMany({
+				where: { organizationId },
+				skip: (page - 1) * limit,
+				take: limit,
+				select: {
+					role: true,
+					createdAt: true,
+					user: {
+						select: {
+							id: true,
+							name: true,
+							email: true,
+							avatarUrl: true,
+						},
 					},
 				},
-			},
-		});
+			}),
+			prisma.member.count({
+				where: {
+					organizationId,
+				},
+			}),
+		]);
 
-		return memberships.map(PrismaMemberWithProfileMapper.toDomain);
+		return {
+			data: memberships.map(PrismaMemberWithProfileMapper.toDomain),
+			meta: {
+				page,
+				limit,
+				total,
+			},
+		};
 	}
 
 	async save(member: Member) {

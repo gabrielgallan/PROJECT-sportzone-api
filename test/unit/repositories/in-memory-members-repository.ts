@@ -1,13 +1,18 @@
-import type { Pagination } from "@/core/types/pagination";
-import type { MembersRepository } from "@/domain/identity/application/repositories/members-repository";
-import type { Member } from "@/domain/identity/enterprise/entities/member";
-import { MemberWithProfile } from "@/domain/identity/enterprise/entities/value-objects/member-with-profile";
-import type { InMemoryUsersRepository } from "./in-memory-users-repository";
+import type { PaginationInput } from '@/core/types/pagination';
+import type { MembersRepository } from '@/domain/identity/application/repositories/members-repository';
+import type { Member } from '@/domain/identity/enterprise/entities/member';
+import { MemberWithProfile } from '@/domain/identity/enterprise/entities/value-objects/member-with-profile';
+import { OrganizationWithRole } from '@/domain/identity/enterprise/entities/value-objects/organization-with-role';
+import type { InMemoryOrganizationsRepository } from './in-memory-organizations-reporitory';
+import type { InMemoryUsersRepository } from './in-memory-users-repository';
 
 export class InMemoryMembersRepository implements MembersRepository {
 	public items: Member[] = [];
 
-	constructor(private usersRepository: InMemoryUsersRepository) {}
+	constructor(
+		private usersRepository: InMemoryUsersRepository,
+		private organizationsRepository: InMemoryOrganizationsRepository,
+	) {}
 
 	async create(member: Member) {
 		this.items.push(member);
@@ -15,22 +20,18 @@ export class InMemoryMembersRepository implements MembersRepository {
 		return;
 	}
 
-	async listByOrganizationId(organizationId: string, pagination: Pagination) {
-		const { page, limit } = pagination;
+	async listByOrganizationId(organizationId: string, { page, limit }: PaginationInput) {
+		const members = this.items.filter((m) => m.organizationId.toString() === organizationId);
 
-		const members = this.items.filter(
-			(m) => m.organizationId.toString() === organizationId,
-		);
+		const paginated = members
+			.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+			.slice((page - 1) * limit, page * limit);
 
-		const membersWithProfile = members.map((member) => {
-			const user = this.usersRepository.items.find((user) =>
-				user.id.equals(member.userId),
-			);
+		const membersWithProfile = paginated.map((member) => {
+			const user = this.usersRepository.items.find((user) => user.id.equals(member.userId));
 
 			if (!user) {
-				throw new Error(
-					`User with ID ${member.userId.toString()} does not exists`,
-				);
+				throw new Error(`User with ID ${member.userId.toString()} does not exists`);
 			}
 
 			return MemberWithProfile.create({
@@ -47,14 +48,43 @@ export class InMemoryMembersRepository implements MembersRepository {
 			});
 		});
 
-		const paginated = membersWithProfile
-			.sort(
-				(a, b) =>
-					b.membership.createdAt.getTime() - a.membership.createdAt.getTime(),
-			)
-			.slice((page - 1) * limit, page * limit);
+		return {
+			data: membersWithProfile,
+			meta: {
+				page,
+				limit,
+				total: members.length,
+			},
+		};
+	}
 
-		return paginated;
+	async listWithOrganizationByUserId(userId: string, { page, limit }: PaginationInput) {
+		const memberships = this.items.filter((m) => m.userId.toString() === userId);
+
+		const paginated = memberships.slice((page - 1) * limit, page * limit);
+
+		const membershipsWithOrg = paginated.map((ship) => {
+			const organization = this.organizationsRepository.items.find(
+				(o) => o.id.toString() === ship.organizationId.toString(),
+			);
+
+			if (!organization)
+				throw new Error(`Organization ID ${ship.organizationId.toString()} does not exists`);
+
+			return OrganizationWithRole.create({
+				role: ship.role,
+				organization,
+			});
+		});
+
+		return {
+			data: membershipsWithOrg,
+			meta: {
+				page,
+				limit,
+				total: memberships.length,
+			},
+		};
 	}
 
 	async findById(memberId: string) {
@@ -72,18 +102,14 @@ export class InMemoryMembersRepository implements MembersRepository {
 	async findByUserIdAndOrganizationId(userId: string, organizationId: string) {
 		const member =
 			this.items.find(
-				(m) =>
-					m.userId.toString() === userId &&
-					m.organizationId.toString() === organizationId,
+				(m) => m.userId.toString() === userId && m.organizationId.toString() === organizationId,
 			) ?? null;
 
 		return member;
 	}
 
 	async save(member: Member) {
-		const memberIndex = this.items.findIndex(
-			(m) => m.id.toString() === member.id.toString(),
-		);
+		const memberIndex = this.items.findIndex((m) => m.id.toString() === member.id.toString());
 
 		if (memberIndex >= 0) {
 			this.items[memberIndex] = member;

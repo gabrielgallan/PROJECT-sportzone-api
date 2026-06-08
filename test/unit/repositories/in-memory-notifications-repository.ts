@@ -1,9 +1,8 @@
-import type { NotificationsRepository } from "@/domain/notifications/application/repositories/notifications-repository";
-import type { Notification } from "@/domain/notifications/enterprise/entities/notification";
+import type { PaginationInput } from '@/core/types/pagination';
+import type { NotificationsRepository } from '@/domain/notifications/application/repositories/notifications-repository';
+import type { Notification } from '@/domain/notifications/enterprise/entities/notification';
 
-export class InMemoryNotificationsRepository
-	implements NotificationsRepository
-{
+export class InMemoryNotificationsRepository implements NotificationsRepository {
 	public items: Notification[] = [];
 
 	async create(notification: Notification) {
@@ -17,12 +16,28 @@ export class InMemoryNotificationsRepository
 		return notification ?? null;
 	}
 
-	async findManyByRecipientId(recipietId: string) {
-		const notifications = this.items.filter(
-			(n) => n.recipientId.toString() === recipietId,
-		);
+	async findManyByRecipientId(recipietId: string, pagination: PaginationInput) {
+		const { page, limit } = pagination;
 
-		return notifications;
+		const notifications = this.items.filter((n) => n.recipientId.toString() === recipietId);
+
+		const paginated = notifications
+			.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+			.slice((page - 1) * limit, page * limit);
+
+		return { data: paginated, meta: { page, limit, total: notifications.length } };
+	}
+
+	async markAllAsReadByRecipientId(recipientId: string) {
+		for (const notification of this.items) {
+			const isFromRecipient = notification.recipientId.toString() === recipientId;
+
+			const isUnread = !notification.readAt;
+
+			if (isFromRecipient && isUnread) {
+				notification.read();
+			}
+		}
 	}
 
 	async save(notification: Notification) {

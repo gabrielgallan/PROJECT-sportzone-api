@@ -41,7 +41,7 @@ describe("List invites use case", () => {
 		expect(result.isRight()).toBe(true);
 
 		if (result.isRight()) {
-			expect(result.value.invites).toHaveLength(1);
+			expect(result.value.invites.data).toHaveLength(1);
 		}
 	});
 });
