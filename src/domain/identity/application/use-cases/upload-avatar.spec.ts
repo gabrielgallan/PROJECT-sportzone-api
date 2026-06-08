@@ -1,7 +1,7 @@
-import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import { UploaderStub } from "test/stubs/uploader";
 import { makeUser } from "test/unit/factories/make-user";
 import { InMemoryUsersRepository } from "test/unit/repositories/in-memory-users-repository";
+import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import { UploadAvatarUseCase } from "./upload-avatar";
 
 let usersRepository: InMemoryUsersRepository;

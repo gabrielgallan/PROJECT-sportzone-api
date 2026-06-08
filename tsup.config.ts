@@ -1,8 +1,9 @@
-import { defineConfig } from 'tsup'
+import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ['src/server.ts'],
-  outDir: 'dist',
-  format: ['cjs'],   
-  clean: true,
-})
+	entry: ["src/infra/server.ts"],
+	outDir: "dist",
+
+	format: ["esm"],
+	clean: true,
+});

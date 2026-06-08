@@ -9,8 +9,8 @@ services:
       - POSTGRESQL_PASSWORD=docker
       - POSTGRESQL_DATABASE=sportzone
 
-  redis:
-    container_name: sportzone-redis
-    image: redis
-    ports:
-      - 6379:6379
+  # redis:
+  #   container_name: sportzone-redis
+  #   image: redis
+  #   ports:
+  #     - 6379:6379

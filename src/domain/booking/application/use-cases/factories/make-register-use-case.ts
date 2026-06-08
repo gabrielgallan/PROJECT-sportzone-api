@@ -1,9 +1,12 @@
-import { PrismaUsersRepository } from "@/infra/repositories/prisma/prisma-users-repository.ts"
-import { RegisterUseCase } from "../register.ts"
+import { RegisterUseCase } from "@/domain/identity/application/use-cases/register";
+import { BcryptHasher } from "@/infra/cryptography/bcrypt-hasher";
+import { PrismaUsersRepository } from "@/infra/database/prisma/repositories/prisma-users-repository.ts";
 
 export function makeRegisterUseCase() {
-    const usersRepository = new PrismaUsersRepository()
-    const registerUseCase = new RegisterUseCase(usersRepository)
+	const usersRepository = new PrismaUsersRepository();
+	const hasher = new BcryptHasher();
 
-    return registerUseCase
+	const registerUseCase = new RegisterUseCase(usersRepository, hasher);
+
+	return registerUseCase;
 }

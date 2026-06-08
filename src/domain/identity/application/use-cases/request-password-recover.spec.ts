@@ -1,8 +1,8 @@
-import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import { EmailSenderStub } from "test/stubs/email-sender";
 import { makeUser } from "test/unit/factories/make-user";
 import { InMemoryTokensRepository } from "test/unit/repositories/in-memory-tokens-repository";
 import { InMemoryUsersRepository } from "test/unit/repositories/in-memory-users-repository";
+import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import { RequestPasswordRecoverUseCase } from "./request-password-recover";
 
 let usersRepository: InMemoryUsersRepository;

@@ -1,10 +1,10 @@
+import { faker } from "@faker-js/faker";
+import { HasherStup } from "test/stubs/hasher";
 import type { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import {
 	User,
 	type UserProps,
 } from "@/domain/identity/enterprise/entities/user";
-import { faker } from "@faker-js/faker";
-import { HasherStup } from "test/stubs/hasher";
 
 const hasher = new HasherStup();
 

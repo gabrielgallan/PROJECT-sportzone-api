@@ -1,0 +1,58 @@
+import { ResourceNotFoundError } from "@/core/errors/resource-not-found-error";
+import { type Either, left, right } from "@/core/types/either";
+import { Member, MemberRole } from "../../enterprise/entities/member";
+import { Organization } from "../../enterprise/entities/organization";
+import type { MembersRepository } from "../repositories/members-repository";
+import type { OrganizationsRepository } from "../repositories/organizations-repository";
+import type { UsersRepository } from "../repositories/users-repository";
+
+interface CreateOrganizationUseCaseRequest {
+	userId: string;
+	name: string;
+	avatarUrl: string | null;
+}
+
+type CreateOrganizationUseCaseResponse = Either<
+	ResourceNotFoundError,
+	{ organization: Organization }
+>;
+
+export class CreateOrganizationUseCase {
+	constructor(
+		private usersRepository: UsersRepository,
+		private organizationsRepository: OrganizationsRepository,
+		private membersRepository: MembersRepository,
+	) {}
+
+	async execute({
+		userId,
+		name,
+		avatarUrl,
+	}: CreateOrganizationUseCaseRequest): Promise<CreateOrganizationUseCaseResponse> {
+		const user = await this.usersRepository.findById(userId);
+
+		if (!user) {
+			return left(new ResourceNotFoundError());
+		}
+
+		const organization = Organization.create({
+			ownerId: user.id,
+			name,
+			avatarUrl,
+		});
+
+		await this.organizationsRepository.create(organization);
+
+		const membership = Member.create({
+			userId: user.id,
+			organizationId: organization.id,
+			role: MemberRole.OWNER,
+		});
+
+		await this.membersRepository.create(membership);
+
+		return right({
+			organization,
+		});
+	}
+}

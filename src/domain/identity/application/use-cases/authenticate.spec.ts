@@ -1,8 +1,8 @@
-import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import { EncrypterStub } from "test/stubs/encrypter";
 import { HasherStup } from "test/stubs/hasher";
 import { makeUser } from "test/unit/factories/make-user";
 import { InMemoryUsersRepository } from "test/unit/repositories/in-memory-users-repository";
+import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import type { Encrypter } from "../cryptography/encrypter";
 import type { Hasher } from "../cryptography/hasher";
 import { AuthenticateUseCase } from "./authenticate";

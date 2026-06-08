@@ -1,7 +1,7 @@
-import { UniqueEntityID } from "@/core/entities/unique-entity-id";
-import { ResourceNotFoundError } from "@/core/errors/resource-not-found-error";
 import { makeUser } from "test/unit/factories/make-user";
 import { InMemoryUsersRepository } from "test/unit/repositories/in-memory-users-repository";
+import { UniqueEntityID } from "@/core/entities/unique-entity-id";
+import { ResourceNotFoundError } from "@/core/errors/resource-not-found-error";
 import { GetProfileUseCase } from "./get-profile";
 
 let usersRepository: InMemoryUsersRepository;
