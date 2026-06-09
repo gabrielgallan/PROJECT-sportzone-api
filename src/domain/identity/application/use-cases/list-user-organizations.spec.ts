@@ -5,7 +5,6 @@ import { InMemoryMembersRepository } from "test/unit/repositories/in-memory-memb
 import { InMemoryOrganizationsRepository } from "test/unit/repositories/in-memory-organizations-reporitory";
 import { InMemoryUsersRepository } from "test/unit/repositories/in-memory-users-repository";
 import { UniqueEntityID } from "@/core/entities/unique-entity-id";
-import { MemberRole } from "../../enterprise/entities/member";
 import { ListUserOrganizationsUseCase } from "./list-user-organizations";
 
 let usersRepository: InMemoryUsersRepository;
@@ -53,7 +52,7 @@ describe("List user organizations use case", () => {
 			await makeMember({
 				userId: new UniqueEntityID("user-1"),
 				organizationId: new UniqueEntityID("org-1"),
-				role: MemberRole.OWNER,
+				role: 'OWNER',
 			}),
 		);
 
@@ -61,7 +60,7 @@ describe("List user organizations use case", () => {
 			await makeMember({
 				userId: new UniqueEntityID("user-1"),
 				organizationId: new UniqueEntityID("org-2"),
-				role: MemberRole.BILLING,
+				role: 'BILLING',
 			}),
 		);
 
@@ -76,11 +75,11 @@ describe("List user organizations use case", () => {
 			expect(result.value.organizations.data[0].organization.name).toBe(
 				"SportZone FC",
 			);
-			expect(result.value.organizations.data[0].role).toBe(MemberRole.OWNER);
+			expect(result.value.organizations.data[0].role).toBe('OWNER');
 			expect(result.value.organizations.data[1].organization.name).toBe(
 				"Arena Club",
 			);
-			expect(result.value.organizations.data[1].role).toBe(MemberRole.BILLING);
+			expect(result.value.organizations.data[1].role).toBe('BILLING');
 		}
 	});
 });

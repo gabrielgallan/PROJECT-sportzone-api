@@ -1,9 +1,11 @@
 import { Entity } from "@/core/entities/entity";
 import type { UniqueEntityID } from "@/core/entities/unique-entity-id";
 
+export type AccountProvider = 'GITHUB' | 'GOOGLE'
+
 interface AccountProps {
     userId: UniqueEntityID
-    provider: string
+    provider: AccountProvider
     providerUserId?: string | null
 }
 

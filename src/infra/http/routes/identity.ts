@@ -18,6 +18,8 @@ import { resetPasswordController } from '../controllers/reset-password';
 import { transferOwnershipController } from '../controllers/transfer-ownership';
 import { updateMembershipRoleController } from '../controllers/update-membership-role';
 import { updateOrganizationProfileController } from '../controllers/update-organization';
+import { uploadAvatarController } from '../controllers/upload-avatar';
+import { uploadOrgAvatarController } from '../controllers/upload-org-avatar';
 
 export function identityRoutes(app: FastifyInstance) {
 	app.register(plugins.authPlugin);
@@ -40,4 +42,6 @@ export function identityRoutes(app: FastifyInstance) {
 	app.register(updateOrganizationProfileController);
 	app.register(transferOwnershipController);
 	app.register(removeMembershipController);
+	app.register(uploadAvatarController);
+	app.register(uploadOrgAvatarController);
 }

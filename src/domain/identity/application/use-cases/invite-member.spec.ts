@@ -5,7 +5,6 @@ import { InMemoryInvitesRepository } from 'test/unit/repositories/in-memory-invi
 import { InMemoryOrganizationsRepository } from 'test/unit/repositories/in-memory-organizations-reporitory';
 import { InMemoryUsersRepository } from 'test/unit/repositories/in-memory-users-repository';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
-import { MemberRole } from '../../enterprise/entities/member';
 import { Slug } from '../../enterprise/entities/value-objects/slug';
 import { InsufficientPermissionsError } from './errors/insufficient-permissions-error';
 import { ResourceAlreadyExistsError } from './errors/resource-already-exists-error';
@@ -57,7 +56,7 @@ describe('Invite member use case', () => {
 			userId: 'user-1',
 			organizationSlug: 'org-1',
 			invitedEmail: 'member@email.com',
-			role: MemberRole.BILLING,
+			role: 'BILLING',
 		});
 
 		expect(result.isRight()).toBe(true);
@@ -65,7 +64,7 @@ describe('Invite member use case', () => {
 		expect(invitesRepository.items[0].authorId.toString()).toBe('user-1');
 		expect(invitesRepository.items[0].organizationId.toString()).toBe('org-1');
 		expect(invitesRepository.items[0].email).toBe('member@email.com');
-		expect(invitesRepository.items[0].role).toBe(MemberRole.BILLING);
+		expect(invitesRepository.items[0].role).toBe('BILLING');
 		expect(emailSender.emails[0].to).toBe('member@email.com');
 		expect(emailSender.emails[0].subject).toBe('New Invite');
 		expect(emailSender.emails[0].text).toContain('org-1');
@@ -85,7 +84,7 @@ describe('Invite member use case', () => {
 			userId: 'user-1',
 			organizationSlug: 'org-1',
 			invitedEmail: 'member@email.com',
-			role: MemberRole.MEMBER,
+			role: 'MEMBER',
 		});
 
 		expect(result.isLeft()).toBe(true);
@@ -109,14 +108,14 @@ describe('Invite member use case', () => {
 			userId: 'user-1',
 			organizationSlug: 'org-1',
 			invitedEmail: 'member@email.com',
-			role: MemberRole.MEMBER,
+			role: 'MEMBER',
 		});
 
 		const result = await sut.execute({
 			userId: 'user-1',
 			organizationSlug: 'org-1',
 			invitedEmail: 'member@email.com',
-			role: MemberRole.MEMBER,
+			role: 'MEMBER',
 		});
 
 		expect(result.isLeft()).toBe(true);

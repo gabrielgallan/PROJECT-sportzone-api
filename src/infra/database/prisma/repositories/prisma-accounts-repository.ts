@@ -1,8 +1,8 @@
-import { AccountProvider } from 'generated/prisma/client';
 import type { AccountRepository } from '@/domain/identity/application/repositories/account-repository';
-import type { Account } from '@/domain/identity/enterprise/entities/account';
+import type { Account, AccountProvider } from '@/domain/identity/enterprise/entities/account';
 import { PrismaAccountMapper } from '../mappers/prisma-account-mapper';
 import { prisma } from '../prisma';
+import { PrismaAccountProviderMapper } from '../mappers/prisma-account-provider-mapper';
 
 export class PrismaAccountsRepository implements AccountRepository {
 	async create(account: Account) {
@@ -14,20 +14,10 @@ export class PrismaAccountsRepository implements AccountRepository {
 	}
 
 	async findByProviderAndUserId(provider: string, userId: string) {
-		let prismaProvider: AccountProvider;
-
-		switch (provider) {
-			case 'GITHUB':
-				prismaProvider = AccountProvider.GITHUB;
-				break;
-			default:
-				throw new Error(`Invalid provider: ${provider}`);
-		}
-
 		const account = await prisma.account.findUnique({
 			where: {
 				provider_userId: {
-					provider: prismaProvider,
+					provider: PrismaAccountProviderMapper.toPrisma(provider as AccountProvider),
 					userId,
 				},
 			},

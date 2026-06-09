@@ -25,16 +25,12 @@ export function authenticateWithGoogleController(app: FastifyInstance) {
 
 			const authenticateWithGoogle = makeAuthenticateWithGoogleUseCase(app);
 
-			const result = await authenticateWithGoogle.execute({
+			const { token } = await authenticateWithGoogle.execute({
 				provider: 'GOOGLE',
 				code,
 			});
 
-			if (result.isLeft()) {
-				throw new Error();
-			}
-
-			reply.status(200).send(result.value);
+			reply.status(200).send({ token });
 		},
 	);
 }

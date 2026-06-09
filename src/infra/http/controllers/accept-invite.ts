@@ -13,7 +13,7 @@ export function acceptInviteController(app: FastifyInstance) {
 		{
 			schema: {
 				summary: 'Accept invite',
-				tags: ['auth'],
+				tags: ['invites'],
 				security: [{ bearerAuth: [] }],
 				params: z.object({
 					inviteId: z.string(),

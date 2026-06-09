@@ -20,7 +20,7 @@ export function listInvitesController(app: FastifyInstance) {
 		{
 			schema: {
 				summary: 'List invites',
-				tags: ['auth'],
+				tags: ['invites'],
 				security: [{ bearerAuth: [] }],
 				querystring: z.object({
 					page: z.string().optional(),

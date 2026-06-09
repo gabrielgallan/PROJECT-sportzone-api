@@ -65,6 +65,8 @@ model Organization {
 
   members  Member[]
   invites  Invite[]
+
+  @@map("organizations")
 }
 
 enum InviteStatus {

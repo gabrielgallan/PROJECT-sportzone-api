@@ -5,7 +5,6 @@ import { InMemoryOrganizationsRepository } from "test/unit/repositories/in-memor
 import { InMemoryUsersRepository } from "test/unit/repositories/in-memory-users-repository";
 import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import { ResourceNotFoundError } from "@/core/errors/resource-not-found-error";
-import { MemberRole } from "../../enterprise/entities/member";
 import { Slug } from "../../enterprise/entities/value-objects/slug";
 import { CreateOrganizationUseCase } from "./create-organization";
 import { OrganizationAlreadyExistsError } from "./errors/organization-already-exists-error";
@@ -50,7 +49,7 @@ describe("Create organization use case", () => {
 		expect(organizationsRepository.items).toHaveLength(1);
 		expect(membersRepository.items).toHaveLength(1);
 		expect(membersRepository.items[0].userId.toString()).toBe("user-1");
-		expect(membersRepository.items[0].role).toBe(MemberRole.OWNER);
+		expect(membersRepository.items[0].role).toBe('OWNER');
 		expect(membersRepository.items[0].organizationId.toString()).toBe(
 			organizationsRepository.items[0].id.toString(),
 		);

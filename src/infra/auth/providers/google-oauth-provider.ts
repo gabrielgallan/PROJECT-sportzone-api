@@ -18,6 +18,8 @@ const googleTokenResponseSchema = z.object({
 	scope: z.string().optional(),
 });
 
+type GoogleTokenResponseSchema = z.infer<typeof googleTokenResponseSchema>
+
 const googleUserResponseSchema = z.object({
 	sub: z.string(),
 	email: z.string().email(),
@@ -25,6 +27,8 @@ const googleUserResponseSchema = z.object({
 	name: z.string(),
 	picture: z.string().url().optional(),
 });
+
+type GoogleUserResponseSchema = z.infer<typeof googleUserResponseSchema>
 
 export class GoogleOAuthProvider implements AuthProvider<GoogleUser, GoogleOAuthProviderInput> {
 	async signIn({ code }: GoogleOAuthProviderInput) {
@@ -36,13 +40,13 @@ export class GoogleOAuthProvider implements AuthProvider<GoogleUser, GoogleOAuth
 					},
 					body: new URLSearchParams({
 						code,
-						client_id: env.GITHUB_OAUTH_CLIENT_ID,
+						client_id: env.GOOGLE_OAUTH_CLIENT_ID,
 						client_secret: env.GOOGLE_OAUTH_CLIENT_SECRET,
 						redirect_uri: env.GOOGLE_OAUTH_CLIENT_REDIRECT_URI,
 						grant_type: 'authorization_code',
 					}),
 				})
-				.json();
+				.json<GoogleTokenResponseSchema>();
 
 			const { access_token } = googleTokenResponseSchema.parse(tokenResponse);
 
@@ -52,7 +56,7 @@ export class GoogleOAuthProvider implements AuthProvider<GoogleUser, GoogleOAuth
 						Authorization: `Bearer ${access_token}`,
 					},
 				})
-				.json();
+				.json<GoogleUserResponseSchema>();
 
 			const {
 				sub: id,
@@ -69,10 +73,14 @@ export class GoogleOAuthProvider implements AuthProvider<GoogleUser, GoogleOAuth
 			};
 		} catch (err) {
 			if (err instanceof HTTPError) {
+				console.error(err)
+
 				throw new BadGatewayError('Failed connect with Google OAuth API');
 			}
 
 			if (err instanceof ZodError) {
+				console.error(err)
+
 				throw new BadGatewayError('Wrong data format returned from Google OAuth API');
 			}
 

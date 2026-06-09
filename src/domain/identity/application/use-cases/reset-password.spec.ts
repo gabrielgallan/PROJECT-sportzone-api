@@ -4,7 +4,6 @@ import { makeUser } from "test/unit/factories/make-user";
 import { InMemoryTokensRepository } from "test/unit/repositories/in-memory-tokens-repository";
 import { InMemoryUsersRepository } from "test/unit/repositories/in-memory-users-repository";
 import { UniqueEntityID } from "@/core/entities/unique-entity-id";
-import { TokenType } from "../../enterprise/entities/token";
 import type { Hasher } from "../cryptography/hasher";
 import { InvalidTokenError } from "./errors/invalid-token-error";
 import { ResetPasswordUseCase } from "./reset-password";
@@ -39,7 +38,7 @@ describe("Reset user password use case", () => {
 			await makeToken(
 				{
 					userId: new UniqueEntityID("user-1"),
-					type: TokenType.PASSWORD_RECOVER,
+					type: 'PASSWORD_RECOVER',
 				},
 				new UniqueEntityID("token-1"),
 			),
@@ -64,7 +63,7 @@ describe("Reset user password use case", () => {
 			await makeToken(
 				{
 					userId: new UniqueEntityID("user-1"),
-					type: TokenType.PASSWORD_RECOVER,
+					type: 'PASSWORD_RECOVER',
 				},
 				new UniqueEntityID("token-1"),
 			),
@@ -90,7 +89,7 @@ describe("Reset user password use case", () => {
 			await makeToken(
 				{
 					userId: new UniqueEntityID("user-1"),
-					type: TokenType.PASSWORD_RECOVER,
+					type: 'PASSWORD_RECOVER',
 				},
 				new UniqueEntityID("token-1"),
 			),

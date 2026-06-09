@@ -24,16 +24,12 @@ export function authenticateWithGithubController(app: FastifyInstance) {
 
 			const authenticateWithGithub = makeAuthenticateWithGithubUseCase(app);
 
-			const result = await authenticateWithGithub.execute({
+			const { token } = await authenticateWithGithub.execute({
 				provider: 'GITHUB',
 				code,
 			});
 
-			if (result.isLeft()) {
-				throw new Error();
-			}
-
-			reply.status(200).send(result.value);
+			reply.status(200).send({ token });
 		},
 	);
 }

@@ -1,5 +1,4 @@
-import { type Either, right } from "@/core/types/either";
-import { Account } from "../../enterprise/entities/account";
+import { Account, AccountProvider } from "../../enterprise/entities/account";
 import { User } from "../../enterprise/entities/user";
 import type { AuthProvider } from "../auth/auth-provider";
 import type { Encrypter } from "../cryptography/encrypter";
@@ -7,11 +6,11 @@ import type { AccountRepository } from "../repositories/account-repository";
 import type { UsersRepository } from "../repositories/users-repository";
 
 interface AuthenticateWithProviderUseCaseRequest {
-	provider: string;
+	provider: AccountProvider
 	code: string;
 }
 
-type AuthenticateWithProviderUseCaseResponse = Either<null, { token: string }>;
+type AuthenticateWithProviderUseCaseResponse = { token: string };
 
 export class AuthenticateWithProviderUseCase {
 	constructor(
@@ -58,8 +57,8 @@ export class AuthenticateWithProviderUseCase {
 
 		const token = await this.encrypter.encrypt({ sub: user.id.toString() });
 
-		return right({
+		return {
 			token,
-		});
+		}
 	}
 }

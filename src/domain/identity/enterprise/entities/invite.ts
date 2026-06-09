@@ -1,13 +1,9 @@
-import { Entity } from "@/core/entities/entity";
-import type { UniqueEntityID } from "@/core/entities/unique-entity-id";
-import type { Optional } from "@/core/types/optional";
-import { MemberRole } from "./member";
+import { Entity } from '@/core/entities/entity';
+import type { UniqueEntityID } from '@/core/entities/unique-entity-id';
+import type { Optional } from '@/core/types/optional';
+import type { MemberRole } from './member';
 
-export enum InviteStatus {
-	PENDING = "PENDING",
-	ACCEPTED = "ACCEPTED",
-	DECLINED = "DECLINED",
-}
+export type InviteStatus = 'PENDING' | 'ACCEPTED' | 'DECLINED';
 
 export interface InviteProps {
 	authorId: UniqueEntityID;
@@ -20,14 +16,14 @@ export interface InviteProps {
 
 export class Invite extends Entity<InviteProps> {
 	static create(
-		props: Optional<InviteProps, "createdAt" | "role" | "status">,
+		props: Optional<InviteProps, 'createdAt' | 'role' | 'status'>,
 		id?: UniqueEntityID,
 	) {
 		const invite = new Invite(
 			{
 				...props,
-				role: props.role ?? MemberRole.MEMBER,
-				status: props.status ?? InviteStatus.PENDING,
+				role: props.role ?? 'MEMBER',
+				status: props.status ?? 'PENDING',
 				createdAt: props.createdAt ?? new Date(),
 			},
 			id,
@@ -65,10 +61,10 @@ export class Invite extends Entity<InviteProps> {
 
 	// Methods
 	decline() {
-		this.props.status = InviteStatus.DECLINED;
+		this.props.status = 'DECLINED';
 	}
 
 	accept() {
-		this.props.status = InviteStatus.ACCEPTED;
+		this.props.status = 'ACCEPTED';
 	}
 }

@@ -4,14 +4,8 @@ import { z } from 'zod';
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
 import { InsufficientPermissionsError } from '@/domain/identity/application/use-cases/errors/insufficient-permissions-error';
 import { makeInviteMemberUseCase } from '@/domain/identity/application/use-cases/factories/make-invite-member-use-case';
-import { MemberRole } from '@/domain/identity/enterprise/entities/member';
 import { ForbiddenError } from '../errors/forbidden-error';
 import { NotFoundError } from '../errors/not-found-error';
-
-const memberRoleMap = {
-	MEMBER: MemberRole.MEMBER,
-	BILLING: MemberRole.BILLING,
-};
 
 export function inviteMemberController(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().post(
@@ -19,11 +13,11 @@ export function inviteMemberController(app: FastifyInstance) {
 		{
 			schema: {
 				summary: 'Invite member',
-				tags: ['org'],
+				tags: ['invites'],
 				security: [{ bearerAuth: [] }],
 				body: z.object({
 					email: z.email(),
-					role: z.enum(['MEMBER', 'BILLING']),
+					role: z.union([z.literal('MEMBER'), z.literal('BILLING')]),
 				}),
 				params: z.object({
 					organizationSlug: z.string(),
@@ -47,7 +41,7 @@ export function inviteMemberController(app: FastifyInstance) {
 				userId,
 				organizationSlug,
 				invitedEmail: email,
-				role: memberRoleMap[role],
+				role,
 			});
 
 			if (result.isLeft()) {

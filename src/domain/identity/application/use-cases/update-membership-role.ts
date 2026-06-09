@@ -49,7 +49,7 @@ export class UpdateMembershipRoleUseCase {
 			return left(new InsufficientPermissionsError());
 		}
 
-		if (role === MemberRole.OWNER) {
+		if (role === 'OWNER') {
 			return left(new InvalidMembershipRoleError());
 		}
 

@@ -5,7 +5,7 @@
 * [x] It should be able to register a new account
 * [x] It should be able to authenticate with email and password
 * [x] It should be able to authenticate with GitHub
-* [ ] It should be able to authenticate with Google
+* [x] It should be able to authenticate with Google
 * [x] It should be able to request a password recovery code
 * [x] It should be able to reset a password using a recovery code
 * [x] It should be able to get the authenticated user profile
@@ -24,12 +24,6 @@
 * [x] It should be able to transfer organization ownership
 * [x] It should be able to update a organization profile
 * [x] It should be able to remove a member from the organization
-
-### Fix
-
-* [x] Invite use case - it should not be able to create two invites to the same email and organization
-* [ ] Integrate Google OAuth authentication
-* [ ] Integrate Uploader Service
 
 ---
 

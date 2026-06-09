@@ -2,11 +2,7 @@ import { Entity } from "@/core/entities/entity";
 import type { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import type { Optional } from "@/core/types/optional";
 
-export enum MemberRole {
-	MEMBER = "MEMBER",
-	OWNER = "OWNER",
-	BILLING = "BILLING",
-}
+export type MemberRole = "MEMBER" | "OWNER" | "BILLING"
 
 export interface MemberProps {
 	userId: UniqueEntityID;

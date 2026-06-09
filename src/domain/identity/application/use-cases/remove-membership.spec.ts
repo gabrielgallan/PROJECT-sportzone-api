@@ -5,7 +5,6 @@ import { InMemoryMembersRepository } from "test/unit/repositories/in-memory-memb
 import { InMemoryOrganizationsRepository } from "test/unit/repositories/in-memory-organizations-reporitory";
 import { InMemoryUsersRepository } from "test/unit/repositories/in-memory-users-repository";
 import { UniqueEntityID } from "@/core/entities/unique-entity-id";
-import { MemberRole } from "../../enterprise/entities/member";
 import { InsufficientPermissionsError } from "./errors/insufficient-permissions-error";
 import { RemoveMembershipUseCase } from "./remove-membership";
 import { Slug } from "../../enterprise/entities/value-objects/slug";
@@ -52,7 +51,7 @@ describe("Remove membership use case", () => {
 				{
 					userId: new UniqueEntityID("user-2"),
 					organizationId: new UniqueEntityID("org-1"),
-					role: MemberRole.MEMBER,
+					role: 'MEMBER',
 				},
 				new UniqueEntityID("member-1"),
 			),
@@ -91,7 +90,7 @@ describe("Remove membership use case", () => {
 				{
 					userId: new UniqueEntityID("user-2"),
 					organizationId: new UniqueEntityID("org-1"),
-					role: MemberRole.MEMBER,
+					role: 'MEMBER',
 				},
 				new UniqueEntityID("member-1"),
 			),

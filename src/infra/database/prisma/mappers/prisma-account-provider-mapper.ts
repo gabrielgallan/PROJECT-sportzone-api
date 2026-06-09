@@ -1,33 +1,22 @@
-import { AccountProvider } from "generated/prisma/enums"
+import type { AccountProvider as PrismaAccountProvider } from 'generated/prisma/enums';
+import type { AccountProvider } from '@/domain/identity/enterprise/entities/account';
+
+const toDomain: Record<PrismaAccountProvider, AccountProvider> = {
+	GITHUB: 'GITHUB',
+	GOOGLE: 'GOOGLE',
+};
+
+const toPrisma: Record<AccountProvider, PrismaAccountProvider> = {
+	GITHUB: 'GITHUB',
+	GOOGLE: 'GOOGLE',
+};
 
 export class PrismaAccountProviderMapper {
-  static toPrisma(provider: string): AccountProvider {
-    const map: Record<string, AccountProvider> = {
-      github: AccountProvider.GITHUB,
-      google: AccountProvider.GOOGLE
-    }
+	static toPrisma(provider: AccountProvider): PrismaAccountProvider {
+		return toPrisma[provider];
+	}
 
-    const prismaProvider = map[provider.toLowerCase()]
-
-    if (!prismaProvider) {
-      throw new Error(`Invalid  account provider: ${provider}`)
-    }
-
-    return prismaProvider
-  }
-
-  static toDomain(provider: AccountProvider): string {
-    const map: Record<AccountProvider, string> = {
-      [AccountProvider.GITHUB]: 'github',
-      [AccountProvider.GOOGLE]: 'google'
-    }
-
-    const domainProvider = map[provider]
-
-    if (!domainProvider) {
-      throw new Error(`Unknown Prisma provider: ${provider}`)
-    }
-
-    return domainProvider
-  }
+	static toDomain(provider: PrismaAccountProvider): AccountProvider {
+		return toDomain[provider];
+	}
 }

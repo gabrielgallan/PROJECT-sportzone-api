@@ -29,12 +29,10 @@ describe("Authenticate with  provider use case", () => {
 	});
 
 	it("should be able to authenticate with  provider", async () => {
-		const result = await sut.execute({
-			provider: "fake-provider",
+		await sut.execute({
+			provider: "GITHUB",
 			code: "fake-provider-code",
 		});
-
-		expect(result.isRight()).toBe(true);
 
 		expect(accountsRepository.items[0].providerUserId).toBe("-user-id");
 

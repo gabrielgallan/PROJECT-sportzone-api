@@ -1,4 +1,6 @@
+import fastifyCors from '@fastify/cors';
 import fastifyJwt from '@fastify/jwt';
+import fastifyMultipart from '@fastify/multipart';
 import fastifySwagger from '@fastify/swagger';
 import ScalarApiReference from '@scalar/fastify-api-reference';
 import fastify from 'fastify';
@@ -11,7 +13,6 @@ import {
 import { env } from '../env';
 import { errorHandler } from './error-handler';
 import { identityRoutes } from './routes/identity';
-import fastifyCors from '@fastify/cors';
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -19,10 +20,19 @@ app.setSerializerCompiler(serializerCompiler);
 
 app.setValidatorCompiler(validatorCompiler);
 
-app.register(fastifyCors)
+app.register(fastifyCors);
+
+await app.register(fastifyMultipart, {
+	limits: {
+		fileSize: 5 * 1024 * 1024, // 5mb
+	},
+});
 
 app.register(fastifyJwt, {
-	secret: env.JWT_SECRET,
+	secret: {
+		private: Buffer.from(env.JWT_PRIVATE_KEY, 'base64'),
+		public: Buffer.from(env.JWT_PUBLIC_KEY, 'base64'),
+	},
 });
 
 app.register(fastifySwagger, {

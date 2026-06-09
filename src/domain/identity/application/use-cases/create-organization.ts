@@ -1,6 +1,6 @@
 import { ResourceNotFoundError } from "@/core/errors/resource-not-found-error";
 import { type Either, left, right } from "@/core/types/either";
-import { Member, MemberRole } from "../../enterprise/entities/member";
+import { Member } from "../../enterprise/entities/member";
 import { Organization } from "../../enterprise/entities/organization";
 import { Slug } from "../../enterprise/entities/value-objects/slug";
 import type { MembersRepository } from "../repositories/members-repository";
@@ -58,7 +58,7 @@ export class CreateOrganizationUseCase {
 		const membership = Member.create({
 			userId: user.id,
 			organizationId: organization.id,
-			role: MemberRole.OWNER,
+			role: 'OWNER',
 		});
 
 		await this.membersRepository.create(membership);

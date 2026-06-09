@@ -22,7 +22,7 @@ export function updateMembershipRoleController(app: FastifyInstance) {
 					memberId: z.string(),
 				}),
 				body: z.object({
-					role: z.enum(['MEMBER', 'OWNER', 'BILLING']),
+					role: z.union([z.literal('MEMBER'), z.literal('BILLING')]),
 				}),
 				response: {
 					200: z.null(),

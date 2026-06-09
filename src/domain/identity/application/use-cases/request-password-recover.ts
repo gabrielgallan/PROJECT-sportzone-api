@@ -1,19 +1,15 @@
-import { ResourceNotFoundError } from "@/core/errors/resource-not-found-error";
-import { type Either, left, right } from "@/core/types/either";
-import { TokenType } from "@/domain/identity/enterprise/entities/token";
-import { Token } from "../../enterprise/entities/token";
-import type { EmailSender } from "../email/email-sender";
-import type { TokensRepository } from "../repositories/tokens-repository";
-import type { UsersRepository } from "../repositories/users-repository";
+import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
+import { type Either, left, right } from '@/core/types/either';
+import { Token } from '../../enterprise/entities/token';
+import type { EmailSender } from '../email/email-sender';
+import type { TokensRepository } from '../repositories/tokens-repository';
+import type { UsersRepository } from '../repositories/users-repository';
 
 interface RequestPasswordRecoverUseCaseRequest {
 	email: string;
 }
 
-type RequestPasswordRecoverUseCaseResponse = Either<
-	ResourceNotFoundError,
-	null
->;
+type RequestPasswordRecoverUseCaseResponse = Either<ResourceNotFoundError, null>;
 
 export class RequestPasswordRecoverUseCase {
 	constructor(
@@ -33,7 +29,7 @@ export class RequestPasswordRecoverUseCase {
 
 		const token = Token.create({
 			userId: user.id,
-			type: TokenType.PASSWORD_RECOVER,
+			type: 'PASSWORD_RECOVER',
 		});
 
 		await this.tokensRepository.create(token);

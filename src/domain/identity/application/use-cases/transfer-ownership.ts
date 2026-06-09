@@ -1,6 +1,5 @@
 import { ResourceNotFoundError } from "@/core/errors/resource-not-found-error";
 import { type Either, left, right } from "@/core/types/either";
-import { MemberRole } from "../../enterprise/entities/member";
 import type { MembersRepository } from "../repositories/members-repository";
 import type { OrganizationsRepository } from "../repositories/organizations-repository";
 import type { UsersRepository } from "../repositories/users-repository";
@@ -65,8 +64,8 @@ export class TransferOwnershipUseCase {
 			return left(new ResourceNotFoundError());
 		}
 
-		currentOwnerMembership.role = MemberRole.MEMBER;
-		targetMembership.role = MemberRole.OWNER;
+		currentOwnerMembership.role = 'MEMBER';
+		targetMembership.role = 'OWNER';
 		organization.transferOwnership(targetMembership.userId);
 
 		await this.membersRepository.save(currentOwnerMembership);

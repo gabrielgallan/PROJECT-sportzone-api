@@ -5,7 +5,9 @@ const envSchema = z.object({
 	NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
 	PORT: z.coerce.number().default(3000),
 	DATABASE_URL: z.url(),
-	JWT_SECRET: z.string(),
+
+	JWT_PRIVATE_KEY: z.string(),
+	JWT_PUBLIC_KEY: z.string(),
 
 	GITHUB_OAUTH_CLIENT_ID: z.string(),
 	GITHUB_OAUTH_CLIENT_SECRET: z.string(),
@@ -17,7 +19,11 @@ const envSchema = z.object({
 
 	RESEND_API_KEY: z.string(),
 
-	WEB_URL: z.string(),
+	CLOUDINARY_API_KEY: z.string(),
+	CLOUDINARY_API_SECRET: z.string(),
+	CLOUDINARY_CLOUD_NAME: z.string(),
+
+	WEB_URL: z.url(),
 });
 
 const _env = envSchema.safeParse(process.env);

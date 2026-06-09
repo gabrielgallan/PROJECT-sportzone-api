@@ -2,7 +2,6 @@ import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import {
 	Token,
 	type TokenProps,
-	TokenType,
 } from "@/domain/identity/enterprise/entities/token";
 
 export async function makeToken(
@@ -12,7 +11,7 @@ export async function makeToken(
 	const token = Token.create(
 		{
 			userId: new UniqueEntityID(),
-			type: TokenType.PASSWORD_RECOVER,
+			type: 'PASSWORD_RECOVER',
 			...override,
 		},
 		id,

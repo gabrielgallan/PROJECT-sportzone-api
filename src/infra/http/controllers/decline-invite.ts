@@ -13,7 +13,7 @@ export function declineInviteController(app: FastifyInstance) {
 		{
 			schema: {
 				summary: 'Decline invite',
-				tags: ['auth'],
+				tags: ['invites'],
 				security: [{ bearerAuth: [] }],
 				params: z.object({
 					inviteId: z.string(),

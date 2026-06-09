@@ -19,4 +19,15 @@ export class UploaderStub implements Uploader {
 
         return { url }
     }
+
+    async uploadAvatar({ fileName }: UploadParams): Promise<{ url: string; }> {
+        const url = randomUUID()
+
+        this.uploads.push({
+            fileName,
+            url
+        })
+
+        return { url }
+    }
 }
