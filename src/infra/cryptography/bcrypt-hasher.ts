@@ -1,5 +1,5 @@
-import { compare, hash } from "bcryptjs";
-import type { Hasher } from "@/domain/identity/application/cryptography/hasher";
+import { compare, hash } from 'bcryptjs';
+import type { Hasher } from '@/domain/identity/application/cryptography/hasher';
 
 export class BcryptHasher implements Hasher {
 	async generate(plain: string) {

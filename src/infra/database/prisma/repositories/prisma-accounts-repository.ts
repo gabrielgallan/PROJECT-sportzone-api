@@ -1,8 +1,8 @@
 import { AccountProvider } from 'generated/prisma/client';
 import type { AccountRepository } from '@/domain/identity/application/repositories/account-repository';
 import type { Account } from '@/domain/identity/enterprise/entities/account';
-import { prisma } from '..';
 import { PrismaAccountMapper } from '../mappers/prisma-account-mapper';
+import { prisma } from '../prisma';
 
 export class PrismaAccountsRepository implements AccountRepository {
 	async create(account: Account) {

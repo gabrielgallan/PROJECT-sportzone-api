@@ -1,12 +1,12 @@
-import { ResourceNotFoundError } from "@/core/errors/resource-not-found-error";
-import { type Either, left, right } from "@/core/types/either";
-import { Invite } from "../../enterprise/entities/invite";
-import type { MemberRole } from "../../enterprise/entities/member";
-import type { EmailSender } from "../email/email-sender";
-import type { InvitesRepository } from "../repositories/invites-repository";
-import type { OrganizationsRepository } from "../repositories/organizations-repository";
-import type { UsersRepository } from "../repositories/users-repository";
-import { InsufficientPermissionsError } from "./errors/insufficient-permissions-error";
+import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
+import { type Either, left, right } from '@/core/types/either';
+import { Invite } from '../../enterprise/entities/invite';
+import type { MemberRole } from '../../enterprise/entities/member';
+import type { EmailSender } from '../email/email-sender';
+import type { InvitesRepository } from '../repositories/invites-repository';
+import type { OrganizationsRepository } from '../repositories/organizations-repository';
+import type { UsersRepository } from '../repositories/users-repository';
+import { InsufficientPermissionsError } from './errors/insufficient-permissions-error';
 
 interface InviteMemberUseCaseRequest {
 	userId: string;
@@ -40,8 +40,7 @@ export class InviteMemberUseCase {
 			return left(new ResourceNotFoundError());
 		}
 
-		const organization =
-			await this.organizationsRepository.findBySlug(organizationSlug);
+		const organization = await this.organizationsRepository.findBySlug(organizationSlug);
 
 		if (!organization) {
 			return left(new ResourceNotFoundError());
@@ -60,7 +59,7 @@ export class InviteMemberUseCase {
 
 		await this.invitesRepository.create(invite);
 
-		await this.emailSender.sendInvite(invitedEmail, invite);
+		await this.emailSender.sendInvite(invitedEmail, invite, organization);
 
 		return right(null);
 	}

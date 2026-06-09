@@ -1,10 +1,10 @@
 import type { PaginationInput } from '@/core/types/pagination';
 import type { MembersRepository } from '@/domain/identity/application/repositories/members-repository';
 import type { Member } from '@/domain/identity/enterprise/entities/member';
-import { prisma } from '..';
 import { PrismaMemberMapper } from '../mappers/prisma-member-mapper';
 import { PrismaMemberWithProfileMapper } from '../mappers/prisma-member-with-profile-mapper';
 import { PrismaOrganizationWithRoleMapper } from '../mappers/prisma-organization-with-role-mapper';
+import { prisma } from '../prisma';
 
 export class PrismaMembersRepository implements MembersRepository {
 	async create(member: Member) {

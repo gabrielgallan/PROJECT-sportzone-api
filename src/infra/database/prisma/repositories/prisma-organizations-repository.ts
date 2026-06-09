@@ -1,7 +1,7 @@
 import type { OrganizationsRepository } from '@/domain/identity/application/repositories/organizations-repository';
 import type { Organization } from '@/domain/identity/enterprise/entities/organization';
-import { prisma } from '..';
 import { PrismaOrganizationMapper } from '../mappers/prisma-organization-mapper';
+import { prisma } from '../prisma';
 
 export class PrismaOrganizationsRepository implements OrganizationsRepository {
 	async create(organization: Organization) {

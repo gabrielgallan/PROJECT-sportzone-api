@@ -1,17 +1,17 @@
-import { BcryptHasher } from "@/infra/cryptography/bcrypt-hasher";
-import { FastifyJwtEncrypter } from "@/infra/cryptography/jwt-encrypter";
-import { PrismaUsersRepository } from "@/infra/database/prisma/repositories/prisma-users-repository";
-import { app } from "@/infra/http/app";
-import { AuthenticateUseCase } from "../authenticate";
+import type { FastifyInstance } from 'fastify';
+import {
+	pluggins as cryptographyPluggins,
+	services as cryptographyServices,
+} from '@/infra/cryptography';
+import { repositories } from '@/infra/database';
+import { AuthenticateUseCase } from '../authenticate';
 
-export function makeAuthenticateUseCase() {
-	const usersRepository = new PrismaUsersRepository();
-	const hasher = new BcryptHasher();
-	const encrypter = new FastifyJwtEncrypter(app);
+export function makeAuthenticateUseCase(app: FastifyInstance) {
+	const { encrypter } = cryptographyPluggins(app);
 
 	const authenticateUseCase = new AuthenticateUseCase(
-		usersRepository,
-		hasher,
+		repositories.users,
+		cryptographyServices.hasher,
 		encrypter,
 	);
 

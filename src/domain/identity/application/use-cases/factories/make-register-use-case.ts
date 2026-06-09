@@ -1,12 +1,9 @@
-import { BcryptHasher } from "@/infra/cryptography/bcrypt-hasher";
-import { PrismaUsersRepository } from "@/infra/database/prisma/repositories/prisma-users-repository";
-import { RegisterUseCase } from "../register";
+import { services as cryptographyServices } from '@/infra/cryptography';
+import { repositories } from '@/infra/database';
+import { RegisterUseCase } from '../register';
 
 export function makeRegisterUseCase() {
-	const usersRepository = new PrismaUsersRepository();
-	const hasher = new BcryptHasher();
-
-	const registerUseCase = new RegisterUseCase(usersRepository, hasher);
+	const registerUseCase = new RegisterUseCase(repositories.users, cryptographyServices.hasher);
 
 	return registerUseCase;
 }

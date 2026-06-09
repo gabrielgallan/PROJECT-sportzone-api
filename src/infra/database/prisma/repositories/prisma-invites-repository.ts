@@ -1,8 +1,8 @@
 import type { PaginationInput } from '@/core/types/pagination';
 import type { InvitesRepository } from '@/domain/identity/application/repositories/invites-repository';
 import type { Invite } from '@/domain/identity/enterprise/entities/invite';
-import { prisma } from '..';
 import { PrismaInviteMapper } from '../mappers/prisma-invite-mapper';
+import { prisma } from '../prisma';
 
 export class PrismaInvitesRepository implements InvitesRepository {
 	async create(invite: Invite) {

@@ -1,16 +1,17 @@
-import type { FastifyInstance } from "fastify";
-import type { ZodTypeProvider } from "fastify-type-provider-zod";
-import { z } from "zod";
-import { InvalidCredentialsError } from "@/domain/identity/application/use-cases/errors/invalid-credentials-error";
-import { makeAuthenticateUseCase } from "@/domain/identity/application/use-cases/factories/make-authenticate-use-case";
+import type { FastifyInstance } from 'fastify';
+import type { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import { InvalidCredentialsError } from '@/domain/identity/application/use-cases/errors/invalid-credentials-error';
+import { makeAuthenticateUseCase } from '@/domain/identity/application/use-cases/factories/make-authenticate-use-case';
+import { UnauthorizedError } from '../errors/unauthorized-error';
 
 export function authenticateWithCredentialsController(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().post(
-		"/session",
+		'/sessions',
 		{
 			schema: {
-				summary: "Authenticate with credentials",
-				tags: ["auth"],
+				summary: 'Authenticate',
+				tags: ['auth'],
 				body: z.object({
 					email: z.email(),
 					password: z.string(),
@@ -24,7 +25,7 @@ export function authenticateWithCredentialsController(app: FastifyInstance) {
 		async (request, reply) => {
 			const { email, password } = request.body;
 
-			const authenticate = makeAuthenticateUseCase();
+			const authenticate = makeAuthenticateUseCase(app);
 
 			const result = await authenticate.execute({
 				email,
@@ -36,7 +37,7 @@ export function authenticateWithCredentialsController(app: FastifyInstance) {
 
 				switch (error.constructor) {
 					case InvalidCredentialsError:
-						return reply.status(401).send({ message: error.message });
+						throw new UnauthorizedError(error.message);
 
 					default:
 						throw error;

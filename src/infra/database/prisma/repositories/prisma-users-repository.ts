@@ -1,7 +1,7 @@
-import type { UsersRepository } from "@/domain/identity/application/repositories/users-repository";
-import type { User } from "@/domain/identity/enterprise/entities/user";
-import { prisma } from "..";
-import { PrismaUserMapper } from "../mappers/prisma-user-mapper";
+import type { UsersRepository } from '@/domain/identity/application/repositories/users-repository';
+import type { User } from '@/domain/identity/enterprise/entities/user';
+import { PrismaUserMapper } from '../mappers/prisma-user-mapper';
+import { prisma } from '../prisma';
 
 export class PrismaUsersRepository implements UsersRepository {
 	async create(user: User) {

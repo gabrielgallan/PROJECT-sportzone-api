@@ -1,16 +1,17 @@
-import type { FastifyInstance } from "fastify";
-import type { ZodTypeProvider } from "fastify-type-provider-zod";
-import { z } from "zod";
-import { ResourceNotFoundError } from "@/core/errors/resource-not-found-error";
-import { makeGetProfileUseCase } from "@/domain/booking/application/use-cases/factories/make-get-profile-use-case";
+import type { FastifyInstance } from 'fastify';
+import type { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
+import { makeGetProfileUseCase } from '@/domain/booking/application/use-cases/factories/make-get-profile-use-case';
+import { NotFoundError } from '../errors/not-found-error';
 
 export function getProfileController(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().get(
-		"/me",
+		'/me',
 		{
 			schema: {
-				summary: "Get user profile",
-				tags: ["auth"],
+				summary: 'Get user profile',
+				tags: ['auth'],
 				security: [{ bearerAuth: [] }],
 				response: {
 					200: z.object({
@@ -38,7 +39,7 @@ export function getProfileController(app: FastifyInstance) {
 
 				switch (error.constructor) {
 					case ResourceNotFoundError:
-						return reply.status(404).send({ message: error.message });
+						throw new NotFoundError(error.message);
 
 					default:
 						throw error;

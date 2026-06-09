@@ -1,14 +1,10 @@
-import { PrismaMembersRepository } from '@/infra/database/prisma/repositories/prisma-members-repository';
-import { PrismaUsersRepository } from '@/infra/database/prisma/repositories/prisma-users-repository';
+import { repositories } from '@/infra/database';
 import { ListUserOrganizationsUseCase } from '../list-user-organizations';
 
 export function makeListUserOrganizationsUseCase() {
-	const usersRepository = new PrismaUsersRepository();
-	const membersRepository = new PrismaMembersRepository();
-
 	const listUserOrganizationsUseCase = new ListUserOrganizationsUseCase(
-		usersRepository,
-		membersRepository,
+		repositories.users,
+		repositories.members,
 	);
 
 	return listUserOrganizationsUseCase;

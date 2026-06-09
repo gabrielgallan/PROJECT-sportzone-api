@@ -1,7 +1,7 @@
 import type { TokensRepository } from '@/domain/identity/application/repositories/tokens-repository';
 import type { Token } from '@/domain/identity/enterprise/entities/token';
-import { prisma } from '..';
 import { PrismaTokenMapper } from '../mappers/prisma-token-mapper';
+import { prisma } from '../prisma';
 
 export class PrismaTokensRepository implements TokensRepository {
 	async create(token: Token) {

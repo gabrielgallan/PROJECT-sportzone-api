@@ -1,16 +1,17 @@
-import type { FastifyInstance } from "fastify";
-import type { ZodTypeProvider } from "fastify-type-provider-zod";
-import { z } from "zod";
-import { UserAlreadyExistsError } from "@/domain/booking/application/use-cases/errors/user-already-exists";
-import { makeRegisterUseCase } from "@/domain/booking/application/use-cases/factories/make-register-use-case";
+import type { FastifyInstance } from 'fastify';
+import type { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import { UserAlreadyExistsError } from '@/domain/booking/application/use-cases/errors/user-already-exists';
+import { makeRegisterUseCase } from '@/domain/booking/application/use-cases/factories/make-register-use-case';
+import { ConflictError } from '../errors/conflict-error';
 
 export function registerController(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().post(
-		"/users",
+		'/users',
 		{
 			schema: {
-				summary: "Register",
-				tags: ["auth"],
+				summary: 'Register',
+				tags: ['auth'],
 				body: z.object({
 					name: z.string(),
 					email: z.string().email(),
@@ -38,7 +39,7 @@ export function registerController(app: FastifyInstance) {
 
 				switch (error.constructor) {
 					case UserAlreadyExistsError:
-						return reply.status(409).send({ message: error.message });
+						throw new ConflictError(error.message);
 
 					default:
 						throw error;

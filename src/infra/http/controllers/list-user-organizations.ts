@@ -3,7 +3,9 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
 import { makeListUserOrganizationsUseCase } from '@/domain/identity/application/use-cases/factories/make-list-user-organizations-use-case';
+import { NotFoundError } from '../errors/not-found-error';
 import { OrganizationWithRolePresenter } from '../presenters/identity/organization-presenter';
+import { parsePaginationQuery } from '../utils/pagination-query';
 
 const organizationWithRoleSchema = z.object({
 	id: z.string(),
@@ -23,9 +25,9 @@ export function listOrganizationsController(app: FastifyInstance) {
 				summary: 'List user organizations',
 				tags: ['org'],
 				security: [{ bearerAuth: [] }],
-				params: z.object({
-					page: z.coerce.number().optional(),
-					limit: z.coerce.number().optional()
+				querystring: z.object({
+					page: z.string().optional(),
+					limit: z.string().optional(),
 				}),
 				response: {
 					200: z.object({
@@ -36,6 +38,7 @@ export function listOrganizationsController(app: FastifyInstance) {
 							total: z.number(),
 						}),
 					}),
+					400: z.object({ message: z.string() }),
 					404: z.object({ message: z.string() }),
 				},
 			},
@@ -43,13 +46,13 @@ export function listOrganizationsController(app: FastifyInstance) {
 		async (request, reply) => {
 			const userId = await request.getUserId();
 
-			const pagination = await request.getPaginationQuery()
+			const pagination = parsePaginationQuery(request.query);
 
 			const listOrganizations = makeListUserOrganizationsUseCase();
 
 			const result = await listOrganizations.execute({
 				userId,
-				pagination
+				pagination,
 			});
 
 			if (result.isLeft()) {
@@ -57,7 +60,7 @@ export function listOrganizationsController(app: FastifyInstance) {
 
 				switch (error.constructor) {
 					case ResourceNotFoundError:
-						return reply.status(404).send({ message: error.message });
+						throw new NotFoundError(error.message);
 
 					default:
 						throw error;
