@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
 import { GithubOAuthProvider } from './providers/github-oauth-provider';
+import { GoogleOAuthProvider } from './providers/google-oauth-provider';
 
 const authPlugin = fastifyPlugin(async (app: FastifyInstance) => {
 	app.addHook('preHandler', async (request, reply) => {
@@ -18,6 +19,7 @@ const authPlugin = fastifyPlugin(async (app: FastifyInstance) => {
 
 const providers = {
 	github: new GithubOAuthProvider(),
+	google: new GoogleOAuthProvider(),
 };
 
 const plugins = {

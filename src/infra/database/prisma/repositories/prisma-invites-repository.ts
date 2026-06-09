@@ -51,6 +51,21 @@ export class PrismaInvitesRepository implements InvitesRepository {
 		};
 	}
 
+	async findByEmailAndOrganizationId(email: string, organizationId: string) {
+		const invite = await prisma.invite.findUnique({
+			where: {
+				email_organizationId: {
+					email,
+					organizationId,
+				},
+			},
+		});
+
+		if (!invite) return null;
+
+		return PrismaInviteMapper.toDomain(invite);
+	}
+
 	async save(invite: Invite) {
 		await prisma.invite.update({
 			where: { id: invite.id.toString() },

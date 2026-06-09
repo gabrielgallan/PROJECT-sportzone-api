@@ -3,6 +3,7 @@ import { plugins } from '@/infra/auth';
 import { acceptInviteController } from '../controllers/accept-invite';
 import { authenticateWithCredentialsController } from '../controllers/authenticate-with-crendentias';
 import { authenticateWithGithubController } from '../controllers/authenticate-with-github';
+import { authenticateWithGoogleController } from '../controllers/authenticate-with-google';
 import { createOrganizationController } from '../controllers/create-organization';
 import { declineInviteController } from '../controllers/decline-invite';
 import { getProfileController } from '../controllers/get-profile';
@@ -16,6 +17,7 @@ import { requestPasswordRecoverController } from '../controllers/request-passwor
 import { resetPasswordController } from '../controllers/reset-password';
 import { transferOwnershipController } from '../controllers/transfer-ownership';
 import { updateMembershipRoleController } from '../controllers/update-membership-role';
+import { updateOrganizationProfileController } from '../controllers/update-organization';
 
 export function identityRoutes(app: FastifyInstance) {
 	app.register(plugins.authPlugin);
@@ -25,6 +27,7 @@ export function identityRoutes(app: FastifyInstance) {
 	app.register(resetPasswordController);
 	app.register(authenticateWithCredentialsController);
 	app.register(authenticateWithGithubController);
+	app.register(authenticateWithGoogleController);
 	app.register(getProfileController);
 	app.register(inviteMemberController);
 	app.register(listInvitesController);
@@ -34,6 +37,7 @@ export function identityRoutes(app: FastifyInstance) {
 	app.register(listOrganizationsController);
 	app.register(listOrganizationMembersController);
 	app.register(updateMembershipRoleController);
+	app.register(updateOrganizationProfileController);
 	app.register(transferOwnershipController);
 	app.register(removeMembershipController);
 }

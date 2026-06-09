@@ -7,6 +7,7 @@ import type { InvitesRepository } from '../repositories/invites-repository';
 import type { OrganizationsRepository } from '../repositories/organizations-repository';
 import type { UsersRepository } from '../repositories/users-repository';
 import { InsufficientPermissionsError } from './errors/insufficient-permissions-error';
+import { ResourceAlreadyExistsError } from './errors/resource-already-exists-error';
 
 interface InviteMemberUseCaseRequest {
 	userId: string;
@@ -48,6 +49,15 @@ export class InviteMemberUseCase {
 
 		if (organization.ownerId.toString() !== user.id.toString()) {
 			return left(new InsufficientPermissionsError());
+		}
+
+		const emailAlreadyInvited = await this.invitesRepository.findByEmailAndOrganizationId(
+			invitedEmail,
+			organization.id.toString(),
+		);
+
+		if (emailAlreadyInvited) {
+			return left(new ResourceAlreadyExistsError());
 		}
 
 		const invite = Invite.create({

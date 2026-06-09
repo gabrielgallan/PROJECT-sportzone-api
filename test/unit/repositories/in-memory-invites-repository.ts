@@ -1,6 +1,6 @@
-import { PaginationInput } from "@/core/types/pagination";
-import type { InvitesRepository } from "@/domain/identity/application/repositories/invites-repository";
-import type { Invite } from "@/domain/identity/enterprise/entities/invite";
+import type { PaginationInput } from '@/core/types/pagination';
+import type { InvitesRepository } from '@/domain/identity/application/repositories/invites-repository';
+import type { Invite } from '@/domain/identity/enterprise/entities/invite';
 
 export class InMemoryInvitesRepository implements InvitesRepository {
 	public items: Invite[] = [];
@@ -22,20 +22,28 @@ export class InMemoryInvitesRepository implements InvitesRepository {
 
 		const paginated = invites
 			.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-            .slice((page - 1) * limit, page * limit)
+			.slice((page - 1) * limit, page * limit);
 
 		return {
 			data: paginated,
 			meta: {
-				page, limit, total: invites.length
-			}
-		}
+				page,
+				limit,
+				total: invites.length,
+			},
+		};
+	}
+
+	async findByEmailAndOrganizationId(email: string, organizationId: string) {
+		const invite = this.items.find(
+			(invite) => invite.email === email && invite.organizationId.toString() === organizationId,
+		);
+
+		return invite ?? null;
 	}
 
 	async save(invite: Invite) {
-		const inviteIndex = this.items.findIndex(
-			(i) => i.id.toString() === invite.id.toString(),
-		);
+		const inviteIndex = this.items.findIndex((i) => i.id.toString() === invite.id.toString());
 
 		if (inviteIndex >= 0) {
 			this.items[inviteIndex] = invite;

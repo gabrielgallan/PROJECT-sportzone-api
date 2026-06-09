@@ -22,12 +22,12 @@
 * [x] It should be able to list organization members (pagination)
 * [x] It should be able to update a member role
 * [x] It should be able to transfer organization ownership
-* [ ] It should be able to update a organization profile
+* [x] It should be able to update a organization profile
 * [x] It should be able to remove a member from the organization
 
 ### Fix
 
-* [ ] Invite use case - it should not be able to create two invites to the same email and organization
+* [x] Invite use case - it should not be able to create two invites to the same email and organization
 * [ ] Integrate Google OAuth authentication
 * [ ] Integrate Uploader Service
 
