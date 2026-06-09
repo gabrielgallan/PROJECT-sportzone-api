@@ -1,0 +1,44 @@
+import { makeNotification } from "test/unit/factories/make-notification";
+import { InMemoryNotificationsRepository } from "test/unit/repositories/in-memory-notifications-repository";
+import { UniqueEntityID } from "@/core/entities/unique-entity-id";
+import { ReadNotificationUseCase } from "./read-notification";
+
+let notificationsRepository: InMemoryNotificationsRepository;
+let sut: ReadNotificationUseCase;
+
+describe("Read notification use case", () => {
+	beforeEach(() => {
+		notificationsRepository = new InMemoryNotificationsRepository();
+		sut = new ReadNotificationUseCase(notificationsRepository);
+
+		vi.useFakeTimers();
+	});
+
+	afterEach(() => {
+		vi.useRealTimers();
+	});
+
+	it("should be able to read a notification", async () => {
+		vi.setSystemTime(new Date(2026, 0, 31, 20, 0, 0));
+
+		await notificationsRepository.create(
+			makeNotification(
+				{
+					recipientId: new UniqueEntityID("user-1"),
+				},
+				new UniqueEntityID("notification-1"),
+			),
+		);
+
+		const result = await sut.execute({
+			recipientId: "user-1",
+			notificationId: "notification-1",
+		});
+
+		expect(result.isRight()).toBe(true);
+
+		if (result.isRight()) {
+			expect(result.value.notification.readAt).toEqual(expect.any(Date));
+		}
+	});
+});

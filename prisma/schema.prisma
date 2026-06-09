@@ -1,114 +1,128 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
-}
-
-enum UserRole {
-  MEMBER
-  ADMIN
 }
 
 model User {
-  id            String       @id @default(uuid())
-  name          String
-  email         String       @unique
-  password_hash String
-  role          UserRole     @default(MEMBER)
-  created_at    DateTime     @default(now())
-  bookings      Booking[]
-  sport_courts  SportCourt[]
-  payments      Payment[]
+  id           String   @id @default(uuid())
+  name         String?
+  email        String   @unique
+  passwordHash String?  @map("password_hash")
+  avatarUrl    String?  @map("avatar_url")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime? @updatedAt @map("updated_at")
+
+  owns_organizations Organization[]
+  members_on         Member[]
+  invites            Invite[]
+  accounts Account[]
+  tokens   Token[]
 
   @@map("users")
 }
 
-model Booking {
-  id         String        @id @default(uuid())
-  start_time DateTime
-  end_time   DateTime
-  created_at DateTime      @default(now())
-  status     BookingStatus @default(PENDING)
-  price      Decimal
-
-  user    User   @relation(fields: [user_id], references: [id])
-  user_id String
-
-  sportCourt    SportCourt @relation(fields: [sportCourt_id], references: [id])
-  sportCourt_id String
-
-  payment Payment?
-
-  @@map("bookings")
+enum Role {
+  OWNER
+  MEMBER
+  BILLING
 }
 
-enum BookingStatus {
+model Member {
+  id   String @id @default(uuid())
+  role Role   @default(MEMBER)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String       @map("organization_id")
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @map("user_id")
+
+
+  @@unique([organizationId, userId])
+  @@map("member")
+}
+
+model Organization {
+  id  String   @id @default(uuid())
+  name String
+  slug String @unique
+  avatarUrl    String?  @map("avatar_url")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime? @updatedAt @map("updated_at")
+
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String @map("owner_id")
+
+  members  Member[]
+  invites  Invite[]
+
+  @@map("organizations")
+}
+
+enum InviteStatus {
   PENDING
-  CONFIRMED
-  CANCELLED
-  ERROR
+  ACCEPTED
+  DECLINED
 }
 
-model Payment {
-  id           String        @id @default(uuid())
-  method       String?
-  external_id  String?
-  amount       Decimal
-  created_at   DateTime      @default(now())
-  status       PaymentStatus @default(PENDING)
-  validated_at DateTime?
-  currency     String        @default("brl")
-  description  String        @default("Reserva de Quadra")
+model Invite {
+  id        String   @id @default(uuid())
+  email     String
+  role      Role
+  status InviteStatus @default(PENDING)
+  createdAt DateTime @default(now()) @map("created_at")
 
-  user       User   @relation(fields: [user_email], references: [email])
-  user_email String
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String @map("author_id")
 
-  booking    Booking @relation(fields: [booking_id], references: [id])
-  booking_id String  @unique
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String       @map("organization_id")
 
-  @@map("payments")
+  @@unique([email, organizationId])
+  @@index([email])
+  @@map("invites")
 }
 
-enum PaymentStatus {
-  PENDING
-  PAID
-  REFUNDED
+enum TokenType {
+  PASSWORD_RECOVER
 }
 
-model SportCourt {
-  id                  String             @id @default(uuid())
-  title               String
-  type                String
-  phone               String?
-  location            String
-  latitude            Decimal
-  longitude           Decimal
-  is_active           Boolean            @default(true)
-  price_per_hour      Decimal
-  bookings            Booking[]
-  court_blocked_dates CourtBlockedDate[]
-  owner               User               @relation(fields: [owner_id], references: [id])
-  owner_id            String
+model Token {
+  id        String    @id @default(uuid())
+  type      TokenType
+  usedAt    DateTime? @map("used_at")
+  expiresAt DateTime  @map("expires_at")
+  createdAt DateTime  @default(now()) @map("created_at")
 
-  @@map("sport_courts")
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @map("user_id")
+
+  @@map("tokens")
 }
 
-model CourtBlockedDate {
-  id            String     @id @default(uuid())
-  start_time    DateTime
-  end_time      DateTime
-  reason        String?
-  sportCourt    SportCourt @relation(fields: [sportCourt_id], references: [id])
-  sportCourt_id String
+enum AccountProvider {
+  GITHUB
+  GOOGLE
+}
 
-  @@map("court_blocked_dates")
+model Account {
+  id                String          @id @default(uuid())
+  provider          AccountProvider
+  providerAccountId String?         @unique @map("provider_account_id")
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @map("user_id")
+
+  @@unique([provider, userId])
+  @@map("accounts")
 }

@@ -1,36 +1,48 @@
-## RF (Requisitos funcionais)
+# Features
 
-- [x] O usuário deve poder se registrar;
-- [x] O usuário deve poder se autenticar;
-- [x] O usuário deve poder acessar seu perfil;
-- [x] O usuário deve poder reservar uma quadra por um tempo determinado;
-- [x] O usuário deve poder listar todas suas últimas reservas;
-- [x] Deve ser possível confirmar uma reserva;
-- [x] Deve ser possível cancelar uma reserva depois de confirmada;
-- [x] Deve ser possível cadastrar uma quadra;
-- [x] O usuário deve poder listar quadras próximas a ele (Até 10km) (ativas);
-- [x] O usuário deve poder pesquisar quadras por endereço (ativas);
-- [x] O usuário deve poder pesquisar quadras pelo tipo de esporte na descrição (ativas);
-- [x] Deve ser possível desativar uma quadra sem previsão de retorno;
-- [x] Deve ser possível reativar uma quadra;
-- [x] Deve ser possível restringir horários de uso das quadras;
+## Identity
 
-## RN (Regras de negócio)
+* [x] It should be able to register a new account
+* [x] It should be able to authenticate with email and password
+* [x] It should be able to authenticate with GitHub
+* [x] It should be able to authenticate with Google
+* [x] It should be able to request a password recovery code
+* [x] It should be able to reset a password using a recovery code
+* [x] It should be able to get the authenticated user profile
+* [ ] It should be able to update profile
+* [x] It should be able to create an organization
+* [x] It should be able to list user organizations (pagination)
+* [x] It should be able to list pending invitations (pagination)
+* [x] It should be able to accept an invitation
+* [x] It should be able to decline an invitation
 
-- [x] Não pode haver dois usuários com o mesmo email;
-- [x] A reserva só pode ser realizada se a quadra e o horário de reserva estiverem disponíveis;
-- [x] A reserva não pode ser realizada em horários restritos da quadra;
-- [x] O usuário não pode fazer mais do que 1 reserva por dia;
-- [x] A reserva deve ser feita com no mínimo 2 horas de antecedencia;
-- [x] O usuário não pode reservar uma quadra por mais de 6 horas;
-- [x] Para a reserva ser confirmada deve haver o pagamento em até 20 minutos (via pix ou cartão);
-- [ ] Se a reserva for cancelada o valor deve ser reembolsado;
-- [x] A reserva só pode ser cancelada com no mínimo 2 horas de antecedencia;
-- [x] As quadras só podem ser cadastradas por administradores;
+### As Owner
 
-## RNFs (Requisitos não funcionais)
+* [x] It should be able to invite a new member
+* [x] It should be able to list organization members (pagination)
+* [x] It should be able to update a member role
+* [x] It should be able to transfer organization ownership
+* [x] It should be able to update a organization profile
+* [x] It should be able to remove a member from the organization
 
-- [x] A senha do usuário deve estar criptografada;
-- [x] Os dados da aplicação devem ser persistidos em um banco PostgreSQL;
-- [x] Todos os dados da aplicação devem ser paginados em até 20 items;
-- [x] O usuário deve ser identificado por um JWT (JSON Web Token);
+---
+
+## Notifications
+
+* [x] It should be able to list user notifications (pagination)
+* [x] It should be able to mark a notification as read
+* [x] It should be able to mark all notifications as read
+
+---
+
+## Bookings
+
+---
+
+## Reviews
+
+* [ ] It should be able to create a court review
+* [ ] It should be able to update an own review
+* [ ] It should be able to delete an own review
+* [ ] It should be able to list court reviews
+* [ ] It should be able to get a review by id
