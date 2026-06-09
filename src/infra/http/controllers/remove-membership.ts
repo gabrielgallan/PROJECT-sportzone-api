@@ -6,6 +6,7 @@ import { InsufficientPermissionsError } from '@/domain/identity/application/use-
 import { makeRemoveMembershipUseCase } from '@/domain/identity/application/use-cases/factories/make-remove-membership-use-case';
 import { ForbiddenError } from '../errors/forbidden-error';
 import { NotFoundError } from '../errors/not-found-error';
+import { httpErrorSchema } from '../errors/types/http-error';
 
 export function removeMembershipController(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().delete(
@@ -20,9 +21,9 @@ export function removeMembershipController(app: FastifyInstance) {
 					memberId: z.string(),
 				}),
 				response: {
-					200: z.null(),
-					403: z.object({ message: z.string() }),
-					404: z.object({ message: z.string() }),
+					204: z.null(),
+					403: httpErrorSchema,
+					404: httpErrorSchema,
 				},
 			},
 		},
@@ -53,7 +54,7 @@ export function removeMembershipController(app: FastifyInstance) {
 				}
 			}
 
-			reply.status(200).send(null);
+			reply.status(204).send(null);
 		},
 	);
 }

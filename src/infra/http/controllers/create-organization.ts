@@ -6,6 +6,7 @@ import { OrganizationAlreadyExistsError } from '@/domain/identity/application/us
 import { makeCreateOrganizationUseCase } from '@/domain/identity/application/use-cases/factories/make-create-organization-use-case';
 import { ConflictError } from '../errors/conflict-error';
 import { NotFoundError } from '../errors/not-found-error';
+import { httpErrorSchema } from '../errors/types/http-error';
 
 export function createOrganizationController(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().post(
@@ -21,8 +22,8 @@ export function createOrganizationController(app: FastifyInstance) {
 				}),
 				response: {
 					201: z.null(),
-					404: z.object({ message: z.string() }),
-					409: z.object({ message: z.string() }),
+					404: httpErrorSchema,
+					409: httpErrorSchema,
 				},
 			},
 		},

@@ -3,9 +3,10 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { makeUploadAvatarUseCase } from '@/domain/identity/application/use-cases/factories/make-upload-avatar-use-case';
 import { BadRequestError } from '../errors/bad-request-error';
+import { httpErrorSchema } from '../errors/types/http-error';
 
 export function uploadAvatarController(app: FastifyInstance) {
-	app.withTypeProvider<ZodTypeProvider>().patch(
+	app.withTypeProvider<ZodTypeProvider>().put(
 		'/profile/avatar',
 		{
 			schema: {
@@ -15,7 +16,8 @@ export function uploadAvatarController(app: FastifyInstance) {
 				consumes: ['multipart/form-data'],
 				response: {
 					204: z.null(),
-					400: z.object({ message: z.string() }),
+					400: httpErrorSchema,
+					502: httpErrorSchema
 				},
 			},
 		},

@@ -6,9 +6,10 @@ import { InvalidTokenError } from '@/domain/identity/application/use-cases/error
 import { makeResetPasswordUseCase } from '@/domain/identity/application/use-cases/factories/make-reset-password-use-case';
 import { BadRequestError } from '../errors/bad-request-error';
 import { NotFoundError } from '../errors/not-found-error';
+import { httpErrorSchema } from '../errors/types/http-error';
 
 export function resetPasswordController(app: FastifyInstance) {
-	app.withTypeProvider<ZodTypeProvider>().post(
+	app.withTypeProvider<ZodTypeProvider>().patch(
 		'/password/reset',
 		{
 			schema: {
@@ -19,9 +20,9 @@ export function resetPasswordController(app: FastifyInstance) {
 					password: z.string(),
 				}),
 				response: {
-					200: z.null(),
-					400: z.object({ message: z.string() }),
-					404: z.object({ message: z.string() }),
+					204: z.null(),
+					400: httpErrorSchema,
+					404: httpErrorSchema,
 				},
 			},
 		},
@@ -50,7 +51,7 @@ export function resetPasswordController(app: FastifyInstance) {
 				}
 			}
 
-			reply.status(200).send(null);
+			reply.status(204).send(null);
 		},
 	);
 }

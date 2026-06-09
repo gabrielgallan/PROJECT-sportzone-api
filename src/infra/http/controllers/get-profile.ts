@@ -4,10 +4,11 @@ import { z } from 'zod';
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
 import { makeGetProfileUseCase } from '@/domain/booking/application/use-cases/factories/make-get-profile-use-case';
 import { NotFoundError } from '../errors/not-found-error';
+import { httpErrorSchema } from '../errors/types/http-error';
 
 export function getProfileController(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().get(
-		'/me',
+		'/profile',
 		{
 			schema: {
 				summary: 'Get user profile',
@@ -21,7 +22,7 @@ export function getProfileController(app: FastifyInstance) {
 							avatarUrl: z.string().nullable(),
 						}),
 					}),
-					404: z.object({ message: z.string() }),
+					404: httpErrorSchema,
 				},
 			},
 		},

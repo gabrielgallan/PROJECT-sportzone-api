@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { InvalidCredentialsError } from '@/domain/identity/application/use-cases/errors/invalid-credentials-error';
 import { makeAuthenticateUseCase } from '@/domain/identity/application/use-cases/factories/make-authenticate-use-case';
 import { UnauthorizedError } from '../errors/unauthorized-error';
+import { httpErrorSchema } from '../errors/types/http-error';
 
 export function authenticateWithCredentialsController(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().post(
@@ -17,8 +18,8 @@ export function authenticateWithCredentialsController(app: FastifyInstance) {
 					password: z.string(),
 				}),
 				response: {
-					200: z.object({ token: z.string() }),
-					401: z.object({ message: z.string() }),
+					201: z.object({ token: z.string() }),
+					401: httpErrorSchema,
 				},
 			},
 		},
@@ -44,7 +45,7 @@ export function authenticateWithCredentialsController(app: FastifyInstance) {
 				}
 			}
 
-			reply.status(200).send(result.value);
+			reply.status(201).send(result.value);
 		},
 	);
 }

@@ -9,6 +9,7 @@ import { makeUpdateOrganizationProfileUseCase } from '@/domain/identity/applicat
 import { ConflictError } from '../errors/conflict-error';
 import { ForbiddenError } from '../errors/forbidden-error';
 import { NotFoundError } from '../errors/not-found-error';
+import { httpErrorSchema } from '../errors/types/http-error';
 
 export function updateOrganizationProfileController(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().put(
@@ -26,10 +27,10 @@ export function updateOrganizationProfileController(app: FastifyInstance) {
 				}),
 				response: {
 					204: z.null(),
-					400: z.object({ message: z.string() }),
-					404: z.object({ message: z.string() }),
-					403: z.object({ message: z.string() }),
-					409: z.object({ message: z.string() }),
+					400: httpErrorSchema,
+					403: httpErrorSchema,
+					404: httpErrorSchema,
+					409: httpErrorSchema,
 				},
 			},
 		},

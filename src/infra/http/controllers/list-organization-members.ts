@@ -7,6 +7,7 @@ import { makeListOrganizationMembersUseCase } from '@/domain/identity/applicatio
 import { ForbiddenError } from '../errors/forbidden-error';
 import { NotFoundError } from '../errors/not-found-error';
 import { parsePaginationQuery } from '../utils/pagination-query';
+import { httpErrorSchema } from '../errors/types/http-error';
 
 const memberWithProfileSchema = z.object({
 	user: z.object({
@@ -45,9 +46,9 @@ export function listOrganizationMembersController(app: FastifyInstance) {
 							total: z.number(),
 						}),
 					}),
-					400: z.object({ message: z.string() }),
-					403: z.object({ message: z.string() }),
-					404: z.object({ message: z.string() }),
+					400: httpErrorSchema,
+					403: httpErrorSchema,
+					404: httpErrorSchema,
 				},
 			},
 		},

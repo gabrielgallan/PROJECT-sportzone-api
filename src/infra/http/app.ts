@@ -35,7 +35,7 @@ app.register(fastifyJwt, {
 	},
 });
 
-app.register(fastifySwagger, {
+await app.register(fastifySwagger, {
 	openapi: {
 		info: {
 			title: 'sportzone api',

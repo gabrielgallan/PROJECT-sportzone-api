@@ -8,6 +8,7 @@ import { makeUpdateMembershipRoleUseCase } from '@/domain/identity/application/u
 import { BadRequestError } from '../errors/bad-request-error';
 import { ForbiddenError } from '../errors/forbidden-error';
 import { NotFoundError } from '../errors/not-found-error';
+import { httpErrorSchema } from '../errors/types/http-error';
 
 export function updateMembershipRoleController(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().patch(
@@ -25,10 +26,10 @@ export function updateMembershipRoleController(app: FastifyInstance) {
 					role: z.union([z.literal('MEMBER'), z.literal('BILLING')]),
 				}),
 				response: {
-					200: z.null(),
-					400: z.object({ message: z.string() }),
-					403: z.object({ message: z.string() }),
-					404: z.object({ message: z.string() }),
+					204: z.null(),
+					400: httpErrorSchema,
+					403: httpErrorSchema,
+					404: httpErrorSchema,
 				},
 			},
 		},
@@ -64,7 +65,7 @@ export function updateMembershipRoleController(app: FastifyInstance) {
 				}
 			}
 
-			reply.status(200).send(null);
+			reply.status(204).send(null);
 		},
 	);
 }

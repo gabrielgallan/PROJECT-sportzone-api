@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { UserAlreadyExistsError } from '@/domain/booking/application/use-cases/errors/user-already-exists';
 import { makeRegisterUseCase } from '@/domain/booking/application/use-cases/factories/make-register-use-case';
 import { ConflictError } from '../errors/conflict-error';
+import { httpErrorSchema } from '../errors/types/http-error';
 
 export function registerController(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().post(
@@ -19,7 +20,7 @@ export function registerController(app: FastifyInstance) {
 				}),
 				response: {
 					201: z.null(),
-					409: z.object({ message: z.string() }),
+					409: httpErrorSchema,
 				},
 			},
 		},

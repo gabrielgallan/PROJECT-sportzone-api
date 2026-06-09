@@ -6,6 +6,7 @@ import { InsufficientPermissionsError } from '@/domain/identity/application/use-
 import { makeInviteMemberUseCase } from '@/domain/identity/application/use-cases/factories/make-invite-member-use-case';
 import { ForbiddenError } from '../errors/forbidden-error';
 import { NotFoundError } from '../errors/not-found-error';
+import { httpErrorSchema } from '../errors/types/http-error';
 
 export function inviteMemberController(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().post(
@@ -24,8 +25,8 @@ export function inviteMemberController(app: FastifyInstance) {
 				}),
 				response: {
 					201: z.null(),
-					403: z.object({ message: z.string() }),
-					404: z.object({ message: z.string() }),
+					403: httpErrorSchema,
+					404: httpErrorSchema,
 				},
 			},
 		},

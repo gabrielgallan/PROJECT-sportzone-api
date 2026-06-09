@@ -6,9 +6,10 @@ import { InviteAccessDeniedError } from '@/domain/identity/application/use-cases
 import { makeAcceptInviteUseCase } from '@/domain/identity/application/use-cases/factories/make-accept-invite-use-case';
 import { ForbiddenError } from '../errors/forbidden-error';
 import { NotFoundError } from '../errors/not-found-error';
+import { httpErrorSchema } from '../errors/types/http-error';
 
 export function acceptInviteController(app: FastifyInstance) {
-	app.withTypeProvider<ZodTypeProvider>().post(
+	app.withTypeProvider<ZodTypeProvider>().patch(
 		'/invites/:inviteId/accept',
 		{
 			schema: {
@@ -19,9 +20,9 @@ export function acceptInviteController(app: FastifyInstance) {
 					inviteId: z.string(),
 				}),
 				response: {
-					200: z.null(),
-					403: z.object({ message: z.string() }),
-					404: z.object({ message: z.string() }),
+					204: z.null(),
+					403: httpErrorSchema,
+					404: httpErrorSchema,
 				},
 			},
 		},
@@ -51,7 +52,7 @@ export function acceptInviteController(app: FastifyInstance) {
 				}
 			}
 
-			reply.status(200).send(null);
+			reply.status(204).send(null);
 		},
 	);
 }

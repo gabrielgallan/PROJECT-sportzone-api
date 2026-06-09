@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { makeAuthenticateWithGithubUseCase } from '@/domain/identity/application/use-cases/factories/make-authenticate-with-github';
+import { httpErrorSchema } from '../errors/types/http-error';
 
 export function authenticateWithGithubController(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().post(
@@ -14,8 +15,8 @@ export function authenticateWithGithubController(app: FastifyInstance) {
 					code: z.string(),
 				}),
 				response: {
-					200: z.object({ token: z.string() }),
-					401: z.object({ message: z.string() }),
+					201: z.object({ token: z.string() }),
+					502: httpErrorSchema
 				},
 			},
 		},
@@ -29,7 +30,7 @@ export function authenticateWithGithubController(app: FastifyInstance) {
 				code,
 			});
 
-			reply.status(200).send({ token });
+			reply.status(201).send({ token });
 		},
 	);
 }

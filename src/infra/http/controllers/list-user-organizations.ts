@@ -6,6 +6,7 @@ import { makeListUserOrganizationsUseCase } from '@/domain/identity/application/
 import { NotFoundError } from '../errors/not-found-error';
 import { OrganizationWithRolePresenter } from '../presenters/identity/organization-presenter';
 import { parsePaginationQuery } from '../utils/pagination-query';
+import { httpErrorSchema } from '../errors/types/http-error';
 
 const organizationWithRoleSchema = z.object({
 	id: z.string(),
@@ -38,8 +39,8 @@ export function listOrganizationsController(app: FastifyInstance) {
 							total: z.number(),
 						}),
 					}),
-					400: z.object({ message: z.string() }),
-					404: z.object({ message: z.string() }),
+					400: httpErrorSchema,
+					404: httpErrorSchema,
 				},
 			},
 		},

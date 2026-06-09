@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
 import { makeListInvitesUseCase } from '@/domain/identity/application/use-cases/factories/make-list-invites-use-case';
 import { NotFoundError } from '../errors/not-found-error';
+import { httpErrorSchema } from '../errors/types/http-error';
 import { parsePaginationQuery } from '../utils/pagination-query';
 
 const inviteSchema = z.object({
@@ -35,8 +36,8 @@ export function listInvitesController(app: FastifyInstance) {
 							total: z.number(),
 						}),
 					}),
-					400: z.object({ message: z.string() }),
-					404: z.object({ message: z.string() }),
+					400: httpErrorSchema,
+					404: httpErrorSchema,
 				},
 			},
 		},

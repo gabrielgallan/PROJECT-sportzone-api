@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
 import { makeRequestPasswordRecoverUseCase } from '@/domain/identity/application/use-cases/factories/make-request-password-recover-use-case';
 import { NotFoundError } from '../errors/not-found-error';
+import { httpErrorSchema } from '../errors/types/http-error';
 
 export function requestPasswordRecoverController(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().post(
@@ -17,7 +18,7 @@ export function requestPasswordRecoverController(app: FastifyInstance) {
 				}),
 				response: {
 					201: z.null(),
-					404: z.object({ message: z.string() }),
+					404: httpErrorSchema,
 				},
 			},
 		},
