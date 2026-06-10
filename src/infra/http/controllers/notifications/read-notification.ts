@@ -1,8 +1,8 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import { NotAllowedError } from '@/core/errors/not-allowed-error';
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
+import { NotAllowedError } from '@/core/shared/errors/not-allowed-error';
+import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { makeReadNotificationUseCase } from '@/domain/notifications/application/use-cases/factories/make-read-notification-use-case';
 import { ForbiddenError } from '../../errors/forbidden-error';
 import { NotFoundError } from '../../errors/not-found-error';
