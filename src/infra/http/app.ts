@@ -20,7 +20,9 @@ app.setSerializerCompiler(serializerCompiler);
 
 app.setValidatorCompiler(validatorCompiler);
 
-app.register(fastifyCors);
+app.register(fastifyCors, {
+	methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+});
 
 await app.register(fastifyMultipart, {
 	limits: {

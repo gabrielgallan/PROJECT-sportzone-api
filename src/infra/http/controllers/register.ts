@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import { UserAlreadyExistsError } from '@/domain/booking/application/use-cases/errors/user-already-exists';
+import { UserAlreadyExistsError } from '@/domain/identity/application/use-cases/errors/user-already-exists-error';
 import { makeRegisterUseCase } from '@/domain/booking/application/use-cases/factories/make-register-use-case';
 import { ConflictError } from '../errors/conflict-error';
 import { httpErrorSchema } from '../errors/types/http-error';
