@@ -4,10 +4,10 @@ import type { Notification } from '../../enterprise/entities/notification';
 export interface NotificationsRepository {
 	create(notification: Notification): Promise<void>;
 	findById(id: string): Promise<Notification | null>;
-	markAllAsReadByRecipientId(recipietId: string): Promise<void>
+	markAllAsReadByRecipientId(recipientId: string): Promise<void>;
 	findManyByRecipientId(
-		recipietId: string,
+		recipientId: string,
 		pagination: PaginationInput,
 	): Promise<PaginatedList<Notification[]>>;
-	save(notification: Notification): Promise<Notification>;
+	save(notification: Notification): Promise<void>;
 }

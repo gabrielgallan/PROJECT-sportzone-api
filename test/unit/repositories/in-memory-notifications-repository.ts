@@ -16,10 +16,10 @@ export class InMemoryNotificationsRepository implements NotificationsRepository 
 		return notification ?? null;
 	}
 
-	async findManyByRecipientId(recipietId: string, pagination: PaginationInput) {
+	async findManyByRecipientId(recipientId: string, pagination: PaginationInput) {
 		const { page, limit } = pagination;
 
-		const notifications = this.items.filter((n) => n.recipientId.toString() === recipietId);
+		const notifications = this.items.filter((n) => n.recipientId.toString() === recipientId);
 
 		const paginated = notifications
 			.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
@@ -49,6 +49,6 @@ export class InMemoryNotificationsRepository implements NotificationsRepository 
 			this.items[notificationIndex] = notification;
 		}
 
-		return this.items[notificationIndex];
+		return;
 	}
 }

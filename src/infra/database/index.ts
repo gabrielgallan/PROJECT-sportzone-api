@@ -2,6 +2,7 @@ import { prisma } from './prisma/prisma';
 import { PrismaAccountsRepository } from './prisma/repositories/prisma-accounts-repository';
 import { PrismaInvitesRepository } from './prisma/repositories/prisma-invites-repository';
 import { PrismaMembersRepository } from './prisma/repositories/prisma-members-repository';
+import { PrismaNotificationsRepository } from './prisma/repositories/prisma-notifications-repository';
 import { PrismaOrganizationsRepository } from './prisma/repositories/prisma-organizations-repository';
 import { PrismaTokensRepository } from './prisma/repositories/prisma-tokens-repository';
 import { PrismaUsersRepository } from './prisma/repositories/prisma-users-repository';
@@ -17,6 +18,7 @@ const repositories = {
 	members: new PrismaMembersRepository(),
 	organizations: new PrismaOrganizationsRepository(),
 	tokens: new PrismaTokensRepository(),
+	notifications: new PrismaNotificationsRepository(),
 };
 
 export { repositories, services };

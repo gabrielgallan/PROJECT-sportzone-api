@@ -1,5 +1,3 @@
-import type { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
-import { type Either, right } from '@/core/types/either';
 import type { PaginatedList, PaginationInput } from '@/core/types/pagination';
 import type { Notification } from '../../enterprise/entities/notification';
 import type { NotificationsRepository } from '../repositories/notifications-repository';
@@ -9,10 +7,7 @@ interface ListNotificationsUseCaseRequest {
 	pagination?: PaginationInput;
 }
 
-type ListNotificationsUseCaseResponse = Either<
-	ResourceNotFoundError,
-	{ notifications: PaginatedList<Notification[]> }
->;
+type ListNotificationsUseCaseResponse = { notifications: PaginatedList<Notification[]> };
 
 export class ListNotificationsUseCase {
 	constructor(private notificationsRepository: NotificationsRepository) {}
@@ -26,8 +21,8 @@ export class ListNotificationsUseCase {
 			pagination,
 		);
 
-		return right({
+		return {
 			notifications,
-		});
+		};
 	}
 }

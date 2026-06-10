@@ -13,19 +13,20 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
+  id           String    @id @default(uuid())
   name         String?
-  email        String   @unique
-  passwordHash String?  @map("password_hash")
-  avatarUrl    String?  @map("avatar_url")
-  createdAt    DateTime @default(now()) @map("created_at")
+  email        String    @unique
+  passwordHash String?   @map("password_hash")
+  avatarUrl    String?   @map("avatar_url")
+  createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime? @updatedAt @map("updated_at")
 
   owns_organizations Organization[]
   members_on         Member[]
   invites            Invite[]
-  accounts Account[]
-  tokens   Token[]
+  accounts           Account[]
+  tokens             Token[]
+  notifications      Notification[]
 
   @@map("users")
 }
@@ -37,8 +38,8 @@ enum Role {
 }
 
 model Member {
-  id   String @id @default(uuid())
-  role Role   @default(MEMBER)
+  id        String   @id @default(uuid())
+  role      Role     @default(MEMBER)
   createdAt DateTime @default(now()) @map("created_at")
 
   organization   Organization @relation(fields: [organizationId], references: [id])
@@ -47,24 +48,23 @@ model Member {
   user   User   @relation(fields: [userId], references: [id])
   userId String @map("user_id")
 
-
   @@unique([organizationId, userId])
   @@map("member")
 }
 
 model Organization {
-  id  String   @id @default(uuid())
-  name String
-  slug String @unique
-  avatarUrl    String?  @map("avatar_url")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime? @updatedAt @map("updated_at")
+  id        String    @id @default(uuid())
+  name      String
+  slug      String    @unique
+  avatarUrl String?   @map("avatar_url")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
 
   owner   User   @relation(fields: [ownerId], references: [id])
   ownerId String @map("owner_id")
 
-  members  Member[]
-  invites  Invite[]
+  members Member[]
+  invites Invite[]
 
   @@map("organizations")
 }
@@ -76,11 +76,11 @@ enum InviteStatus {
 }
 
 model Invite {
-  id        String   @id @default(uuid())
+  id        String       @id @default(uuid())
   email     String
   role      Role
-  status InviteStatus @default(PENDING)
-  createdAt DateTime @default(now()) @map("created_at")
+  status    InviteStatus @default(PENDING)
+  createdAt DateTime     @default(now()) @map("created_at")
 
   author   User   @relation(fields: [authorId], references: [id])
   authorId String @map("author_id")
@@ -125,4 +125,17 @@ model Account {
 
   @@unique([provider, userId])
   @@map("accounts")
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  title     String
+  content   String
+  readAt    DateTime? @map("read_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  recipient   User   @relation(fields: [recipientId], references: [id])
+  recipientId String @map("recipient_id")
+
+  @@map("notifications")
 }

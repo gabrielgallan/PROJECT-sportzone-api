@@ -13,6 +13,7 @@ import {
 import { env } from '../env';
 import { errorHandler } from './error-handler';
 import { identityRoutes } from './routes/identity';
+import { notificationsRoutes } from './routes/notifications';
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -68,6 +69,7 @@ app.setErrorHandler(errorHandler);
 await app.register(
 	() => {
 		app.register(identityRoutes);
+		app.register(notificationsRoutes);
 	},
 	{ prefix: 'api' },
 );
