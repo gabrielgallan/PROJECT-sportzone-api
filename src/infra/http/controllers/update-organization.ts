@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
+import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { InsufficientPermissionsError } from '@/domain/identity/application/use-cases/errors/insufficient-permissions-error';
 
 import { OrganizationAlreadyExistsError } from '@/domain/identity/application/use-cases/errors/organization-already-exists-error';

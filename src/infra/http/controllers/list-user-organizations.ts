@@ -1,12 +1,12 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
+import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { makeListUserOrganizationsUseCase } from '@/domain/identity/application/use-cases/factories/make-list-user-organizations-use-case';
 import { NotFoundError } from '../errors/not-found-error';
+import { httpErrorSchema } from '../errors/types/http-error';
 import { OrganizationWithRolePresenter } from '../presenters/identity/organization-presenter';
 import { parsePaginationQuery } from '../utils/pagination-query';
-import { httpErrorSchema } from '../errors/types/http-error';
 
 const organizationWithRoleSchema = z.object({
 	id: z.string(),

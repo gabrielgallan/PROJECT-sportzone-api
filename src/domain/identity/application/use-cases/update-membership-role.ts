@@ -1,11 +1,11 @@
-import { ResourceNotFoundError } from "@/core/errors/resource-not-found-error";
-import { type Either, left, right } from "@/core/types/either";
-import { MemberRole } from "../../enterprise/entities/member";
-import type { MembersRepository } from "../repositories/members-repository";
-import type { OrganizationsRepository } from "../repositories/organizations-repository";
-import type { UsersRepository } from "../repositories/users-repository";
-import { InsufficientPermissionsError } from "./errors/insufficient-permissions-error";
-import { InvalidMembershipRoleError } from "./errors/invalid-membership-role-error";
+import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
+import { type Either, left, right } from '@/core/types/either';
+import type { MemberRole } from '../../enterprise/entities/member';
+import type { MembersRepository } from '../repositories/members-repository';
+import type { OrganizationsRepository } from '../repositories/organizations-repository';
+import type { UsersRepository } from '../repositories/users-repository';
+import { InsufficientPermissionsError } from './errors/insufficient-permissions-error';
+import { InvalidMembershipRoleError } from './errors/invalid-membership-role-error';
 
 interface UpdateMembershipRoleUseCaseRequest {
 	userId: string;
@@ -38,8 +38,7 @@ export class UpdateMembershipRoleUseCase {
 			return left(new ResourceNotFoundError());
 		}
 
-		const organization =
-			await this.organizationsRepository.findBySlug(organizationSlug);
+		const organization = await this.organizationsRepository.findBySlug(organizationSlug);
 
 		if (!organization) {
 			return left(new ResourceNotFoundError());

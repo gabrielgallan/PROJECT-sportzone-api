@@ -1,21 +1,18 @@
-import { ResourceNotFoundError } from "@/core/errors/resource-not-found-error";
-import { type Either, left, right } from "@/core/types/either";
-import { Member } from "../../enterprise/entities/member";
-import type { InvitesRepository } from "../repositories/invites-repository";
-import type { MembersRepository } from "../repositories/members-repository";
-import type { OrganizationsRepository } from "../repositories/organizations-repository";
-import type { UsersRepository } from "../repositories/users-repository";
-import { InviteAccessDeniedError } from "./errors/invite-access-denied-error";
+import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
+import { type Either, left, right } from '@/core/types/either';
+import { Member } from '../../enterprise/entities/member';
+import type { InvitesRepository } from '../repositories/invites-repository';
+import type { MembersRepository } from '../repositories/members-repository';
+import type { OrganizationsRepository } from '../repositories/organizations-repository';
+import type { UsersRepository } from '../repositories/users-repository';
+import { InviteAccessDeniedError } from './errors/invite-access-denied-error';
 
 interface AcceptInviteUseCaseRequest {
 	userId: string;
 	inviteId: string;
 }
 
-type AcceptInviteUseCaseResponse = Either<
-	ResourceNotFoundError | InviteAccessDeniedError,
-	null
->;
+type AcceptInviteUseCaseResponse = Either<ResourceNotFoundError | InviteAccessDeniedError, null>;
 
 export class AcceptInviteUseCase {
 	constructor(

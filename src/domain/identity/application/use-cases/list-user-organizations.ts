@@ -1,4 +1,4 @@
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
+import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { type Either, left, right } from '@/core/types/either';
 import type { PaginatedList, PaginationInput } from '@/core/types/pagination';
 import type { OrganizationWithRole } from '../../enterprise/entities/value-objects/organization-with-role';

@@ -1,34 +1,39 @@
-import { Entity } from "@/core/entities/entity";
-import type { UniqueEntityID } from "@/core/entities/unique-entity-id";
-import type { Optional } from "@/core/types/optional";
-import type { Cash } from "./value-objects/cash";
+import { AggregatedRoot } from '@/core/entities/aggregate-root';
+import type { UniqueEntityID } from '@/core/entities/unique-entity-id';
+import type { Optional } from '@/core/types/optional';
+import type { Cash } from '../../../../core/shared/value-objects/cash';
+
+type CourtStatus = 'IN_MAINTENENCE' | 'PAUSED' | 'PENDIND' | 'ONLINE';
 
 export interface CourtProps {
-	ownerId: UniqueEntityID;
-	title: string;
-	type: string;
+	organizationId: UniqueEntityID;
+	name: string;
+	description?: string | null;
+	coverImageUrl: string;
+
 	phone?: string | null;
-	location: string;
+	address: string;
 	latitude: number;
 	longitude: number;
-	isActive: boolean;
+
+	rate: number;
+	status: CourtStatus;
 	pricePerHour: Cash;
 	createdAt: Date;
 	updatedAt?: Date | null;
 }
 
-export class Court extends Entity<CourtProps> {
-	static create(
-		props: Optional<CourtProps, "createdAt" | "isActive">,
-		id?: UniqueEntityID
-	) {
+export class Court extends AggregatedRoot<CourtProps> {
+	static create(props: Optional<CourtProps, 'createdAt' | 'status' | 'rate'>, id?: UniqueEntityID) {
 		const court = new Court(
 			{
 				...props,
+				description: props.description ?? null,
 				phone: props.phone ?? null,
+				status: props.status ?? 'PENDIND',
+				rate: props.rate ?? 0,
 				createdAt: props.createdAt ?? new Date(),
 				updatedAt: props.updatedAt ?? null,
-				isActive: props.isActive ?? true,
 			},
 			id,
 		);
@@ -37,24 +42,28 @@ export class Court extends Entity<CourtProps> {
 	}
 
 	// => Getters
-	get ownerId() {
-		return this.props.ownerId;
+	get organizationId() {
+		return this.props.organizationId;
 	}
 
-	get title() {
-		return this.props.title;
+	get name() {
+		return this.props.name;
 	}
 
-	get type() {
-		return this.props.type;
+	get description() {
+		return this.props.description;
+	}
+
+	get coverImageUrl() {
+		return this.props.coverImageUrl;
 	}
 
 	get phone() {
 		return this.props.phone;
 	}
 
-	get location() {
-		return this.props.location;
+	get address() {
+		return this.props.address;
 	}
 
 	get latitude() {
@@ -65,8 +74,12 @@ export class Court extends Entity<CourtProps> {
 		return this.props.longitude;
 	}
 
-	get isActive() {
-		return this.props.isActive;
+	get status() {
+		return this.props.status;
+	}
+
+	get rate() {
+		return this.props.rate;
 	}
 
 	get pricePerHour() {
@@ -82,20 +95,50 @@ export class Court extends Entity<CourtProps> {
 	}
 
 	// => Setters
-	set title(title: string) {
-		this.props.title = title;
+	set name(name: string) {
+		this.props.name = name;
 
 		this.touch();
 	}
 
-	set type(type: string) {
-		this.props.type = type;
+	set description(description: string | null | undefined) {
+		this.props.description = description;
+
+		this.touch();
+	}
+
+	set coverImageUrl(coverImageUrl: string) {
+		this.props.coverImageUrl = coverImageUrl;
+
+		this.touch();
+	}
+
+	set status(status: CourtStatus) {
+		this.props.status = status;
 
 		this.touch();
 	}
 
 	set phone(phone: string | null | undefined) {
 		this.props.phone = phone;
+
+		this.touch();
+	}
+
+	set address(address: string) {
+		this.props.address = address;
+
+		this.touch();
+	}
+
+	set latitude(latitude: number) {
+		this.props.latitude = latitude;
+
+		this.touch();
+	}
+
+	set longitude(longitude: number) {
+		this.props.longitude = longitude;
 
 		this.touch();
 	}

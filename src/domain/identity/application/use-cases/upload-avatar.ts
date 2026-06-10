@@ -1,5 +1,5 @@
 import type { Readable } from 'node:stream';
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
+import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { type Either, left, right } from '@/core/types/either';
 import type { UsersRepository } from '../repositories/users-repository';
 import type { Uploader } from '../storage/uploader';

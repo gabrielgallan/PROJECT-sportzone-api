@@ -1,19 +1,16 @@
-import { ResourceNotFoundError } from "@/core/errors/resource-not-found-error";
-import { type Either, left, right } from "@/core/types/either";
-import type { InvitesRepository } from "../repositories/invites-repository";
-import type { OrganizationsRepository } from "../repositories/organizations-repository";
-import type { UsersRepository } from "../repositories/users-repository";
-import { InviteAccessDeniedError } from "./errors/invite-access-denied-error";
+import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
+import { type Either, left, right } from '@/core/types/either';
+import type { InvitesRepository } from '../repositories/invites-repository';
+import type { OrganizationsRepository } from '../repositories/organizations-repository';
+import type { UsersRepository } from '../repositories/users-repository';
+import { InviteAccessDeniedError } from './errors/invite-access-denied-error';
 
 interface DeclineInviteUseCaseRequest {
 	userId: string;
 	inviteId: string;
 }
 
-type DeclineInviteUseCaseResponse = Either<
-	ResourceNotFoundError | InviteAccessDeniedError,
-	null
->;
+type DeclineInviteUseCaseResponse = Either<ResourceNotFoundError | InviteAccessDeniedError, null>;
 
 export class DeclineInviteUseCase {
 	constructor(

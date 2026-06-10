@@ -1,9 +1,9 @@
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
+import type { Readable } from 'node:stream';
+import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { type Either, left, right } from '@/core/types/either';
 import type { OrganizationsRepository } from '../repositories/organizations-repository';
 import type { Uploader } from '../storage/uploader';
 import { InsufficientPermissionsError } from './errors/insufficient-permissions-error';
-import { Readable } from 'node:stream';
 
 interface UploadOrganizationAvatarUseCaseRequest {
 	userId: string;

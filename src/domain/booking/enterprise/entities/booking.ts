@@ -1,12 +1,12 @@
-import { Entity } from "@/core/entities/entity";
-import type { UniqueEntityID } from "@/core/entities/unique-entity-id";
-import type { Optional } from "@/core/types/optional";
-import type { Cash } from "./value-objects/cash";
+import { Entity } from '@/core/entities/entity';
+import type { UniqueEntityID } from '@/core/entities/unique-entity-id';
+import type { Optional } from '@/core/types/optional';
+import type { Cash } from '../../../../core/shared/value-objects/cash';
 
 enum BookingStatus {
-	PENDING = "PENDING",
-	CONFIRMED = "CONFIRMED",
-	CANCELLED = "CANCELLED",
+	PENDING = 'PENDING',
+	CONFIRMED = 'CONFIRMED',
+	CANCELLED = 'CANCELLED',
 }
 
 export interface BookingProps {
@@ -21,10 +21,7 @@ export interface BookingProps {
 }
 
 export class Booking extends Entity<BookingProps> {
-	static create(
-		props: Optional<BookingProps, "createdAt" | "status">,
-		id?: UniqueEntityID,
-	) {
+	static create(props: Optional<BookingProps, 'createdAt' | 'status'>, id?: UniqueEntityID) {
 		const booking = new Booking(
 			{
 				...props,
@@ -69,12 +66,5 @@ export class Booking extends Entity<BookingProps> {
 
 	get updatedAt() {
 		return this.props.updatedAt;
-	}
-
-	// => Setters
-
-	// => Methods
-	private touch() {
-		this.props.updatedAt = new Date();
 	}
 }

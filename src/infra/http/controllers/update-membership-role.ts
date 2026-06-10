@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
+import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { InsufficientPermissionsError } from '@/domain/identity/application/use-cases/errors/insufficient-permissions-error';
 import { InvalidMembershipRoleError } from '@/domain/identity/application/use-cases/errors/invalid-membership-role-error';
 import { makeUpdateMembershipRoleUseCase } from '@/domain/identity/application/use-cases/factories/make-update-membership-role-use-case';

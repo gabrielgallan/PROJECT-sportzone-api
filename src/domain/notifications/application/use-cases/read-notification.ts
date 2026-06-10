@@ -1,5 +1,5 @@
-import { NotAllowedError } from '@/core/errors/not-allowed-error';
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
+import { NotAllowedError } from '@/core/shared/errors/not-allowed-error';
+import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { type Either, left, right } from '@/core/types/either';
 import type { Notification } from '../../enterprise/entities/notification';
 import type { NotificationsRepository } from '../repositories/notifications-repository';

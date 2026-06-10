@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
+import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { InvalidTokenError } from '@/domain/identity/application/use-cases/errors/invalid-token-error';
 import { makeResetPasswordUseCase } from '@/domain/identity/application/use-cases/factories/make-reset-password-use-case';
 import { BadRequestError } from '../errors/bad-request-error';

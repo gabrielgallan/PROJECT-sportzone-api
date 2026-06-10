@@ -1,4 +1,4 @@
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
+import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { type Either, left, right } from '@/core/types/either';
 import { Invite } from '../../enterprise/entities/invite';
 import type { MemberRole } from '../../enterprise/entities/member';

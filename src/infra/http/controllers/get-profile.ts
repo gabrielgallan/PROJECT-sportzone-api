@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
+import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { makeGetProfileUseCase } from '@/domain/booking/application/use-cases/factories/make-get-profile-use-case';
 import { NotFoundError } from '../errors/not-found-error';
 import { httpErrorSchema } from '../errors/types/http-error';

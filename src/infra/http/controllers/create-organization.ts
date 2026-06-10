@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
+import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { OrganizationAlreadyExistsError } from '@/domain/identity/application/use-cases/errors/organization-already-exists-error';
 import { makeCreateOrganizationUseCase } from '@/domain/identity/application/use-cases/factories/make-create-organization-use-case';
 import { ConflictError } from '../errors/conflict-error';

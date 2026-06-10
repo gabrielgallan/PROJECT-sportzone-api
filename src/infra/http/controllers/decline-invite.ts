@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error';
+import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { InviteAccessDeniedError } from '@/domain/identity/application/use-cases/errors/invite-access-denied-error';
 import { makeDeclineInviteUseCase } from '@/domain/identity/application/use-cases/factories/make-decline-invite-use-case';
 import { ForbiddenError } from '../errors/forbidden-error';
@@ -22,7 +22,7 @@ export function declineInviteController(app: FastifyInstance) {
 				response: {
 					204: z.null(),
 					403: httpErrorSchema,
-					404: httpErrorSchema
+					404: httpErrorSchema,
 				},
 			},
 		},

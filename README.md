@@ -35,14 +35,22 @@
 
 ---
 
-## Bookings
+## Core
 
----
+### As Customer
 
-## Reviews
+* [ ] It should be able to search courts (filters: name, address)
+* [ ] It should be able to discover nearby courts
+* [ ] It should be able to get court details (with reviews)
+* [ ] It should be able to get court availability time slots by date
 
-* [ ] It should be able to create a court review
-* [ ] It should be able to update an own review
-* [ ] It should be able to delete an own review
-* [ ] It should be able to list court reviews
-* [ ] It should be able to get a review by id
+* [ ] It should be able to create a booking
+* [ ] It should be able to list user bookings
+* [ ] It should be able to get booking details
+* [ ] It should be able to cancel a booking
+
+### As Organization
+
+* [ ] It should be able to get org details (courts count, members count)
+* [ ] It should be able to list organization courts
+* [ ] It should be able to list organization bookings
