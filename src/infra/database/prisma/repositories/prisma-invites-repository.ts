@@ -1,6 +1,7 @@
 import type { PaginationInput } from '@/core/types/pagination';
 import type { InvitesRepository } from '@/domain/identity/application/repositories/invites-repository';
 import type { Invite } from '@/domain/identity/enterprise/entities/invite';
+import { PrismaInviteDetailsMapper } from '../mappers/prisma-invite-details-mapper';
 import { PrismaInviteMapper } from '../mappers/prisma-invite-mapper';
 import { prisma } from '../prisma';
 
@@ -28,6 +29,23 @@ export class PrismaInvitesRepository implements InvitesRepository {
 	async findManyByUserEmail(email: string, { page, limit }: PaginationInput) {
 		const [invites, total] = await Promise.all([
 			prisma.invite.findMany({
+				select: {
+					id: true,
+					role: true,
+					createdAt: true,
+					status: true,
+					author: {
+						select: {
+							name: true,
+						},
+					},
+					organization: {
+						select: {
+							name: true,
+							avatarUrl: true,
+						},
+					},
+				},
 				where: {
 					email,
 				},
@@ -42,7 +60,7 @@ export class PrismaInvitesRepository implements InvitesRepository {
 		]);
 
 		return {
-			data: invites.map(PrismaInviteMapper.toDomain),
+			data: invites.map(PrismaInviteDetailsMapper.toDomain),
 			meta: {
 				page,
 				limit,

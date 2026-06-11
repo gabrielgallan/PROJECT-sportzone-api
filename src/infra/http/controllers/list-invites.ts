@@ -9,8 +9,12 @@ import { parsePaginationQuery } from '../utils/pagination-query';
 
 const inviteSchema = z.object({
 	id: z.string(),
-	email: z.string(),
-	role: z.enum(['MEMBER', 'OWNER', 'BILLING']),
+	organization: z.object({
+		name: z.string(),
+		avatarUrl: z.string().nullable(),
+		authorName: z.string().nullable(),
+	}),
+	role: z.enum(['MEMBER', 'BILLING', 'OWNER']),
 	status: z.enum(['PENDING', 'ACCEPTED', 'DECLINED']),
 	createdAt: z.date(),
 });
@@ -65,13 +69,15 @@ export function listInvitesController(app: FastifyInstance) {
 			}
 
 			reply.status(200).send({
-				data: result.value.invites.data.map((invite) => ({
-					id: invite.id.toString(),
-					email: invite.email,
-					role: invite.role,
-					status: invite.status,
-					createdAt: invite.createdAt,
-				})),
+				data: result.value.invites.data.map((invite) => {
+					return {
+						id: invite.inviteId,
+						organization: invite.organization,
+						role: invite.role,
+						status: invite.status,
+						createdAt: invite.createdAt,
+					};
+				}),
 				meta: result.value.invites.meta,
 			});
 		},

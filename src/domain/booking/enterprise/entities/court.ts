@@ -2,6 +2,7 @@ import { AggregatedRoot } from '@/core/entities/aggregate-root';
 import type { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import type { Optional } from '@/core/types/optional';
 import type { Cash } from '../../../../core/shared/value-objects/cash';
+import type { CourtImagesList } from './court-images-list';
 
 type CourtStatus = 'IN_MAINTENENCE' | 'PAUSED' | 'PENDIND' | 'ONLINE';
 
@@ -15,6 +16,8 @@ export interface CourtProps {
 	address: string;
 	latitude: number;
 	longitude: number;
+
+	images: CourtImagesList;
 
 	rate: number;
 	status: CourtStatus;
@@ -72,6 +75,10 @@ export class Court extends AggregatedRoot<CourtProps> {
 
 	get longitude() {
 		return this.props.longitude;
+	}
+
+	get images() {
+		return this.props.images;
 	}
 
 	get status() {
@@ -139,6 +146,12 @@ export class Court extends AggregatedRoot<CourtProps> {
 
 	set longitude(longitude: number) {
 		this.props.longitude = longitude;
+
+		this.touch();
+	}
+
+	set images(images: CourtImagesList) {
+		this.props.images = images;
 
 		this.touch();
 	}

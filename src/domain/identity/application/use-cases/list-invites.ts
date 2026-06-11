@@ -1,7 +1,7 @@
 import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { type Either, left, right } from '@/core/types/either';
 import type { PaginatedList, PaginationInput } from '@/core/types/pagination';
-import type { Invite } from '../../enterprise/entities/invite';
+import type { InviteDetails } from '../../enterprise/entities/value-objects/invite-details';
 import type { InvitesRepository } from '../repositories/invites-repository';
 import type { UsersRepository } from '../repositories/users-repository';
 
@@ -12,7 +12,7 @@ interface ListInvitesUseCaseRequest {
 
 type ListInvitesUseCaseResponse = Either<
 	ResourceNotFoundError,
-	{ invites: PaginatedList<Invite[]> }
+	{ invites: PaginatedList<InviteDetails[]> }
 >;
 
 export class ListInvitesUseCase {
