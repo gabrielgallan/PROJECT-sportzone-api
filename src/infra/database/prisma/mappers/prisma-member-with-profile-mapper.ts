@@ -4,6 +4,7 @@ import { PrismaRoleMapper } from './prisma-role-mapper';
 
 type PrismaMemberWithProfile = Prisma.MemberGetPayload<{
 	select: {
+		id: true
 		role: true;
 		createdAt: true;
 		user: {
@@ -22,6 +23,7 @@ export class PrismaMemberWithProfileMapper {
 		return MemberWithProfile.create({
 			user: raw.user,
 			membership: {
+				id: raw.id,
 				role: PrismaRoleMapper.toDomain(raw.role),
 				createdAt: raw.createdAt,
 			},

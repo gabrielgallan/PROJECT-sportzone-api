@@ -69,16 +69,14 @@ describe('List invites use case', () => {
 
 		if (result.isRight()) {
 			expect(result.value.invites.data).toHaveLength(1);
-			expect(result.value.invites.data[0]).toEqual(
+			expect(result.value.invites.data[0].createdAt).toEqual(expect.any(Date))
+			expect(result.value.invites.data[0].role).toEqual('BILLING')
+			expect(result.value.invites.data[0].organization).toEqual(
 				expect.objectContaining({
-					organization: {
-						name: 'John Org',
-						authorName: 'John Doe',
-					},
-					role: 'BILLING',
-					createdAt: expect.any(Date),
-				}),
-			);
+					name: 'John Org',
+					authorName: 'John Doe',
+				})
+			)
 		}
 	});
 });

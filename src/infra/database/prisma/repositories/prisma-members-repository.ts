@@ -89,6 +89,7 @@ export class PrismaMembersRepository implements MembersRepository {
 				skip: (page - 1) * limit,
 				take: limit,
 				select: {
+					id: true,
 					role: true,
 					createdAt: true,
 					user: {

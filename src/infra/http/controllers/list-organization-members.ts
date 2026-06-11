@@ -17,6 +17,7 @@ const memberWithProfileSchema = z.object({
 		avatarUrl: z.string().nullable(),
 	}),
 	membership: z.object({
+		id: z.string(),
 		role: z.enum(['MEMBER', 'OWNER', 'BILLING']),
 		createdAt: z.date(),
 	}),
@@ -89,6 +90,7 @@ export function listOrganizationMembersController(app: FastifyInstance) {
 						avatarUrl: member.user.avatarUrl ?? null,
 					},
 					membership: {
+						id: member.membership.id,
 						role: member.membership.role,
 						createdAt: member.membership.createdAt,
 					},

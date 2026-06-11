@@ -9,6 +9,7 @@ interface MemberWithProfileProps {
 		avatarUrl?: string | null;
 	};
 	membership: {
+		id: string
 		role: MemberRole;
 		createdAt: Date;
 	};

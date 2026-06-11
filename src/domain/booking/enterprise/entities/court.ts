@@ -3,14 +3,15 @@ import type { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import type { Optional } from '@/core/types/optional';
 import type { Cash } from '../../../../core/shared/value-objects/cash';
 import type { CourtImagesList } from './court-images-list';
+import { CourtImage } from './court-image';
 
-type CourtStatus = 'IN_MAINTENENCE' | 'PAUSED' | 'PENDIND' | 'ONLINE';
+export type CourtStatus = 'IN_MAINTENANCE' | 'PAUSED' | 'PENDING' | 'ONLINE';
 
 export interface CourtProps {
 	organizationId: UniqueEntityID;
 	name: string;
 	description?: string | null;
-	coverImageUrl: string;
+	coverImage: CourtImage | null;
 
 	phone?: string | null;
 	address: string;
@@ -19,7 +20,6 @@ export interface CourtProps {
 
 	images: CourtImagesList;
 
-	rate: number;
 	status: CourtStatus;
 	pricePerHour: Cash;
 	createdAt: Date;
@@ -27,14 +27,16 @@ export interface CourtProps {
 }
 
 export class Court extends AggregatedRoot<CourtProps> {
-	static create(props: Optional<CourtProps, 'createdAt' | 'status' | 'rate'>, id?: UniqueEntityID) {
+	static create(
+		props: Optional<CourtProps, 'createdAt' | 'status' | 'updatedAt' | 'description' | 'phone'>,
+		id?: UniqueEntityID,
+	) {
 		const court = new Court(
 			{
 				...props,
 				description: props.description ?? null,
 				phone: props.phone ?? null,
-				status: props.status ?? 'PENDIND',
-				rate: props.rate ?? 0,
+				status: props.status ?? 'PENDING',
 				createdAt: props.createdAt ?? new Date(),
 				updatedAt: props.updatedAt ?? null,
 			},
@@ -57,8 +59,8 @@ export class Court extends AggregatedRoot<CourtProps> {
 		return this.props.description;
 	}
 
-	get coverImageUrl() {
-		return this.props.coverImageUrl;
+	get coverImage() {
+		return this.props.coverImage;
 	}
 
 	get phone() {
@@ -83,10 +85,6 @@ export class Court extends AggregatedRoot<CourtProps> {
 
 	get status() {
 		return this.props.status;
-	}
-
-	get rate() {
-		return this.props.rate;
 	}
 
 	get pricePerHour() {
@@ -114,14 +112,8 @@ export class Court extends AggregatedRoot<CourtProps> {
 		this.touch();
 	}
 
-	set coverImageUrl(coverImageUrl: string) {
-		this.props.coverImageUrl = coverImageUrl;
-
-		this.touch();
-	}
-
-	set status(status: CourtStatus) {
-		this.props.status = status;
+	set coverImage(coverImage: CourtImage | null) {
+		this.props.coverImage = coverImage;
 
 		this.touch();
 	}
@@ -159,6 +151,26 @@ export class Court extends AggregatedRoot<CourtProps> {
 	set pricePerHour(pricePerHour: Cash) {
 		this.props.pricePerHour = pricePerHour;
 
+		this.touch();
+	}
+
+	putOnline() {
+		this.props.status = 'ONLINE';
+		this.touch();
+	}
+
+	pause() {
+		this.props.status = 'PAUSED';
+		this.touch();
+	}
+
+	markAsPending() {
+		this.props.status = 'PENDING';
+		this.touch();
+	}
+
+	markAsInMaintenance() {
+		this.props.status = 'IN_MAINTENANCE';
 		this.touch();
 	}
 

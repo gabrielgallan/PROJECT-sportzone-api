@@ -54,3 +54,6 @@
 * [ ] It should be able to get org details (courts count, members count)
 * [ ] It should be able to list organization courts
 * [ ] It should be able to list organization bookings
+* [ ] It should be able to create courts
+* [ ] It should be able to edit courts
+* [ ] It should be able to delete courts

@@ -3,6 +3,6 @@ import type { CourtImage } from './court-image';
 
 export class CourtImagesList extends WatchedList<CourtImage> {
 	compareItems(a: CourtImage, b: CourtImage): boolean {
-		return a.imageId === b.imageId;
+		return a.imageId.equals(b.imageId);
 	}
 }

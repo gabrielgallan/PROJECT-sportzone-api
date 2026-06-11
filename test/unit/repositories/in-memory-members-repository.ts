@@ -42,6 +42,7 @@ export class InMemoryMembersRepository implements MembersRepository {
 					avatarUrl: user.avatarUrl,
 				},
 				membership: {
+					id: member.id.toString(),
 					role: member.role,
 					createdAt: member.createdAt,
 				},

@@ -1,6 +1,5 @@
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { Cash } from '@/core/shared/value-objects/cash';
-import { type Either, right } from '@/core/types/either';
 import { Court } from '../../enterprise/entities/court';
 import { CourtImage } from '../../enterprise/entities/court-image';
 import { CourtImagesList } from '../../enterprise/entities/court-images-list';
@@ -10,7 +9,7 @@ type CreateCourtUseCaseRequest = {
 	organizationId: string;
 	name: string;
 	description?: string;
-	coverImageUrl: string;
+	coverImageId: string;
 	phone?: string;
 	address: string;
 	latitude: number;
@@ -19,7 +18,7 @@ type CreateCourtUseCaseRequest = {
 	imagesIds: string[];
 };
 
-type CreateCourtUseCaseResponse = Either<null, null>;
+type CreateCourtUseCaseResponse = null;
 
 export class CreateCourtUseCase {
 	constructor(private courtsRepository: CourtsRepository) {}
@@ -28,7 +27,7 @@ export class CreateCourtUseCase {
 		organizationId,
 		name,
 		description,
-		coverImageUrl,
+		coverImageId,
 		phone,
 		address,
 		latitude,
@@ -40,7 +39,7 @@ export class CreateCourtUseCase {
 			organizationId: new UniqueEntityID(organizationId),
 			name,
 			description,
-			coverImageUrl,
+			coverImage: null,
 			phone,
 			address,
 			latitude,
@@ -58,8 +57,13 @@ export class CreateCourtUseCase {
 
 		court.images = new CourtImagesList(images);
 
+		court.coverImage = CourtImage.create({
+			imageId: new UniqueEntityID(coverImageId),
+			courtId: court.id,
+		});
+
 		await this.courtsRepository.create(court);
 
-		return right(null);
+		return null;
 	}
 }
