@@ -15,7 +15,7 @@ export interface BookingProps {
 	startsAt: Date;
 	endsAt: Date;
 	status: BookingStatus;
-	priceSnapshot: Cash;
+	price: Cash;
 	createdAt: Date;
 	updatedAt?: Date | null;
 	cancelledAt?: Date | null;
@@ -43,7 +43,8 @@ export class Booking extends Entity<BookingProps> {
 		return booking;
 	}
 
-	// => Getters
+	// Getters
+	
 	get courtId() {
 		return this.props.courtId;
 	}
@@ -64,8 +65,8 @@ export class Booking extends Entity<BookingProps> {
 		return this.props.status;
 	}
 
-	get priceSnapshot() {
-		return this.props.priceSnapshot;
+	get price() {
+		return this.props.price;
 	}
 
 	get createdAt() {
@@ -79,6 +80,8 @@ export class Booking extends Entity<BookingProps> {
 	get cancelledAt() {
 		return this.props.cancelledAt;
 	}
+
+	// Setters
 
 	set status(status: BookingStatus) {
 		this.props.status = status

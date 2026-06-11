@@ -10,7 +10,6 @@ type CreateCourtUseCaseRequest = {
 	name: string;
 	description?: string;
 	coverImageId: string;
-	phone?: string;
 	address: string;
 	latitude: number;
 	longitude: number;
@@ -28,7 +27,6 @@ export class CreateCourtUseCase {
 		name,
 		description,
 		coverImageId,
-		phone,
 		address,
 		latitude,
 		longitude,
@@ -40,7 +38,6 @@ export class CreateCourtUseCase {
 			name,
 			description,
 			coverImage: null,
-			phone,
 			address,
 			latitude,
 			longitude,

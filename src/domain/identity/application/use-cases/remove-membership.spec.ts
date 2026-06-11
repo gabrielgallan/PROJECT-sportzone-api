@@ -5,9 +5,9 @@ import { InMemoryMembersRepository } from "test/unit/repositories/in-memory-memb
 import { InMemoryOrganizationsRepository } from "test/unit/repositories/in-memory-organizations-reporitory";
 import { InMemoryUsersRepository } from "test/unit/repositories/in-memory-users-repository";
 import { UniqueEntityID } from "@/core/entities/unique-entity-id";
+import { Slug } from "../../enterprise/entities/value-objects/slug";
 import { InsufficientPermissionsError } from "./errors/insufficient-permissions-error";
 import { RemoveMembershipUseCase } from "./remove-membership";
-import { Slug } from "../../enterprise/entities/value-objects/slug";
 
 let usersRepository: InMemoryUsersRepository;
 let membersRepository: InMemoryMembersRepository;

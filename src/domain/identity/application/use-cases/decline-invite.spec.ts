@@ -17,8 +17,8 @@ let sut: DeclineInviteUseCase;
 describe('Decline invite use case', () => {
 	beforeEach(() => {
 		usersRepository = new InMemoryUsersRepository();
-		invitesRepository = new InMemoryInvitesRepository();
 		organizationsRepository = new InMemoryOrganizationsRepository();
+		invitesRepository = new InMemoryInvitesRepository(usersRepository, organizationsRepository);
 
 		sut = new DeclineInviteUseCase(usersRepository, invitesRepository, organizationsRepository);
 	});

@@ -19,8 +19,8 @@ let sut: AcceptInviteUseCase;
 describe('Accept invite use case', () => {
 	beforeEach(() => {
 		usersRepository = new InMemoryUsersRepository();
-		invitesRepository = new InMemoryInvitesRepository();
 		organizationsRepository = new InMemoryOrganizationsRepository();
+		invitesRepository = new InMemoryInvitesRepository(usersRepository, organizationsRepository);
 		membersRepository = new InMemoryMembersRepository(usersRepository, organizationsRepository);
 
 		sut = new AcceptInviteUseCase(

@@ -1,3 +1,4 @@
+import { Readable } from 'node:stream';
 import { UploaderStub } from 'test/stubs/uploader';
 import { makeOrganization } from 'test/unit/factories/make-organization';
 import { InMemoryOrganizationsRepository } from 'test/unit/repositories/in-memory-organizations-reporitory';
@@ -34,7 +35,7 @@ describe('upload organization avatar use case', () => {
 			organizationSlug: 'sportzone',
 			fileName: 'avatar.png',
 			fileType: 'image/png',
-			body: Buffer.from(''),
+			body: Readable.from(Buffer.from('')),
 		});
 
 		expect(result.isRight()).toBe(true);

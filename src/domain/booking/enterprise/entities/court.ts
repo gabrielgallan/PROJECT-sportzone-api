@@ -2,8 +2,8 @@ import { AggregatedRoot } from '@/core/entities/aggregate-root';
 import type { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import type { Optional } from '@/core/types/optional';
 import type { Cash } from '../../../../core/shared/value-objects/cash';
+import type { CourtImage } from './court-image';
 import type { CourtImagesList } from './court-images-list';
-import { CourtImage } from './court-image';
 
 export type CourtStatus = 'IN_MAINTENANCE' | 'PAUSED' | 'PENDING' | 'ONLINE';
 
@@ -13,7 +13,6 @@ export interface CourtProps {
 	description?: string | null;
 	coverImage: CourtImage | null;
 
-	phone?: string | null;
 	address: string;
 	latitude: number;
 	longitude: number;
@@ -28,14 +27,13 @@ export interface CourtProps {
 
 export class Court extends AggregatedRoot<CourtProps> {
 	static create(
-		props: Optional<CourtProps, 'createdAt' | 'status' | 'updatedAt' | 'description' | 'phone'>,
+		props: Optional<CourtProps, 'createdAt' | 'status' | 'updatedAt' | 'description'>,
 		id?: UniqueEntityID,
 	) {
 		const court = new Court(
 			{
 				...props,
 				description: props.description ?? null,
-				phone: props.phone ?? null,
 				status: props.status ?? 'PENDING',
 				createdAt: props.createdAt ?? new Date(),
 				updatedAt: props.updatedAt ?? null,
@@ -61,10 +59,6 @@ export class Court extends AggregatedRoot<CourtProps> {
 
 	get coverImage() {
 		return this.props.coverImage;
-	}
-
-	get phone() {
-		return this.props.phone;
 	}
 
 	get address() {
@@ -114,12 +108,6 @@ export class Court extends AggregatedRoot<CourtProps> {
 
 	set coverImage(coverImage: CourtImage | null) {
 		this.props.coverImage = coverImage;
-
-		this.touch();
-	}
-
-	set phone(phone: string | null | undefined) {
-		this.props.phone = phone;
 
 		this.touch();
 	}

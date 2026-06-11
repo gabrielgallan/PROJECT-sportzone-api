@@ -20,8 +20,8 @@ let sut: InviteMemberUseCase;
 describe('Invite member use case', () => {
 	beforeEach(() => {
 		usersRepository = new InMemoryUsersRepository();
-		invitesRepository = new InMemoryInvitesRepository();
 		organizationsRepository = new InMemoryOrganizationsRepository();
+		invitesRepository = new InMemoryInvitesRepository(usersRepository, organizationsRepository);
 		emailSender = new EmailSenderStub();
 
 		sut = new InviteMemberUseCase(

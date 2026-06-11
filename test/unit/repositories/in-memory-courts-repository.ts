@@ -1,51 +1,44 @@
-import { getDistanceBetweenCordinates } from "@/domain/booking/application/geocoding/get-distance-between-cordinates"
-import type { CourtSearchQuery, CourtsRepository } from "@/domain/booking/application/repositories/courts-repository"
-import type { Court } from "@/domain/booking/enterprise/entities/court"
+import type { PaginationInput } from '@/core/types/pagination';
+import type { CourtsRepository } from '@/domain/booking/application/repositories/courts-repository';
+import type { Court } from '@/domain/booking/enterprise/entities/court';
 
 export class InMemoryCourtsRepository implements CourtsRepository {
-    public items: Court[] = []
+	public items: Court[] = [];
 
-    async create(court: Court) {
-        this.items.push(court)
+	async create(court: Court) {
+		this.items.push(court);
 
-    }
+		return;
+	}
 
-    async findById(id: string) {
-        const court = this.items.find(c => c.id.toString() === id)
+	async findById(id: string) {
+		const court = this.items.find((c) => c.id.toString() === id);
 
-        return court ?? null
-    }
+		return court ?? null;
+	}
 
-    async searchManyByCordinates({ cordinate, sportType, pagination }: CourtSearchQuery) {
-        const { page, limit } = pagination
+	async listByOrganizationId(organizationId: string, { page, limit }: PaginationInput) {
+		const courts = this.items
+			.filter((c) => c.organizationId.toString() === organizationId)
+			.slice((page - 1) * limit, page * limit);
 
-        const nearbyCourts = this.items.filter(
-            (court) => {
-                const distanceInKilometers = getDistanceBetweenCordinates({
-                    from: { latitude: cordinate.latitude, longitude: cordinate.longitude },
-                    to: { latitude: court.latitude, longitude: court.longitude }
-                })
+		return {
+			data: courts,
+			meta: {
+				page,
+				limit,
+				total: this.items.length,
+			},
+		};
+	}
 
-                if (sportType) {
-                    return distanceInKilometers < 10 && court.type === sportType
-                }
+	async save(court: Court) {
+		const courtIndex = this.items.findIndex((c) => c.id.toString() === court.id.toString());
 
-                return distanceInKilometers < 10
-            }
-        )
+		if (courtIndex >= 0) {
+			this.items[courtIndex] = court;
+		}
 
-        const paginated = nearbyCourts.slice((page - 1) * limit, page * limit)
-
-        return paginated
-    }
-
-    async save(court: Court) {
-        const courtIndex = this.items.findIndex(c => c.id.toString() === court.id.toString())
-
-        if (courtIndex >= 0) {
-            this.items[courtIndex] = court
-        }
-
-        return
-    }
+		return;
+	}
 }
