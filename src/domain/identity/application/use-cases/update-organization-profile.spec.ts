@@ -1,7 +1,7 @@
 import { makeOrganization } from 'test/unit/factories/make-organization';
 import { InMemoryOrganizationsRepository } from 'test/unit/repositories/in-memory-organizations-reporitory';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
-import { Slug } from '../../enterprise/entities/value-objects/slug';
+import { Slug } from '@/core/shared/value-objects/slug';
 import { InsufficientPermissionsError } from './errors/insufficient-permissions-error';
 import { OrganizationAlreadyExistsError } from './errors/organization-already-exists-error';
 import { UpdateOrganizationProfileUseCase } from './update-organization-profile';

@@ -49,5 +49,9 @@ Tests are part of the domain contract, not optional follow-up work.
 - Write tests around business scenarios and expected outcomes.
 - Prefer readable setup and intent-revealing assertions.
 - Test behavior, invariants, and failure cases instead of incidental implementation details.
+- For application use cases, the default test pattern is:
+- Add one `it(...)` for the successful path.
+- Add one `it(...)` for each explicit error the use case can return through its `Either`.
+- If a use case does not return any error branch, only the success case is required.
 
 Good domain code should be understandable from its names, trusted through its tests, and portable across infrastructure changes.

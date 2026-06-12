@@ -21,13 +21,20 @@ export interface CourtProps {
 
 	status: CourtStatus;
 	pricePerHour: Cash;
+
+	rating: number;
+	reviewsCount: number;
+
 	createdAt: Date;
 	updatedAt?: Date | null;
 }
 
 export class Court extends AggregatedRoot<CourtProps> {
 	static create(
-		props: Optional<CourtProps, 'createdAt' | 'status' | 'updatedAt' | 'description'>,
+		props: Optional<
+			CourtProps,
+			'createdAt' | 'status' | 'updatedAt' | 'description' | 'rating' | 'reviewsCount'
+		>,
 		id?: UniqueEntityID,
 	) {
 		const court = new Court(
@@ -35,6 +42,8 @@ export class Court extends AggregatedRoot<CourtProps> {
 				...props,
 				description: props.description ?? null,
 				status: props.status ?? 'PENDING',
+				rating: props.rating ?? 0,
+				reviewsCount: props.reviewsCount ?? 0,
 				createdAt: props.createdAt ?? new Date(),
 				updatedAt: props.updatedAt ?? null,
 			},
@@ -83,6 +92,14 @@ export class Court extends AggregatedRoot<CourtProps> {
 
 	get pricePerHour() {
 		return this.props.pricePerHour;
+	}
+
+	get rating() {
+		return this.props.rating;
+	}
+
+	get reviewsCount() {
+		return this.props.reviewsCount;
 	}
 
 	get createdAt() {
@@ -142,23 +159,15 @@ export class Court extends AggregatedRoot<CourtProps> {
 		this.touch();
 	}
 
-	putOnline() {
-		this.props.status = 'ONLINE';
-		this.touch();
-	}
+	addRating(rating: number) {
+		const newReviewsCount = this.props.reviewsCount + 1;
 
-	pause() {
-		this.props.status = 'PAUSED';
-		this.touch();
-	}
+		const newRating = (this.props.rating * this.props.reviewsCount + rating) / newReviewsCount;
 
-	markAsPending() {
-		this.props.status = 'PENDING';
-		this.touch();
-	}
+		this.props.rating = Number(newRating.toFixed(2));
 
-	markAsInMaintenance() {
-		this.props.status = 'IN_MAINTENANCE';
+		this.props.reviewsCount = newReviewsCount;
+
 		this.touch();
 	}
 

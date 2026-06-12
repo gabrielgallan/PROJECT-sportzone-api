@@ -1,7 +1,7 @@
-import { Entity } from "@/core/entities/entity";
-import type { UniqueEntityID } from "@/core/entities/unique-entity-id";
-import type { Optional } from "@/core/types/optional";
-import { Slug } from "./value-objects/slug";
+import { Entity } from '@/core/entities/entity';
+import type { UniqueEntityID } from '@/core/entities/unique-entity-id';
+import { Slug } from '@/core/shared/value-objects/slug';
+import type { Optional } from '@/core/types/optional';
 
 export interface OrganizationProps {
 	ownerId: UniqueEntityID;
@@ -13,10 +13,7 @@ export interface OrganizationProps {
 }
 
 export class Organization extends Entity<OrganizationProps> {
-	static create(
-		props: Optional<OrganizationProps, "createdAt" | "slug">,
-		id?: UniqueEntityID,
-	) {
+	static create(props: Optional<OrganizationProps, 'createdAt' | 'slug'>, id?: UniqueEntityID) {
 		const organization = new Organization(
 			{
 				...props,

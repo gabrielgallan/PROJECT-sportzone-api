@@ -1,8 +1,8 @@
 import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
+import { Slug } from '@/core/shared/value-objects/slug';
 import { type Either, left, right } from '@/core/types/either';
 import { Member } from '../../enterprise/entities/member';
 import { Organization } from '../../enterprise/entities/organization';
-import { Slug } from '../../enterprise/entities/value-objects/slug';
 import type { MembersRepository } from '../repositories/members-repository';
 import type { OrganizationsRepository } from '../repositories/organizations-repository';
 import type { UsersRepository } from '../repositories/users-repository';

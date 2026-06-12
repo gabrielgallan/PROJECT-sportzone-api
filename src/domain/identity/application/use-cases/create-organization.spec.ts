@@ -5,7 +5,7 @@ import { InMemoryOrganizationsRepository } from 'test/unit/repositories/in-memor
 import { InMemoryUsersRepository } from 'test/unit/repositories/in-memory-users-repository';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
-import { Slug } from '../../enterprise/entities/value-objects/slug';
+import { Slug } from '@/core/shared/value-objects/slug';
 import { CreateOrganizationUseCase } from './create-organization';
 import { OrganizationAlreadyExistsError } from './errors/organization-already-exists-error';
 

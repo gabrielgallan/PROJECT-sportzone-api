@@ -1,5 +1,7 @@
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
+import type { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { Cash } from '@/core/shared/value-objects/cash';
+import { type Either, right } from '@/core/types/either';
 import { Court } from '../../enterprise/entities/court';
 import { CourtImage } from '../../enterprise/entities/court-image';
 import { CourtImagesList } from '../../enterprise/entities/court-images-list';
@@ -17,7 +19,7 @@ type CreateCourtUseCaseRequest = {
 	imagesIds: string[];
 };
 
-type CreateCourtUseCaseResponse = null;
+type CreateCourtUseCaseResponse = Either<ResourceNotFoundError, { court: Court }>;
 
 export class CreateCourtUseCase {
 	constructor(private courtsRepository: CourtsRepository) {}
@@ -61,6 +63,8 @@ export class CreateCourtUseCase {
 
 		await this.courtsRepository.create(court);
 
-		return null;
+		return right({
+			court,
+		});
 	}
 }

@@ -3,11 +3,7 @@ import type { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import type { Optional } from '@/core/types/optional';
 import type { Cash } from '../../../../core/shared/value-objects/cash';
 
-export type BookingStatus =
-	| 'PENDING'
-	| 'CONFIRMED'
-	| 'CANCELLED'
-	| 'COMPLETED';
+export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
 
 export interface BookingProps {
 	courtId: UniqueEntityID;
@@ -22,13 +18,7 @@ export interface BookingProps {
 }
 
 export class Booking extends Entity<BookingProps> {
-	static create(
-		props: Optional<
-			BookingProps,
-			'createdAt' | 'status'
-		>,
-		id?: UniqueEntityID,
-	) {
+	static create(props: Optional<BookingProps, 'createdAt' | 'status'>, id?: UniqueEntityID) {
 		const booking = new Booking(
 			{
 				...props,
@@ -44,7 +34,7 @@ export class Booking extends Entity<BookingProps> {
 	}
 
 	// Getters
-	
+
 	get courtId() {
 		return this.props.courtId;
 	}
@@ -84,9 +74,9 @@ export class Booking extends Entity<BookingProps> {
 	// Setters
 
 	set status(status: BookingStatus) {
-		this.props.status = status
+		this.props.status = status;
 
-		this.touch()
+		this.touch();
 	}
 
 	private touch() {

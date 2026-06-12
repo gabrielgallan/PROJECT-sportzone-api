@@ -16,7 +16,7 @@
 * [x] It should be able to accept an invitation
 * [x] It should be able to decline an invitation
 
-### As Owner
+**As Owner**
 
 * [x] It should be able to invite a new member
 * [x] It should be able to list organization members (pagination)
@@ -25,35 +25,36 @@
 * [x] It should be able to update a organization profile
 * [x] It should be able to remove a member from the organization
 
----
-
 ## Notifications
 
 * [x] It should be able to list user notifications (pagination)
 * [x] It should be able to mark a notification as read
 * [x] It should be able to mark all notifications as read
 
----
-
 ## Core
 
-### As Customer
+**As Customer**
 
-* [ ] It should be able to search courts (filters: name, address)
-* [ ] It should be able to discover nearby courts
-* [ ] It should be able to get court details (with reviews)
+* [x] It should be able to search courts (filters: name, address)
+* [x] It should be able to search nearby courts
 * [ ] It should be able to get court availability time slots by date
 
 * [ ] It should be able to create a booking
-* [ ] It should be able to list user bookings
-* [ ] It should be able to get booking details
 * [ ] It should be able to cancel a booking
+* [ ] It should be able to complete a booking
+* [ ] It should be able to pay and confirm a booking
+* [x] It should be able to list user bookings (filters: courtName, status, createdAt)
+* [x] It should be able to get booking details
 
-### As Organization
+* [x] It should be able to get court details
+* [x] It should be able to list court reviews
+* [x] It should be able to review a court
+
+**As Organization**
 
 * [ ] It should be able to get org details (courts count, members count)
-* [ ] It should be able to list organization courts
-* [ ] It should be able to list organization bookings
-* [ ] It should be able to create courts
-* [ ] It should be able to edit courts
-* [ ] It should be able to delete courts
+* [ ] It should be able to cancel a booking and refund payment
+* [x] It should be able to list organization courts
+* [x] It should be able to list organization bookings
+* [x] It should be able to create courts
+* [x] It should be able to edit courts

@@ -1,5 +1,4 @@
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
-import type { NotAllowedError } from '@/core/shared/errors/not-allowed-error';
 import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { type Either, left, right } from '@/core/types/either';
 import type { Court } from '../../enterprise/entities/court';
@@ -17,7 +16,7 @@ interface EditCourtUseCaseRequest {
 }
 
 type EditCourtUseCaseResponse = Either<
-	ResourceNotFoundError | NotAllowedError,
+	ResourceNotFoundError,
 	{
 		court: Court;
 	}

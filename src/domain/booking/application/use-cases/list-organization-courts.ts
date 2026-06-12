@@ -6,7 +6,7 @@ import type { CourtsRepository } from '../repositories/courts-repository';
 
 interface ListOrganizationCourtsUseCaseRequest {
 	organizationId: string;
-	pagination: PaginationInput;
+	pagination?: PaginationInput;
 }
 
 type ListOrganizationCourtsUseCaseResponse = Either<
@@ -21,7 +21,7 @@ export class ListOrganizationCourtsUseCase {
 
 	async execute({
 		organizationId,
-		pagination,
+		pagination = { page: 1, limit: 10 },
 	}: ListOrganizationCourtsUseCaseRequest): Promise<ListOrganizationCourtsUseCaseResponse> {
 		const { data, meta } = await this.courtsRepository.listByOrganizationId(
 			organizationId,
