@@ -7,16 +7,19 @@ import { CourtImagesList } from '../../enterprise/entities/court-images-list';
 import { EditCourtUseCase } from './edit-court';
 import { InMemoryCourtImagesRepository } from 'test/unit/repositories/in-memory-court-images-repository';
 import { InMemoryCourtsRepository } from 'test/unit/repositories/in-memory-courts-repository';
+import { InMemoryImagesRepository } from 'test/unit/repositories/in-memory-images-repository';
 
 let courtsRepository: InMemoryCourtsRepository;
 let courtImagesRepository: InMemoryCourtImagesRepository;
+let imagesRepository: InMemoryImagesRepository
 
 let sut: EditCourtUseCase;
 
 describe('Edit court use case', () => {
 	beforeEach(() => {
-		courtsRepository = new InMemoryCourtsRepository();
 		courtImagesRepository = new InMemoryCourtImagesRepository();
+		imagesRepository = new InMemoryImagesRepository();
+		courtsRepository = new InMemoryCourtsRepository(courtImagesRepository, imagesRepository);
 
 		sut = new EditCourtUseCase(courtsRepository, courtImagesRepository);
 	});

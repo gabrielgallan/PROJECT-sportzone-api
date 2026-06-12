@@ -9,10 +9,12 @@ import { InMemoryBookingsRepository } from 'test/unit/repositories/in-memory-boo
 import { InMemoryCourtImagesRepository } from 'test/unit/repositories/in-memory-court-images-repository';
 import { InMemoryCourtsRepository } from 'test/unit/repositories/in-memory-courts-repository';
 import { InMemoryCustomersRepository } from 'test/unit/repositories/in-memory-customers-repository';
+import { InMemoryImagesRepository } from 'test/unit/repositories/in-memory-images-repository';
 
 let courtsRepository: InMemoryCourtsRepository;
 let bookingsRepository: InMemoryBookingsRepository;
 let courtImagesRepository: InMemoryCourtImagesRepository;
+let imagesRepository: InMemoryImagesRepository;
 let customersRepository: InMemoryCustomersRepository;
 
 let sut: ListOrganizationBookingsUseCase;
@@ -21,7 +23,8 @@ describe('List organization bookings use case', () => {
 	beforeEach(() => {
 		courtImagesRepository = new InMemoryCourtImagesRepository();
 		customersRepository = new InMemoryCustomersRepository();
-		courtsRepository = new InMemoryCourtsRepository(courtImagesRepository);
+		imagesRepository = new InMemoryImagesRepository();
+		courtsRepository = new InMemoryCourtsRepository(courtImagesRepository, imagesRepository);
 		bookingsRepository = new InMemoryBookingsRepository(courtsRepository, customersRepository);
 
 		sut = new ListOrganizationBookingsUseCase(bookingsRepository);

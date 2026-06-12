@@ -1,6 +1,6 @@
 import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { type Either, left, right } from '@/core/types/either';
-import type { Court } from '../../enterprise/entities/court';
+import type { CourtDetails } from '../../enterprise/entities/value-objects/court-details';
 import type { CourtsRepository } from '../repositories/courts-repository';
 
 interface GetCourtDetailsUseCaseRequest {
@@ -10,7 +10,7 @@ interface GetCourtDetailsUseCaseRequest {
 type GetCourtDetailsUseCaseResponse = Either<
 	ResourceNotFoundError,
 	{
-		court: Court;
+		court: CourtDetails;
 	}
 >;
 
@@ -20,7 +20,7 @@ export class GetCourtDetailsUseCase {
 	async execute({
 		courtId,
 	}: GetCourtDetailsUseCaseRequest): Promise<GetCourtDetailsUseCaseResponse> {
-		const court = await this.courtsRepository.findById(courtId);
+		const court = await this.courtsRepository.findByIdWithDetails(courtId);
 
 		if (!court) {
 			return left(new ResourceNotFoundError());

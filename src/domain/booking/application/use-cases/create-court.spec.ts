@@ -1,14 +1,20 @@
+import { InMemoryCourtImagesRepository } from 'test/unit/repositories/in-memory-court-images-repository';
 import { InMemoryCourtsRepository } from 'test/unit/repositories/in-memory-courts-repository';
+import { InMemoryImagesRepository } from 'test/unit/repositories/in-memory-images-repository';
 import { CourtImage } from '../../enterprise/entities/court-image';
 import { CreateCourtUseCase } from './create-court';
 
 let sut: CreateCourtUseCase;
 
 let courtsRepository: InMemoryCourtsRepository;
+let courtImagesRepository: InMemoryCourtImagesRepository;
+let imagesRepository: InMemoryImagesRepository
 
 describe('Create court use case', () => {
 	beforeEach(() => {
-		courtsRepository = new InMemoryCourtsRepository();
+		courtImagesRepository = new InMemoryCourtImagesRepository();
+		imagesRepository = new InMemoryImagesRepository();
+		courtsRepository = new InMemoryCourtsRepository(courtImagesRepository, imagesRepository);
 
 		sut = new CreateCourtUseCase(courtsRepository);
 	});

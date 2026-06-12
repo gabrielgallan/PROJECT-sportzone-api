@@ -1,10 +1,12 @@
 import type { PaginationInput } from '@/core/types/pagination';
 import type { BookingsRepository } from '@/domain/booking/application/repositories/bookings-repository';
 import type { Booking } from '@/domain/booking/enterprise/entities/booking';
+import type { Image } from '@/domain/booking/enterprise/entities/image';
 import { BookingWithCourt } from '@/domain/booking/enterprise/entities/value-objects/booking-with-court';
 import { OrganizationBooking } from '@/domain/booking/enterprise/entities/value-objects/organization-booking';
 import type { InMemoryCourtsRepository } from './in-memory-courts-repository';
 import type { InMemoryCustomersRepository } from './in-memory-customers-repository';
+import type { InMemoryImagesRepository } from './in-memory-images-repository';
 
 export class InMemoryBookingsRepository implements BookingsRepository {
 	public items: Booking[] = [];
@@ -12,6 +14,7 @@ export class InMemoryBookingsRepository implements BookingsRepository {
 	constructor(
 		private courtsRepository: InMemoryCourtsRepository,
 		private customersRepository: InMemoryCustomersRepository,
+		private imagesRepository: InMemoryImagesRepository
 	) {}
 
 	async create(booking: Booking) {
@@ -29,10 +32,17 @@ export class InMemoryBookingsRepository implements BookingsRepository {
 
 		if (!booking) return null;
 
-		const court = this.courtsRepository.items.find((court) => court.id.equals(booking.courtId));
+		const court = await this.courtsRepository.findById(booking.courtId.toString())
 
 		if (!court) {
 			throw new Error(`Court ID ${booking.courtId.toString()} does not exists!`);
+		}
+
+		let coverImage: Image | undefined
+
+		if (court.coverImage) {
+			coverImage = this.imagesRepository.items.find(image => image.id.equals(court.coverImage.imageId))
+			
 		}
 
 		return BookingWithCourt.create({
@@ -41,7 +51,7 @@ export class InMemoryBookingsRepository implements BookingsRepository {
 				id: court.id.toString(),
 				name: court.name,
 				address: court.address,
-				coverImage: court.coverImage,
+				coverImage: coverImage ?? null,
 			},
 		});
 	}

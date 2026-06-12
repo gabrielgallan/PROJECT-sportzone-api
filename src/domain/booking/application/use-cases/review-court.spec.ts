@@ -1,6 +1,7 @@
 import { InMemoryCourtImagesRepository } from 'test/unit/repositories/in-memory-court-images-repository';
 import { InMemoryReviewsRepository } from 'test/unit/repositories/in-memory-court-reviews-repository';
 import { InMemoryCourtsRepository } from 'test/unit/repositories/in-memory-courts-repository';
+import { InMemoryImagesRepository } from 'test/unit/repositories/in-memory-images-repository';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { Cash } from '@/core/shared/value-objects/cash';
@@ -9,13 +10,17 @@ import { CourtImagesList } from '../../enterprise/entities/court-images-list';
 import { ReviewCourtUseCase } from './review-court';
 
 let courtsRepository: InMemoryCourtsRepository;
+let courtImagesRepository: InMemoryCourtImagesRepository;
+let imagesRepository: InMemoryImagesRepository;
 let reviewsRepository: InMemoryReviewsRepository;
 
 let sut: ReviewCourtUseCase;
 
 describe('Review court use case', () => {
 	beforeEach(() => {
-		courtsRepository = new InMemoryCourtsRepository(new InMemoryCourtImagesRepository());
+		courtImagesRepository = new InMemoryCourtImagesRepository();
+		imagesRepository = new InMemoryImagesRepository();
+		courtsRepository = new InMemoryCourtsRepository(courtImagesRepository, imagesRepository);
 		reviewsRepository = new InMemoryReviewsRepository();
 
 		sut = new ReviewCourtUseCase(courtsRepository, reviewsRepository);

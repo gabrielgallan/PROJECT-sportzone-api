@@ -1,21 +1,24 @@
+import { InMemoryCourtImagesRepository } from 'test/unit/repositories/in-memory-court-images-repository';
+import { InMemoryCourtsRepository } from 'test/unit/repositories/in-memory-courts-repository';
+import { InMemoryImagesRepository } from 'test/unit/repositories/in-memory-images-repository';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { Cash } from '@/core/shared/value-objects/cash';
 import { Court } from '../../enterprise/entities/court';
 import { CourtImagesList } from '../../enterprise/entities/court-images-list';
 import { GetCourtDetailsUseCase } from './get-court-details';
-import { InMemoryCourtImagesRepository } from 'test/unit/repositories/in-memory-court-images-repository';
-import { InMemoryCourtsRepository } from 'test/unit/repositories/in-memory-courts-repository';
 
 let courtsRepository: InMemoryCourtsRepository;
 let courtImagesRepository: InMemoryCourtImagesRepository;
+let imagesRepository: InMemoryImagesRepository;
 
 let sut: GetCourtDetailsUseCase;
 
 describe('Get court details use case', () => {
 	beforeEach(() => {
 		courtImagesRepository = new InMemoryCourtImagesRepository();
-		courtsRepository = new InMemoryCourtsRepository(courtImagesRepository);
+		imagesRepository = new InMemoryImagesRepository();
+		courtsRepository = new InMemoryCourtsRepository(courtImagesRepository, imagesRepository);
 
 		sut = new GetCourtDetailsUseCase(courtsRepository);
 	});
@@ -47,7 +50,7 @@ describe('Get court details use case', () => {
 		expect(result.isRight()).toBe(true);
 
 		if (result.isRight()) {
-			expect(result.value.court.id.toString()).toBe('court-1');
+			expect(result.value.court.courtId).toBe('court-1');
 			expect(result.value.court.name).toBe('Court 1');
 			expect(result.value.court.description).toBe('Indoor court');
 			expect(result.value.court.rating).toBe(4.5);

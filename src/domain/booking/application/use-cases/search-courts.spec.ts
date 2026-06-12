@@ -1,20 +1,23 @@
+import { InMemoryCourtImagesRepository } from 'test/unit/repositories/in-memory-court-images-repository';
+import { InMemoryCourtsRepository } from 'test/unit/repositories/in-memory-courts-repository';
+import { InMemoryImagesRepository } from 'test/unit/repositories/in-memory-images-repository';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { Cash } from '@/core/shared/value-objects/cash';
 import { Court } from '../../enterprise/entities/court';
 import { CourtImagesList } from '../../enterprise/entities/court-images-list';
 import { SearchCourtsUseCase } from './search-courts';
-import { InMemoryCourtImagesRepository } from 'test/unit/repositories/in-memory-court-images-repository';
-import { InMemoryCourtsRepository } from 'test/unit/repositories/in-memory-courts-repository';
 
 let courtsRepository: InMemoryCourtsRepository;
 let courtImagesRepository: InMemoryCourtImagesRepository;
+let imagesRepository: InMemoryImagesRepository;
 
 let sut: SearchCourtsUseCase;
 
 describe('Search courts use case', () => {
 	beforeEach(() => {
 		courtImagesRepository = new InMemoryCourtImagesRepository();
-		courtsRepository = new InMemoryCourtsRepository(courtImagesRepository);
+		imagesRepository = new InMemoryImagesRepository();
+		courtsRepository = new InMemoryCourtsRepository(courtImagesRepository, imagesRepository);
 
 		sut = new SearchCourtsUseCase(courtsRepository);
 	});

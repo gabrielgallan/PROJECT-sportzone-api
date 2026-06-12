@@ -58,3 +58,8 @@
 * [x] It should be able to list organization bookings
 * [x] It should be able to create courts
 * [x] It should be able to edit courts
+
+### To Fix
+
+* [ ] Test WatchedList pattern in use-cases (create, edit)
+* [ ] Test entities relations in get-booking-details and list-user-bookings

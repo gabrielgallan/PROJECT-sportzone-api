@@ -8,15 +8,20 @@ import { Court } from '../../enterprise/entities/court';
 import { CourtImagesList } from '../../enterprise/entities/court-images-list';
 import { Review } from '../../enterprise/entities/review';
 import { ListCourtReviewsUseCase } from './list-court-reviews';
+import { InMemoryImagesRepository } from 'test/unit/repositories/in-memory-images-repository';
 
-let courtsRepository: InMemoryCourtsRepository;
 let reviewsRepository: InMemoryReviewsRepository;
+let courtsRepository: InMemoryCourtsRepository;
+let courtImagesRepository: InMemoryCourtImagesRepository;
+let imagesRepository: InMemoryImagesRepository;
 
 let sut: ListCourtReviewsUseCase;
 
 describe('List court reviews use case', () => {
 	beforeEach(() => {
-		courtsRepository = new InMemoryCourtsRepository(new InMemoryCourtImagesRepository());
+		courtImagesRepository = new InMemoryCourtImagesRepository();
+		imagesRepository = new InMemoryImagesRepository();
+		courtsRepository = new InMemoryCourtsRepository(courtImagesRepository, imagesRepository);
 		reviewsRepository = new InMemoryReviewsRepository();
 
 		sut = new ListCourtReviewsUseCase(courtsRepository, reviewsRepository);

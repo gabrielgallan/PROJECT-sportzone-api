@@ -5,16 +5,19 @@ import { CourtImagesList } from '../../enterprise/entities/court-images-list';
 import { ListOrganizationCourtsUseCase } from './list-organization-courts';
 import { InMemoryCourtImagesRepository } from 'test/unit/repositories/in-memory-court-images-repository';
 import { InMemoryCourtsRepository } from 'test/unit/repositories/in-memory-courts-repository';
+import { InMemoryImagesRepository } from 'test/unit/repositories/in-memory-images-repository';
 
 let courtsRepository: InMemoryCourtsRepository;
 let courtImagesRepository: InMemoryCourtImagesRepository;
+let imagesRepository: InMemoryImagesRepository;
 
 let sut: ListOrganizationCourtsUseCase;
 
 describe('List organization courts use case', () => {
 	beforeEach(() => {
 		courtImagesRepository = new InMemoryCourtImagesRepository();
-		courtsRepository = new InMemoryCourtsRepository(courtImagesRepository);
+		imagesRepository = new InMemoryImagesRepository();
+		courtsRepository = new InMemoryCourtsRepository(courtImagesRepository, imagesRepository);
 
 		sut = new ListOrganizationCourtsUseCase(courtsRepository);
 	});

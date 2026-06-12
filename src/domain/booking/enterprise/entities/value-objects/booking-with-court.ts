@@ -8,7 +8,7 @@ interface BookingWithCourtProps {
 		id: string;
 		name: string;
 		address: string;
-		coverImage: Image;
+		coverImage: Image | null;
 	};
 }
 
