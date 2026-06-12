@@ -1,6 +1,6 @@
 import { ValueObject } from '@/core/entities/value-object';
 import type { Booking } from '../booking';
-import type { CourtImage } from '../court-image';
+import type { Image } from '../image';
 
 interface BookingWithCourtProps {
 	booking: Booking;
@@ -8,7 +8,7 @@ interface BookingWithCourtProps {
 		id: string;
 		name: string;
 		address: string;
-		coverImage: CourtImage | null;
+		coverImage: Image;
 	};
 }
 

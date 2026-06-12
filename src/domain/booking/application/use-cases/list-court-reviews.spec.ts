@@ -1,24 +1,25 @@
+import { InMemoryCourtImagesRepository } from 'test/unit/repositories/in-memory-court-images-repository';
+import { InMemoryReviewsRepository } from 'test/unit/repositories/in-memory-court-reviews-repository';
+import { InMemoryCourtsRepository } from 'test/unit/repositories/in-memory-courts-repository';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { Cash } from '@/core/shared/value-objects/cash';
 import { Court } from '../../enterprise/entities/court';
 import { CourtImagesList } from '../../enterprise/entities/court-images-list';
-import { CourtReview } from '../../enterprise/entities/court-review';
+import { Review } from '../../enterprise/entities/review';
 import { ListCourtReviewsUseCase } from './list-court-reviews';
-import { InMemoryCourtReviewsRepository } from 'test/unit/repositories/in-memory-court-reviews-repository';
-import { InMemoryCourtsRepository } from 'test/unit/repositories/in-memory-courts-repository';
 
 let courtsRepository: InMemoryCourtsRepository;
-let courtReviewsRepository: InMemoryCourtReviewsRepository;
+let reviewsRepository: InMemoryReviewsRepository;
 
 let sut: ListCourtReviewsUseCase;
 
 describe('List court reviews use case', () => {
 	beforeEach(() => {
-		courtsRepository = new InMemoryCourtsRepository();
-		courtReviewsRepository = new InMemoryCourtReviewsRepository();
+		courtsRepository = new InMemoryCourtsRepository(new InMemoryCourtImagesRepository());
+		reviewsRepository = new InMemoryReviewsRepository();
 
-		sut = new ListCourtReviewsUseCase(courtsRepository, courtReviewsRepository);
+		sut = new ListCourtReviewsUseCase(courtsRepository, reviewsRepository);
 	});
 
 	it('should be able to list court reviews', async () => {
@@ -38,8 +39,8 @@ describe('List court reviews use case', () => {
 			),
 		);
 
-		await courtReviewsRepository.create(
-			CourtReview.create({
+		await reviewsRepository.create(
+			Review.create({
 				courtId: new UniqueEntityID('court-1'),
 				authorId: new UniqueEntityID('user-1'),
 				comment: 'Great court',
@@ -47,8 +48,8 @@ describe('List court reviews use case', () => {
 			}),
 		);
 
-		await courtReviewsRepository.create(
-			CourtReview.create({
+		await reviewsRepository.create(
+			Review.create({
 				courtId: new UniqueEntityID('court-1'),
 				authorId: new UniqueEntityID('user-2'),
 				comment: 'Nice place',
@@ -56,8 +57,8 @@ describe('List court reviews use case', () => {
 			}),
 		);
 
-		await courtReviewsRepository.create(
-			CourtReview.create({
+		await reviewsRepository.create(
+			Review.create({
 				courtId: new UniqueEntityID('court-2'),
 				authorId: new UniqueEntityID('user-3'),
 				comment: 'Another court',

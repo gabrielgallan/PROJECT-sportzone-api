@@ -1,25 +1,25 @@
 import type { PaginationInput } from '@/core/types/pagination';
-import type { CourtReviewsRepository } from '@/domain/booking/application/repositories/court-reviews-repository';
-import type { CourtReview } from '@/domain/booking/enterprise/entities/court-review';
+import type { ReviewsRepository } from '@/domain/booking/application/repositories/reviews-repository';
+import type { Review } from '@/domain/booking/enterprise/entities/review';
 
-export class InMemoryCourtReviewsRepository implements CourtReviewsRepository {
-	public items: CourtReview[] = [];
+export class InMemoryReviewsRepository implements ReviewsRepository {
+	public items: Review[] = [];
 
-	async create(courtReview: CourtReview) {
-		this.items.push(courtReview);
+	async create(review: Review) {
+		this.items.push(review);
 	}
 
 	async listByCourtId(courtId: string, { page, limit }: PaginationInput) {
-		const courtReviews = this.items.filter((item) => item.courtId.toString() === courtId);
+		const reviews = this.items.filter((item) => item.courtId.toString() === courtId);
 
-		const paginated = courtReviews.slice((page - 1) * limit, page * limit);
+		const paginated = reviews.slice((page - 1) * limit, page * limit);
 
 		return {
 			data: paginated,
 			meta: {
 				page,
 				limit,
-				total: courtReviews.length,
+				total: reviews.length,
 			},
 		};
 	}

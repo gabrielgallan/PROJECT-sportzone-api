@@ -1,7 +1,7 @@
 import type { Prisma } from 'generated/prisma/client';
 import { OrganizationWithRole } from '@/domain/identity/enterprise/entities/value-objects/organization-with-role';
+import { PrismaRoleMapper } from './enums/prisma-role-mapper';
 import { PrismaOrganizationMapper } from './prisma-organization-mapper';
-import { PrismaRoleMapper } from './prisma-role-mapper';
 
 type PrismaOrganizationWithRole = Prisma.MemberGetPayload<{
 	select: {

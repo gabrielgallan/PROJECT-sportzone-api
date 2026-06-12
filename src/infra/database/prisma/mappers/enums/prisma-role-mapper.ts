@@ -1,17 +1,17 @@
 import type { Role as PrismaRole } from 'generated/prisma/enums';
 import type { MemberRole as DomainRole } from '@/domain/identity/enterprise/entities/member';
 
-const toDomain: Record<PrismaRole, DomainRole> = {
-	OWNER: 'OWNER',
-	MEMBER: 'MEMBER',
-	BILLING: 'BILLING'
-}
+const toDomain = {
+  OWNER: 'OWNER',
+  MEMBER: 'MEMBER',
+  BILLING: 'BILLING',
+} as const satisfies Record<PrismaRole, DomainRole>
 
-const toPrisma: Record<DomainRole, PrismaRole> = {
-	OWNER: 'OWNER',
-	MEMBER: 'MEMBER',
-	BILLING: 'BILLING'
-}
+const toPrisma = {
+  OWNER: 'OWNER',
+  MEMBER: 'MEMBER',
+  BILLING: 'BILLING',
+} as const satisfies Record<DomainRole, PrismaRole>
 
 export class PrismaRoleMapper {
 	static toDomain(role: PrismaRole): DomainRole {

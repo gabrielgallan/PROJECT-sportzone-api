@@ -1,7 +1,7 @@
 import type { Account as PrismaAccount } from 'generated/prisma/client';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { Account } from '@/domain/identity/enterprise/entities/account';
-import { PrismaAccountProviderMapper } from './prisma-account-provider-mapper';
+import { PrismaAccountProviderMapper } from './enums/prisma-account-provider-mapper';
 
 export class PrismaAccountMapper {
 	static toDomain(raw: PrismaAccount): Account {

@@ -1,9 +1,9 @@
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { type Either, left, right } from '@/core/types/either';
-import { CourtReview } from '../../enterprise/entities/court-review';
-import type { CourtReviewsRepository } from '../repositories/court-reviews-repository';
+import { Review } from '../../enterprise/entities/review';
 import type { CourtsRepository } from '../repositories/courts-repository';
+import type { ReviewsRepository } from '../repositories/reviews-repository';
 
 interface ReviewCourtUseCaseRequest {
 	userId: string;
@@ -15,14 +15,13 @@ interface ReviewCourtUseCaseRequest {
 type ReviewCourtUseCaseResponse = Either<
 	ResourceNotFoundError,
 	{
-		courtReview: CourtReview;
+		review: Review;
 	}
 >;
 
 export class ReviewCourtUseCase {
 	constructor(
-		private courtsRepository: CourtsRepository,
-		private courtReviewsRepository: CourtReviewsRepository,
+		private courtsRepository: CourtsRepository, private reviewsRepository: ReviewsRepository,
 	) {}
 
 	async execute({
@@ -39,21 +38,21 @@ export class ReviewCourtUseCase {
 
 		const ratingRounded = Math.min(Math.max(Math.round(rating), 1), 5);
 
-		const courtReview = CourtReview.create({
+		const review = Review.create({
 			courtId: court.id,
 			authorId: new UniqueEntityID(userId),
 			comment,
 			rating: ratingRounded,
 		});
 
-		await this.courtReviewsRepository.create(courtReview);
+		await this.reviewsRepository.create(review);
 
 		court.addRating(ratingRounded);
 
 		await this.courtsRepository.save(court);
 
 		return right({
-			courtReview,
+			review,
 		});
 	}
 }

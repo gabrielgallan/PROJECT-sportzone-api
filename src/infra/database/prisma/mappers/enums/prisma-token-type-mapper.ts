@@ -1,13 +1,13 @@
 import type { TokenType as PrismaTokenType } from 'generated/prisma/client';
 import type { TokenType } from '@/domain/identity/enterprise/entities/token';
 
-const toDomain: Record<PrismaTokenType, TokenType> = {
+const toDomain = {
 	PASSWORD_RECOVER: 'PASSWORD_RECOVER'
-}
+} as const satisfies Record<PrismaTokenType, TokenType>
 
-const toPrisma: Record<TokenType, PrismaTokenType> = {
+const toPrisma = {
 	PASSWORD_RECOVER: 'PASSWORD_RECOVER'
-}
+} as const satisfies Record<TokenType, PrismaTokenType>
 
 export class PrismaTokenTypeMapper {
 	static toDomain(type: PrismaTokenType): TokenType {

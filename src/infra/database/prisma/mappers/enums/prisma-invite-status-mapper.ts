@@ -1,17 +1,17 @@
 import type { InviteStatus as PrismaInviteStatus } from 'generated/prisma/enums';
 import type { InviteStatus } from '@/domain/identity/enterprise/entities/invite';
 
-const toDomain: Record<PrismaInviteStatus, InviteStatus> = {
+const toDomain = {
 	PENDING: 'PENDING',
 	ACCEPTED: 'ACCEPTED',
 	DECLINED: 'DECLINED'
-}
+} as const satisfies Record<PrismaInviteStatus, InviteStatus>
 
-const toPrisma: Record<InviteStatus, PrismaInviteStatus> = {
+const toPrisma = {
 	PENDING: 'PENDING',
 	ACCEPTED: 'ACCEPTED',
 	DECLINED: 'DECLINED'
-}
+} as const satisfies Record<InviteStatus, PrismaInviteStatus>
 
 export class PrismaInviteStatusMapper {
 	static toDomain(status: PrismaInviteStatus): InviteStatus {

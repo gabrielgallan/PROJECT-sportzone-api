@@ -1,7 +1,7 @@
 import type { Prisma, Token as PrismaToken } from 'generated/prisma/client';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { Token } from '@/domain/identity/enterprise/entities/token';
-import { PrismaTokenTypeMapper } from './prisma-token-type-mapper';
+import { PrismaTokenTypeMapper } from './enums/prisma-token-type-mapper';
 
 export class PrismaTokenMapper {
 	static toDomain(raw: PrismaToken): Token {

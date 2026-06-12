@@ -1,6 +1,6 @@
 import type { Prisma } from 'generated/prisma/client';
 import { InviteDetails } from '@/domain/identity/enterprise/entities/value-objects/invite-details';
-import { PrismaRoleMapper } from './prisma-role-mapper';
+import { PrismaRoleMapper } from './enums/prisma-role-mapper';
 
 type PrismaInviteDetails = Prisma.InviteGetPayload<{
 	select: {

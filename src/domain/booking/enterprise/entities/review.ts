@@ -2,7 +2,7 @@ import { Entity } from '@/core/entities/entity';
 import type { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import type { Optional } from '@/core/types/optional';
 
-export interface CourtReviewProps {
+export interface ReviewProps {
 	courtId: UniqueEntityID;
 	authorId: UniqueEntityID;
 	comment: string;
@@ -10,9 +10,9 @@ export interface CourtReviewProps {
 	createdAt: Date;
 }
 
-export class CourtReview extends Entity<CourtReviewProps> {
-	static create(props: Optional<CourtReviewProps, 'createdAt'>, id?: UniqueEntityID) {
-		const courtReview = new CourtReview(
+export class Review extends Entity<ReviewProps> {
+	static create(props: Optional<ReviewProps, 'createdAt'>, id?: UniqueEntityID) {
+		const review = new Review(
 			{
 				...props,
 				createdAt: props.createdAt ?? new Date(),
@@ -20,7 +20,7 @@ export class CourtReview extends Entity<CourtReviewProps> {
 			id,
 		);
 
-		return courtReview;
+		return review;
 	}
 
 	get courtId() {

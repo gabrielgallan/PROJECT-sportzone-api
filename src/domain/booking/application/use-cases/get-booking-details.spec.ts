@@ -1,3 +1,7 @@
+import { InMemoryBookingsRepository } from 'test/unit/repositories/in-memory-bookings-repository';
+import { InMemoryCourtImagesRepository } from 'test/unit/repositories/in-memory-court-images-repository';
+import { InMemoryCourtsRepository } from 'test/unit/repositories/in-memory-courts-repository';
+import { InMemoryCustomersRepository } from 'test/unit/repositories/in-memory-customers-repository';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { Cash } from '@/core/shared/value-objects/cash';
@@ -5,9 +9,6 @@ import { Booking } from '../../enterprise/entities/booking';
 import { Court } from '../../enterprise/entities/court';
 import { CourtImagesList } from '../../enterprise/entities/court-images-list';
 import { GetBookingDetailsUseCase } from './get-booking-details';
-import { InMemoryBookingsRepository } from 'test/unit/repositories/in-memory-bookings-repository';
-import { InMemoryCourtImagesRepository } from 'test/unit/repositories/in-memory-court-images-repository';
-import { InMemoryCourtsRepository } from 'test/unit/repositories/in-memory-courts-repository';
 
 let courtsRepository: InMemoryCourtsRepository;
 let bookingsRepository: InMemoryBookingsRepository;
@@ -19,7 +20,7 @@ describe('Get booking details use case', () => {
 	beforeEach(() => {
 		courtImagesRepository = new InMemoryCourtImagesRepository();
 		courtsRepository = new InMemoryCourtsRepository(courtImagesRepository);
-		bookingsRepository = new InMemoryBookingsRepository(courtsRepository);
+		bookingsRepository = new InMemoryBookingsRepository(courtsRepository, new InMemoryCustomersRepository);
 
 		sut = new GetBookingDetailsUseCase(bookingsRepository);
 	});

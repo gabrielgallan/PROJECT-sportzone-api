@@ -1,8 +1,8 @@
 import type { Invite as PrismaInvite } from 'generated/prisma/client';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { Invite } from '@/domain/identity/enterprise/entities/invite';
-import { PrismaInviteStatusMapper } from './prisma-invite-status-mapper';
-import { PrismaRoleMapper } from './prisma-role-mapper';
+import { PrismaRoleMapper } from './enums/prisma-role-mapper';
+import { PrismaInviteStatusMapper } from './enums/prisma-invite-status-mapper';
 
 export class PrismaInviteMapper {
 	static toDomain(raw: PrismaInvite): Invite {

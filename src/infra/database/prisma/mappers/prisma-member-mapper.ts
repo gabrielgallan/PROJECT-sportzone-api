@@ -1,7 +1,7 @@
 import type { Member as PrismaMember } from "generated/prisma/client";
 import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import { Member } from "@/domain/identity/enterprise/entities/member";
-import { PrismaRoleMapper } from "./prisma-role-mapper";
+import { PrismaRoleMapper } from "./enums/prisma-role-mapper";
 
 export class PrismaMemberMapper {
     static toDomain(raw: PrismaMember): Member {

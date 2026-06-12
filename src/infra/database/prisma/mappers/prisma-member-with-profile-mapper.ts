@@ -1,6 +1,6 @@
 import type { Prisma } from 'generated/prisma/client';
 import { MemberWithProfile } from '@/domain/identity/enterprise/entities/value-objects/member-with-profile';
-import { PrismaRoleMapper } from './prisma-role-mapper';
+import { PrismaRoleMapper } from './enums/prisma-role-mapper';
 
 type PrismaMemberWithProfile = Prisma.MemberGetPayload<{
 	select: {

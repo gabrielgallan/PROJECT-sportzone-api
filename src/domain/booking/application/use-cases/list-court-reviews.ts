@@ -1,9 +1,9 @@
 import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { type Either, left, right } from '@/core/types/either';
 import type { PaginatedList, PaginationInput } from '@/core/types/pagination';
-import type { CourtReview } from '../../enterprise/entities/court-review';
-import type { CourtReviewsRepository } from '../repositories/court-reviews-repository';
+import type { Review } from '../../enterprise/entities/review';
 import type { CourtsRepository } from '../repositories/courts-repository';
+import type { ReviewsRepository } from '../repositories/reviews-repository';
 
 interface ListCourtReviewsUseCaseRequest {
 	courtId: string;
@@ -13,14 +13,14 @@ interface ListCourtReviewsUseCaseRequest {
 type ListCourtReviewsUseCaseResponse = Either<
 	ResourceNotFoundError,
 	{
-		reviewsList: PaginatedList<CourtReview[]>;
+		reviewsList: PaginatedList<Review[]>;
 	}
 >;
 
 export class ListCourtReviewsUseCase {
 	constructor(
 		private courtsRepository: CourtsRepository,
-		private courtReviewsRepository: CourtReviewsRepository,
+		private reviewsRepository: ReviewsRepository,
 	) {}
 
 	async execute({
@@ -33,7 +33,7 @@ export class ListCourtReviewsUseCase {
 			return left(new ResourceNotFoundError());
 		}
 
-		const { data, meta } = await this.courtReviewsRepository.listByCourtId(
+		const { data, meta } = await this.reviewsRepository.listByCourtId(
 			court.id.toString(),
 			pagination,
 		);
