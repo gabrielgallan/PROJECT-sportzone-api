@@ -1,5 +1,5 @@
 import type { PaginatedList, PaginationInput } from '@/core/types/pagination';
-import type { Booking } from '../../enterprise/entities/booking';
+import type { Booking, BookingStatus } from '../../enterprise/entities/booking';
 import type { BookingWithCourt } from '../../enterprise/entities/value-objects/booking-with-court';
 import type { OrganizationBooking } from '../../enterprise/entities/value-objects/organization-booking';
 
@@ -15,5 +15,10 @@ export interface BookingsRepository {
 		userId: string,
 		pagination: PaginationInput,
 	): Promise<PaginatedList<BookingWithCourt[]>>;
+	findManyByCourtIdBetweenDates(
+		courtId: string,
+		range: { startsAt: Date; endsAt: Date },
+		statuses: BookingStatus[],
+	): Promise<Booking[]>;
 	save(booking: Booking): Promise<void>;
 }

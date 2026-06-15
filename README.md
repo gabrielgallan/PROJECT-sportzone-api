@@ -37,7 +37,7 @@
 
 * [x] It should be able to search courts (filters: name, address)
 * [x] It should be able to search nearby courts
-* [ ] It should be able to get court availability time slots by date
+* [x] It should be able to get court availability time slots by date
 
 * [ ] It should be able to create a booking
 * [ ] It should be able to cancel a booking
@@ -58,8 +58,3 @@
 * [x] It should be able to list organization bookings
 * [x] It should be able to create courts
 * [x] It should be able to edit courts
-
-### To Fix
-
-* [ ] Test WatchedList pattern in use-cases (create, edit)
-* [ ] Test entities relations in get-booking-details and list-user-bookings

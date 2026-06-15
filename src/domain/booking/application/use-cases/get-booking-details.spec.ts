@@ -8,13 +8,15 @@ import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-e
 import { Cash } from '@/core/shared/value-objects/cash';
 import { Booking } from '../../enterprise/entities/booking';
 import { Court } from '../../enterprise/entities/court';
+import { CourtImage } from '../../enterprise/entities/court-image';
 import { CourtImagesList } from '../../enterprise/entities/court-images-list';
+import { Image } from '../../enterprise/entities/image';
 import { GetBookingDetailsUseCase } from './get-booking-details';
 
 let bookingsRepository: InMemoryBookingsRepository;
 let courtsRepository: InMemoryCourtsRepository;
 let courtImagesRepository: InMemoryCourtImagesRepository;
-let imagesRepository: InMemoryImagesRepository
+let imagesRepository: InMemoryImagesRepository;
 
 let sut: GetBookingDetailsUseCase;
 
@@ -23,18 +25,35 @@ describe('Get booking details use case', () => {
 		courtImagesRepository = new InMemoryCourtImagesRepository();
 		imagesRepository = new InMemoryImagesRepository();
 		courtsRepository = new InMemoryCourtsRepository(courtImagesRepository, imagesRepository);
-		bookingsRepository = new InMemoryBookingsRepository(courtsRepository, new InMemoryCustomersRepository);
+		bookingsRepository = new InMemoryBookingsRepository(
+			courtsRepository,
+			new InMemoryCustomersRepository(),
+			imagesRepository,
+		);
 
 		sut = new GetBookingDetailsUseCase(bookingsRepository);
 	});
 
 	it('should be able to get booking details', async () => {
+		await imagesRepository.create(
+			Image.create(
+				{
+					title: 'Court cover',
+					url: 'https://example.com/cover.jpg',
+				},
+				new UniqueEntityID('image-1'),
+			),
+		);
+
 		await courtsRepository.create(
 			Court.create(
 				{
 					organizationId: new UniqueEntityID('org-1'),
 					name: 'Court 1',
-					coverImage: null,
+					coverImage: CourtImage.create({
+						courtId: new UniqueEntityID('court-1'),
+						imageId: new UniqueEntityID('image-1'),
+					}),
 					address: 'Street 1',
 					latitude: -23.4567,
 					longitude: -46.4567,
@@ -70,6 +89,11 @@ describe('Get booking details use case', () => {
 			expect(result.value.booking.court.id).toBe('court-1');
 			expect(result.value.booking.court.name).toBe('Court 1');
 			expect(result.value.booking.court.address).toBe('Street 1');
+			expect(result.value.booking.court.coverImage?.id.toString()).toBe('image-1');
+			expect(result.value.booking.court.coverImage?.title).toBe('Court cover');
+			expect(result.value.booking.court.coverImage?.url).toBe(
+				'https://example.com/cover.jpg',
+			);
 		}
 	});
 

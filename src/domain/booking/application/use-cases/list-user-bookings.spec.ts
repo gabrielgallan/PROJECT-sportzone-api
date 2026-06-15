@@ -7,7 +7,9 @@ import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { Cash } from '@/core/shared/value-objects/cash';
 import { Booking } from '../../enterprise/entities/booking';
 import { Court } from '../../enterprise/entities/court';
+import { CourtImage } from '../../enterprise/entities/court-image';
 import { CourtImagesList } from '../../enterprise/entities/court-images-list';
+import { Image } from '../../enterprise/entities/image';
 import { ListUserBookingsUseCase } from './list-user-bookings';
 
 let courtsRepository: InMemoryCourtsRepository;
@@ -23,19 +25,42 @@ describe('List user bookings use case', () => {
 		courtImagesRepository = new InMemoryCourtImagesRepository();
 		imagesRepository = new InMemoryImagesRepository();
 		courtsRepository = new InMemoryCourtsRepository(courtImagesRepository, imagesRepository);
-		customersRepository = new InMemoryCustomersRepository()
+		customersRepository = new InMemoryCustomersRepository();
 		bookingsRepository = new InMemoryBookingsRepository(courtsRepository, customersRepository, imagesRepository);
 
 		sut = new ListUserBookingsUseCase(bookingsRepository);
 	});
 
 	it('should be able to list user bookings', async () => {
+		await imagesRepository.create(
+			Image.create(
+				{
+					title: 'Court 1 cover',
+					url: 'https://example.com/court-1-cover.jpg',
+				},
+				new UniqueEntityID('image-1'),
+			),
+		);
+
+		await imagesRepository.create(
+			Image.create(
+				{
+					title: 'Court 2 cover',
+					url: 'https://example.com/court-2-cover.jpg',
+				},
+				new UniqueEntityID('image-2'),
+			),
+		);
+
 		await courtsRepository.create(
 			Court.create(
 				{
 					organizationId: new UniqueEntityID('org-1'),
 					name: 'Court 1',
-					coverImage: null,
+					coverImage: CourtImage.create({
+						courtId: new UniqueEntityID('court-1'),
+						imageId: new UniqueEntityID('image-1'),
+					}),
 					address: 'Street 1',
 					latitude: -23.4567,
 					longitude: -46.4567,
@@ -51,7 +76,10 @@ describe('List user bookings use case', () => {
 				{
 					organizationId: new UniqueEntityID('org-2'),
 					name: 'Court 2',
-					coverImage: null,
+					coverImage: CourtImage.create({
+						courtId: new UniqueEntityID('court-2'),
+						imageId: new UniqueEntityID('image-2'),
+					}),
 					address: 'Street 2',
 					latitude: -23.5567,
 					longitude: -46.5567,
@@ -111,6 +139,18 @@ describe('List user bookings use case', () => {
 			expect(result.value.bookingsList.data.map((item) => item.court.name)).toEqual([
 				'Court 1',
 				'Court 2',
+			]);
+			expect(result.value.bookingsList.data.map((item) => item.court.coverImage?.id.toString())).toEqual([
+				'image-1',
+				'image-2',
+			]);
+			expect(result.value.bookingsList.data.map((item) => item.court.coverImage?.title)).toEqual([
+				'Court 1 cover',
+				'Court 2 cover',
+			]);
+			expect(result.value.bookingsList.data.map((item) => item.court.coverImage?.url)).toEqual([
+				'https://example.com/court-1-cover.jpg',
+				'https://example.com/court-2-cover.jpg',
 			]);
 			expect(result.value.bookingsList.meta).toEqual({
 				page: 1,

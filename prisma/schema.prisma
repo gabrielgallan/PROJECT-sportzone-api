@@ -179,12 +179,27 @@ model Court {
   updatedAt      DateTime?   @updatedAt @map("updated_at")
 
   organization Organization @relation(fields: [organizationId], references: [id])
+  openingHours  CourtOpeningHour[]
   bookings     Booking[]
   reviews      Review[]
   coverImage   Image?       @relation("coverImage", fields: [coverImageId], references: [id])
   images       Image[]
 
   @@map("courts")
+}
+
+model CourtOpeningHour {
+  id              String @id @default(uuid())
+  courtId          String @map("court_id")
+
+  weekDay          Int @map("week_day")
+  opensAtInMinutes Int @map("opens_at_in_minutes")
+  closesAtInMinutes Int @map("closes_at_in_minutes")
+
+  court Court @relation(fields: [courtId], references: [id], onDelete: Cascade)
+
+  @@index([courtId, weekDay])
+  @@map("court_opening_hours")
 }
 
 enum BookingStatus {

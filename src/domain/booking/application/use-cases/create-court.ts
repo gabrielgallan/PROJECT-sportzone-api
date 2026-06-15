@@ -5,6 +5,8 @@ import { type Either, right } from '@/core/types/either';
 import { Court } from '../../enterprise/entities/court';
 import { CourtImage } from '../../enterprise/entities/court-image';
 import { CourtImagesList } from '../../enterprise/entities/court-images-list';
+import { CourtOpeningHour } from '../../enterprise/entities/value-objects/court-opening-hour';
+import type { CourtOpeningHoursRepository } from '../repositories/court-opening-hours-repository';
 import type { CourtsRepository } from '../repositories/courts-repository';
 
 type CreateCourtUseCaseRequest = {
@@ -17,12 +19,18 @@ type CreateCourtUseCaseRequest = {
 	longitude: number;
 	pricePerHour: number;
 	imagesIds: string[];
+	opensAtInMinutes: number;
+	closesAtInMinutes: number;
+	weekDays: number[];
 };
 
 type CreateCourtUseCaseResponse = Either<ResourceNotFoundError, { court: Court }>;
 
 export class CreateCourtUseCase {
-	constructor(private courtsRepository: CourtsRepository) {}
+	constructor(
+		private courtsRepository: CourtsRepository,
+		private courtOpeningHoursRepository: CourtOpeningHoursRepository,
+	) {}
 
 	async execute({
 		organizationId,
@@ -34,6 +42,9 @@ export class CreateCourtUseCase {
 		longitude,
 		pricePerHour,
 		imagesIds,
+		opensAtInMinutes,
+		closesAtInMinutes,
+		weekDays,
 	}: CreateCourtUseCaseRequest): Promise<CreateCourtUseCaseResponse> {
 		const court = Court.create({
 			organizationId: new UniqueEntityID(organizationId),
@@ -62,6 +73,17 @@ export class CreateCourtUseCase {
 		});
 
 		await this.courtsRepository.create(court);
+
+		const openingHours = weekDays.map((weekDay) =>
+			CourtOpeningHour.create({
+				courtId: court.id.toString(),
+				weekDay,
+				opensAtInMinutes,
+				closesAtInMinutes,
+			}),
+		);
+
+		await this.courtOpeningHoursRepository.createMany(openingHours);
 
 		return right({
 			court,

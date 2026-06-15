@@ -1,6 +1,6 @@
 import type { PaginationInput } from '@/core/types/pagination';
 import type { BookingsRepository } from '@/domain/booking/application/repositories/bookings-repository';
-import type { Booking } from '@/domain/booking/enterprise/entities/booking';
+import type { Booking, BookingStatus } from '@/domain/booking/enterprise/entities/booking';
 import type { Image } from '@/domain/booking/enterprise/entities/image';
 import { BookingWithCourt } from '@/domain/booking/enterprise/entities/value-objects/booking-with-court';
 import { OrganizationBooking } from '@/domain/booking/enterprise/entities/value-objects/organization-booking';
@@ -68,13 +68,21 @@ export class InMemoryBookingsRepository implements BookingsRepository {
 				throw new Error(`Court ID ${booking.courtId.toString()} does not exists!`);
 			}
 
+			let coverImage: Image | undefined;
+
+			if (court.coverImage) {
+				coverImage = this.imagesRepository.items.find((image) =>
+					image.id.equals(court.coverImage!.imageId),
+				);
+			}
+
 			return BookingWithCourt.create({
 				booking,
 				court: {
 					id: court.id.toString(),
 					name: court.name,
 					address: court.address,
-					coverImage: court.coverImage,
+					coverImage: coverImage ?? null,
 				},
 			});
 		});
@@ -136,6 +144,21 @@ export class InMemoryBookingsRepository implements BookingsRepository {
 				total: organizationBookings.length,
 			},
 		};
+	}
+
+	async findManyByCourtIdBetweenDates(
+		courtId: string,
+		range: { startsAt: Date; endsAt: Date },
+		statuses?: BookingStatus[],
+	) {
+		return this.items.filter((booking) => {
+			const isSameCourt = booking.courtId.toString() === courtId;
+			const matchesStatus = statuses ? statuses.includes(booking.status) : true;
+			const intersectsRange =
+				booking.startsAt < range.endsAt && booking.endsAt > range.startsAt;
+
+			return isSameCourt && matchesStatus && intersectsRange;
+		});
 	}
 
 	async save(booking: Booking) {

@@ -1,3 +1,8 @@
+import { InMemoryBookingsRepository } from 'test/unit/repositories/in-memory-bookings-repository';
+import { InMemoryCourtImagesRepository } from 'test/unit/repositories/in-memory-court-images-repository';
+import { InMemoryCourtsRepository } from 'test/unit/repositories/in-memory-courts-repository';
+import { InMemoryCustomersRepository } from 'test/unit/repositories/in-memory-customers-repository';
+import { InMemoryImagesRepository } from 'test/unit/repositories/in-memory-images-repository';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { Cash } from '@/core/shared/value-objects/cash';
 import { Booking } from '../../enterprise/entities/booking';
@@ -5,11 +10,6 @@ import { Court } from '../../enterprise/entities/court';
 import { CourtImagesList } from '../../enterprise/entities/court-images-list';
 import { Customer } from '../../enterprise/entities/customer';
 import { ListOrganizationBookingsUseCase } from './list-organization-bookings';
-import { InMemoryBookingsRepository } from 'test/unit/repositories/in-memory-bookings-repository';
-import { InMemoryCourtImagesRepository } from 'test/unit/repositories/in-memory-court-images-repository';
-import { InMemoryCourtsRepository } from 'test/unit/repositories/in-memory-courts-repository';
-import { InMemoryCustomersRepository } from 'test/unit/repositories/in-memory-customers-repository';
-import { InMemoryImagesRepository } from 'test/unit/repositories/in-memory-images-repository';
 
 let courtsRepository: InMemoryCourtsRepository;
 let bookingsRepository: InMemoryBookingsRepository;
@@ -25,7 +25,11 @@ describe('List organization bookings use case', () => {
 		customersRepository = new InMemoryCustomersRepository();
 		imagesRepository = new InMemoryImagesRepository();
 		courtsRepository = new InMemoryCourtsRepository(courtImagesRepository, imagesRepository);
-		bookingsRepository = new InMemoryBookingsRepository(courtsRepository, customersRepository);
+		bookingsRepository = new InMemoryBookingsRepository(
+			courtsRepository,
+			customersRepository,
+			imagesRepository,
+		);
 
 		sut = new ListOrganizationBookingsUseCase(bookingsRepository);
 	});
@@ -136,10 +140,9 @@ describe('List organization bookings use case', () => {
 
 		if (result.isRight()) {
 			expect(result.value.bookingsList.data).toHaveLength(2);
-			expect(result.value.bookingsList.data.map((item) => item.booking.courtId.toString())).toEqual([
-				'court-1',
-				'court-2',
-			]);
+			expect(result.value.bookingsList.data.map((item) => item.booking.courtId.toString())).toEqual(
+				['court-1', 'court-2'],
+			);
 			expect(result.value.bookingsList.data.map((item) => item.court.name)).toEqual([
 				'Court 1',
 				'Court 2',
