@@ -6,14 +6,19 @@ import type {
 	CourtsRepository,
 } from '@/domain/booking/application/repositories/courts-repository';
 import type { Court } from '@/domain/booking/enterprise/entities/court';
+import type { Image } from '@/domain/booking/enterprise/entities/image';
 import { CourtDetails } from '@/domain/booking/enterprise/entities/value-objects/court-details';
+import { CourtWithCover } from '@/domain/booking/enterprise/entities/value-objects/court-with-cover';
 import type { InMemoryCourtImagesRepository } from './in-memory-court-images-repository';
 import type { InMemoryImagesRepository } from './in-memory-images-repository';
 
 export class InMemoryCourtsRepository implements CourtsRepository {
 	public items: Court[] = [];
 
-	constructor(private courtImagesRepository: InMemoryCourtImagesRepository, private imagesRepository: InMemoryImagesRepository) {}
+	constructor(
+		private courtImagesRepository: InMemoryCourtImagesRepository,
+		private imagesRepository: InMemoryImagesRepository,
+	) {}
 
 	async create(court: Court) {
 		this.items.push(court);
@@ -30,23 +35,21 @@ export class InMemoryCourtsRepository implements CourtsRepository {
 	async findByIdWithDetails(id: string) {
 		const court = this.items.find((c) => c.id.toString() === id);
 
-		if (!court) return null
+		if (!court) return null;
 
-		const courtImages = await this.courtImagesRepository.findManyByCourtId(court.id.toString())
+		const courtImages = await this.courtImagesRepository.findManyByCourtId(court.id.toString());
 
-		const images = courtImages.map(courtImage => {
+		const images = courtImages.map((courtImage) => {
 			const image = this.imagesRepository.items.find((image) => {
-				return image.id.equals(courtImage.imageId)
-			})
+				return image.id.equals(courtImage.imageId);
+			});
 
 			if (!image) {
-				throw new Error(
-					`Image with ID "${courtImage.imageId.toString()}" does not exist.`,
-				)
+				throw new Error(`Image with ID "${courtImage.imageId.toString()}" does not exist.`);
 			}
 
-			return image
-		})
+			return image;
+		});
 
 		return CourtDetails.create({
 			courtId: court.id.toString(),
@@ -58,8 +61,8 @@ export class InMemoryCourtsRepository implements CourtsRepository {
 			pricePerHour: court.pricePerHour.toCents(),
 			rating: court.rating,
 			reviewsCount: court.reviewsCount,
-			images: images
-		})
+			images: images,
+		});
 	}
 
 	async list({ page, limit }: PaginationInput, { name, address }: CourtsFilters) {
@@ -81,8 +84,28 @@ export class InMemoryCourtsRepository implements CourtsRepository {
 
 		const paginated = filteredCourts.slice((page - 1) * limit, page * limit);
 
+		const courtsWithCover = paginated.map((court) => {
+			let image: Image | undefined;
+
+			const coverImage = court.coverImage;
+
+			if (coverImage) {
+				image = this.imagesRepository.items.find((image) => image.id.equals(coverImage.imageId));
+			}
+
+			return CourtWithCover.create({
+				courtId: court.id.toString(),
+				name: court.name,
+				description: court.description ?? null,
+				address: court.address,
+				coverImage: image ?? null,
+				pricePerHour: court.pricePerHour.toCents(),
+				rating: court.rating,
+			});
+		});
+
 		return {
-			data: paginated,
+			data: courtsWithCover,
 			meta: {
 				page,
 				limit,
@@ -103,8 +126,28 @@ export class InMemoryCourtsRepository implements CourtsRepository {
 
 		const paginated = nearbyCourts.slice((page - 1) * limit, page * limit);
 
+		const courtsWithCover = paginated.map((court) => {
+			let image: Image | undefined;
+
+			const coverImage = court.coverImage;
+
+			if (coverImage) {
+				image = this.imagesRepository.items.find((image) => image.id.equals(coverImage.imageId));
+			}
+
+			return CourtWithCover.create({
+				courtId: court.id.toString(),
+				name: court.name,
+				description: court.description ?? null,
+				address: court.address,
+				coverImage: image ?? null,
+				pricePerHour: court.pricePerHour.toCents(),
+				rating: court.rating,
+			});
+		});
+
 		return {
-			data: paginated,
+			data: courtsWithCover,
 			meta: {
 				page,
 				limit,
@@ -118,8 +161,28 @@ export class InMemoryCourtsRepository implements CourtsRepository {
 
 		const paginated = orgCourts.slice((page - 1) * limit, page * limit);
 
+		const courtsWithCover = paginated.map((court) => {
+			let image: Image | undefined;
+
+			const coverImage = court.coverImage;
+
+			if (coverImage) {
+				image = this.imagesRepository.items.find((image) => image.id.equals(coverImage.imageId));
+			}
+
+			return CourtWithCover.create({
+				courtId: court.id.toString(),
+				name: court.name,
+				description: court.description ?? null,
+				address: court.address,
+				coverImage: image ?? null,
+				pricePerHour: court.pricePerHour.toCents(),
+				rating: court.rating,
+			});
+		});
+
 		return {
-			data: paginated,
+			data: courtsWithCover,
 			meta: {
 				page,
 				limit,
@@ -133,9 +196,9 @@ export class InMemoryCourtsRepository implements CourtsRepository {
 
 		this.items[courtIndex] = court;
 
-		await this.courtImagesRepository.createMany(court.images.getNewItems())
+		await this.courtImagesRepository.createMany(court.images.getNewItems());
 
-		await this.courtImagesRepository.deleteMany(court.images.getRemovedItems())
+		await this.courtImagesRepository.deleteMany(court.images.getRemovedItems());
 
 		return;
 	}
@@ -143,7 +206,7 @@ export class InMemoryCourtsRepository implements CourtsRepository {
 	async delete(court: Court) {
 		const courtIndex = this.items.findIndex((c) => c.id.toString() === court.id.toString());
 
-		this.items.splice(courtIndex, 1)
+		this.items.splice(courtIndex, 1);
 
 		this.courtImagesRepository.deleteManyByCourtId(court.id.toString());
 

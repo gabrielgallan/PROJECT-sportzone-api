@@ -1,7 +1,7 @@
 import type { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { type Either, right } from '@/core/types/either';
 import type { PaginatedList, PaginationInput } from '@/core/types/pagination';
-import type { Court } from '../../enterprise/entities/court';
+import type { CourtWithCover } from '../../enterprise/entities/value-objects/court-with-cover';
 import type { CourtsRepository } from '../repositories/courts-repository';
 
 interface ListOrganizationCourtsUseCaseRequest {
@@ -12,7 +12,7 @@ interface ListOrganizationCourtsUseCaseRequest {
 type ListOrganizationCourtsUseCaseResponse = Either<
 	ResourceNotFoundError,
 	{
-		courtsList: PaginatedList<Court[]>;
+		courtsList: PaginatedList<CourtWithCover[]>;
 	}
 >;
 

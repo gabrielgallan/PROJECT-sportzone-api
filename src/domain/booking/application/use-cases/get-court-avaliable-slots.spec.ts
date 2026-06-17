@@ -45,7 +45,8 @@ function makeBooking({
 
 describe('Get available time slots by date use case', () => {
 	beforeEach(() => {
-		vi.useRealTimers();
+		vi.useFakeTimers();
+		vi.setSystemTime(new Date('2026-06-14T12:00:00.000Z'));
 
 		const courtImagesRepository = new InMemoryCourtImagesRepository();
 		const imagesRepository = new InMemoryImagesRepository();
@@ -62,6 +63,10 @@ describe('Get available time slots by date use case', () => {
 			bookingsRepository,
 			courtOpeningHoursRepository,
 		);
+	});
+
+	afterEach(() => {
+		vi.useRealTimers();
 	});
 
 	it('should return resource not found when court does not exist', async () => {
@@ -214,7 +219,6 @@ describe('Get available time slots by date use case', () => {
 	});
 
 	it('should mark past slots as unavailable only on the current day', async () => {
-		vi.useFakeTimers();
 		vi.setSystemTime(new Date('2026-06-15T13:30:00.000Z'));
 
 		await courtsRepository.create(makeCourt({}, new UniqueEntityID('court-1')));

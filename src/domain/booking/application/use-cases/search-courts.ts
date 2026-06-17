@@ -1,6 +1,6 @@
 import { type Either, right } from '@/core/types/either';
 import type { PaginatedList, PaginationInput } from '@/core/types/pagination';
-import type { Court } from '../../enterprise/entities/court';
+import type { CourtWithCover } from '../../enterprise/entities/value-objects/court-with-cover';
 import type { CourtsRepository } from '../repositories/courts-repository';
 
 interface SearchCourtsUseCaseRequest {
@@ -12,7 +12,7 @@ interface SearchCourtsUseCaseRequest {
 type SearchCourtsUseCaseResponse = Either<
 	null,
 	{
-		courtsList: PaginatedList<Court[]>;
+		courtsList: PaginatedList<CourtWithCover[]>;
 	}
 >;
 

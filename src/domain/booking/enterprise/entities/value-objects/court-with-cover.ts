@@ -1,42 +1,46 @@
-import { ValueObject } from '@/core/entities/value-object'
-import type { Image } from '../image'
+import { ValueObject } from '@/core/entities/value-object';
+import type { Image } from '../image';
 
 interface CourtWithCoverProps {
-  courtId: string
-  name: string
-  description: string | null
-  coverImage: Image
-  address: string
-  pricePerHour: number
-  rating: number
+	courtId: string;
+	name: string;
+	description: string | null;
+	coverImage: Image | null;
+	address: string;
+	pricePerHour: number;
+	rating: number;
 }
 
 export class CourtWithCover extends ValueObject<CourtWithCoverProps> {
-  get courtId() {
-    return this.props.courtId
-  }
+	get courtId() {
+		return this.props.courtId;
+	}
 
-  get name() {
-    return this.props.name
-  }
+	get name() {
+		return this.props.name;
+	}
 
-  get description() {
-    return this.props.description
-  }
+	get description() {
+		return this.props.description;
+	}
 
-  get address() {
-    return this.props.address
-  }
+	get coverImage() {
+		return this.props.coverImage;
+	}
 
-  get pricePerHour() {
-    return this.props.pricePerHour
-  }
+	get address() {
+		return this.props.address;
+	}
 
-  get rating() {
-    return this.props.rating
-  }
+	get pricePerHour() {
+		return this.props.pricePerHour;
+	}
 
-  static create(props: CourtWithCoverProps) {
-    return new CourtWithCover(props)
-  }
+	get rating() {
+		return this.props.rating;
+	}
+
+	static create(props: CourtWithCoverProps) {
+		return new CourtWithCover(props);
+	}
 }
