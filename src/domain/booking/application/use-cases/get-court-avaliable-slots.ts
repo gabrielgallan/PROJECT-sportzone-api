@@ -87,6 +87,13 @@ export class GetCourtAvaliableSlotsUseCase {
 			const slotEnd = new Date(slotStart.getTime() + SLOT_DURATION_IN_MS);
 
 			const hasBlockingBooking = bookings.some((booking) => {
+				if (
+					booking.status === 'PENDING' &&
+					(!booking.expiresAt || booking.expiresAt <= now.toDate())
+				) {
+					return false;
+				}
+
 				return booking.startsAt < slotEnd && booking.endsAt > slotStart;
 			});
 

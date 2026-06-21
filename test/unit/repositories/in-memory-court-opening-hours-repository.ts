@@ -1,5 +1,5 @@
 import type { CourtOpeningHoursRepository } from '@/domain/booking/application/repositories/court-opening-hours-repository';
-import type { CourtOpeningHour } from '@/domain/booking/enterprise/entities/value-objects/court-opening-hour';
+import type { CourtOpeningHour } from '@/domain/booking/enterprise/entities/court-opening-hour';
 
 export class InMemoryCourtOpeningHoursRepository implements CourtOpeningHoursRepository {
 	public items: CourtOpeningHour[] = [];
@@ -14,9 +14,7 @@ export class InMemoryCourtOpeningHoursRepository implements CourtOpeningHoursRep
 
 	async findByCourtIdAndWeekDay(courtId: string, weekDay: number) {
 		const openingHour =
-			this.items.find(
-				(item) => item.courtId === courtId && item.weekDay === weekDay,
-			) ?? null;
+			this.items.find((item) => item.courtId === courtId && item.weekDay === weekDay) ?? null;
 
 		return openingHour;
 	}

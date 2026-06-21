@@ -4,9 +4,9 @@ import { type Either, left, right } from '@/core/types/either';
 import type { Court } from '../../enterprise/entities/court';
 import { CourtImage } from '../../enterprise/entities/court-image';
 import { CourtImagesList } from '../../enterprise/entities/court-images-list';
-import { CourtOpeningHour } from '../../enterprise/entities/value-objects/court-opening-hour';
-import type { CourtOpeningHoursRepository } from '../repositories/court-opening-hours-repository';
+import { CourtOpeningHour } from '../../enterprise/entities/court-opening-hour';
 import type { CourtImagesRepository } from '../repositories/court-images-repository';
+import type { CourtOpeningHoursRepository } from '../repositories/court-opening-hours-repository';
 import type { CourtsRepository } from '../repositories/courts-repository';
 
 interface EditCourtUseCaseRequest {

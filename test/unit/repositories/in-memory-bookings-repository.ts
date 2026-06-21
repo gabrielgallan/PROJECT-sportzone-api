@@ -14,7 +14,7 @@ export class InMemoryBookingsRepository implements BookingsRepository {
 	constructor(
 		private courtsRepository: InMemoryCourtsRepository,
 		private customersRepository: InMemoryCustomersRepository,
-		private imagesRepository: InMemoryImagesRepository
+		private imagesRepository: InMemoryImagesRepository,
 	) {}
 
 	async create(booking: Booking) {
@@ -32,17 +32,18 @@ export class InMemoryBookingsRepository implements BookingsRepository {
 
 		if (!booking) return null;
 
-		const court = await this.courtsRepository.findById(booking.courtId.toString())
+		const court = await this.courtsRepository.findById(booking.courtId.toString());
 
 		if (!court) {
 			throw new Error(`Court ID ${booking.courtId.toString()} does not exists!`);
 		}
 
-		let coverImage: Image | undefined
+		let coverImage: Image | undefined;
 
 		if (court.coverImage) {
-			coverImage = this.imagesRepository.items.find(image => image.id.equals(court.coverImage.imageId))
-			
+			coverImage = this.imagesRepository.items.find((image) =>
+				image.id.equals(court.coverImage.imageId),
+			);
 		}
 
 		return BookingWithCourt.create({
@@ -72,7 +73,7 @@ export class InMemoryBookingsRepository implements BookingsRepository {
 
 			if (court.coverImage) {
 				coverImage = this.imagesRepository.items.find((image) =>
-					image.id.equals(court.coverImage!.imageId),
+					image.id.equals(court.coverImage?.imageId),
 				);
 			}
 
@@ -154,10 +155,23 @@ export class InMemoryBookingsRepository implements BookingsRepository {
 		return this.items.filter((booking) => {
 			const isSameCourt = booking.courtId.toString() === courtId;
 			const matchesStatus = statuses ? statuses.includes(booking.status) : true;
-			const intersectsRange =
-				booking.startsAt < range.endsAt && booking.endsAt > range.startsAt;
+			const intersectsRange = booking.startsAt < range.endsAt && booking.endsAt > range.startsAt;
 
 			return isSameCourt && matchesStatus && intersectsRange;
+		});
+	}
+
+	async findManyByCustomerIdBetweenDates(
+		customerId: string,
+		range: { startsAt: Date; endsAt: Date },
+		statuses?: BookingStatus[],
+	) {
+		return this.items.filter((booking) => {
+			const isSameCustomer = booking.customerId.toString() === customerId;
+			const matchesStatus = statuses ? statuses.includes(booking.status) : true;
+			const intersectsRange = booking.startsAt < range.endsAt && booking.endsAt > range.startsAt;
+
+			return isSameCustomer && matchesStatus && intersectsRange;
 		});
 	}
 

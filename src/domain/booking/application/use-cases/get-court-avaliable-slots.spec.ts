@@ -9,7 +9,7 @@ import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { Cash } from '@/core/shared/value-objects/cash';
 import { Booking, type BookingStatus } from '../../enterprise/entities/booking';
-import { CourtOpeningHour } from '../../enterprise/entities/value-objects/court-opening-hour';
+import { CourtOpeningHour } from '../../enterprise/entities/court-opening-hour';
 import { GetCourtAvaliableSlotsUseCase } from './get-court-avaliable-slots';
 
 let courtsRepository: InMemoryCourtsRepository;
@@ -23,12 +23,14 @@ function makeBooking({
 	endsAt,
 	status = 'CONFIRMED',
 	courtId = 'court-1',
+	expiresAt,
 }: {
 	id: string;
 	startsAt: string;
 	endsAt: string;
 	status?: BookingStatus;
 	courtId?: string;
+	expiresAt?: string;
 }) {
 	return Booking.create(
 		{
@@ -37,6 +39,7 @@ function makeBooking({
 			startsAt: new Date(startsAt),
 			endsAt: new Date(endsAt),
 			status,
+			expiresAt: expiresAt ? new Date(expiresAt) : null,
 			price: Cash.fromCents(3000),
 		},
 		new UniqueEntityID(id),
@@ -138,6 +141,7 @@ describe('Get available time slots by date use case', () => {
 				startsAt: '2026-06-16T12:00:00.000Z',
 				endsAt: '2026-06-16T13:00:00.000Z',
 				status: 'PENDING',
+				expiresAt: '2026-06-14T13:00:00.000Z',
 			}),
 		);
 		await bookingsRepository.create(

@@ -1,4 +1,5 @@
-import { ValueObject } from '@/core/entities/value-object';
+import { Entity } from '@/core/entities/entity';
+import type { UniqueEntityID } from '@/core/entities/unique-entity-id';
 
 interface CourtOpeningHourProps {
 	courtId: string;
@@ -7,11 +8,11 @@ interface CourtOpeningHourProps {
 	closesAtInMinutes: number;
 }
 
-export class CourtOpeningHour extends ValueObject<CourtOpeningHourProps> {
-	static create(props: CourtOpeningHourProps) {
-		this.validate(props);
+export class CourtOpeningHour extends Entity<CourtOpeningHourProps> {
+	static create(props: CourtOpeningHourProps, id?: UniqueEntityID) {
+		CourtOpeningHour.validate(props);
 
-		return new CourtOpeningHour(props);
+		return new CourtOpeningHour(props, id);
 	}
 
 	get courtId() {
@@ -30,11 +31,7 @@ export class CourtOpeningHour extends ValueObject<CourtOpeningHourProps> {
 		return this.props.closesAtInMinutes;
 	}
 
-	private static validate({
-		weekDay,
-		opensAtInMinutes,
-		closesAtInMinutes,
-	}: CourtOpeningHourProps) {
+	private static validate({ weekDay, opensAtInMinutes, closesAtInMinutes }: CourtOpeningHourProps) {
 		if (weekDay < 0 || weekDay > 6) {
 			throw new Error('Court opening hour week day must be between 0 and 6.');
 		}

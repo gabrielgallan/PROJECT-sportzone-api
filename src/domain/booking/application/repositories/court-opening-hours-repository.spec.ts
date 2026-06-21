@@ -1,5 +1,5 @@
 import { InMemoryCourtOpeningHoursRepository } from 'test/unit/repositories/in-memory-court-opening-hours-repository';
-import { CourtOpeningHour } from '../../enterprise/entities/value-objects/court-opening-hour';
+import { CourtOpeningHour } from '../../enterprise/entities/court-opening-hour';
 
 let repository: InMemoryCourtOpeningHoursRepository;
 

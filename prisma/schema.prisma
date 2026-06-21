@@ -217,6 +217,7 @@ model Booking {
   endsAt     DateTime      @map("ends_at")
   status     BookingStatus @default(PENDING)
   price      Int
+  expiresAt   DateTime  @map("expires_at")
   createdAt  DateTime      @default(now()) @map("created_at")
   updatedAt  DateTime?     @updatedAt @map("updated_at")
   canceledAt DateTime?     @map("canceled_at")

@@ -1,14 +1,14 @@
-import { UniqueEntityID } from '@/core/entities/unique-entity-id';
-import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
-import { Cash } from '@/core/shared/value-objects/cash';
 import { InMemoryCourtImagesRepository } from 'test/unit/repositories/in-memory-court-images-repository';
 import { InMemoryCourtOpeningHoursRepository } from 'test/unit/repositories/in-memory-court-opening-hours-repository';
 import { InMemoryCourtsRepository } from 'test/unit/repositories/in-memory-courts-repository';
 import { InMemoryImagesRepository } from 'test/unit/repositories/in-memory-images-repository';
+import { UniqueEntityID } from '@/core/entities/unique-entity-id';
+import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
+import { Cash } from '@/core/shared/value-objects/cash';
 import { Court } from '../../enterprise/entities/court';
 import { CourtImage } from '../../enterprise/entities/court-image';
 import { CourtImagesList } from '../../enterprise/entities/court-images-list';
-import { CourtOpeningHour } from '../../enterprise/entities/value-objects/court-opening-hour';
+import { CourtOpeningHour } from '../../enterprise/entities/court-opening-hour';
 import { EditCourtUseCase } from './edit-court';
 
 let courtsRepository: InMemoryCourtsRepository;

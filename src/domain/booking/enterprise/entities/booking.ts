@@ -12,18 +12,24 @@ export interface BookingProps {
 	endsAt: Date;
 	status: BookingStatus;
 	price: Cash;
+	expiresAt: Date;
 	createdAt: Date;
 	updatedAt?: Date | null;
 	cancelledAt?: Date | null;
 }
 
 export class Booking extends Entity<BookingProps> {
-	static create(props: Optional<BookingProps, 'createdAt' | 'status'>, id?: UniqueEntityID) {
+	static create(
+		props: Optional<BookingProps, 'createdAt' | 'status' | 'expiresAt'>,
+		id?: UniqueEntityID,
+	) {
+		const createdAt = props.createdAt ?? new Date();
 		const booking = new Booking(
 			{
 				...props,
 				status: props.status ?? 'PENDING',
-				createdAt: props.createdAt ?? new Date(),
+				createdAt,
+				expiresAt: props.expiresAt ?? new Date(createdAt.getTime() + 15 * 60 * 1000),
 				updatedAt: props.updatedAt ?? null,
 				cancelledAt: props.cancelledAt ?? null,
 			},
@@ -57,6 +63,10 @@ export class Booking extends Entity<BookingProps> {
 
 	get price() {
 		return this.props.price;
+	}
+
+	get expiresAt() {
+		return this.props.expiresAt;
 	}
 
 	get createdAt() {

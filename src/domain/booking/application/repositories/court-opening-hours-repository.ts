@@ -1,4 +1,4 @@
-import type { CourtOpeningHour } from '../../enterprise/entities/value-objects/court-opening-hour';
+import type { CourtOpeningHour } from '../../enterprise/entities/court-opening-hour';
 
 export interface CourtOpeningHoursRepository {
 	createMany(openingHours: CourtOpeningHour[]): Promise<void>;

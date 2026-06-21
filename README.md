@@ -39,7 +39,7 @@
 * [x] It should be able to search nearby courts
 * [x] It should be able to get court availability time slots by date
 
-* [ ] It should be able to create a booking
+* [x] It should be able to create a booking
 * [ ] It should be able to cancel a booking
 * [ ] It should be able to complete a booking
 * [ ] It should be able to pay and confirm a booking

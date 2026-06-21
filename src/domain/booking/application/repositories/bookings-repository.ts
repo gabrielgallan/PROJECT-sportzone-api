@@ -20,5 +20,10 @@ export interface BookingsRepository {
 		range: { startsAt: Date; endsAt: Date },
 		statuses: BookingStatus[],
 	): Promise<Booking[]>;
+	findManyByCustomerIdBetweenDates(
+		customerId: string,
+		range: { startsAt: Date; endsAt: Date },
+		statuses: BookingStatus[],
+	): Promise<Booking[]>;
 	save(booking: Booking): Promise<void>;
 }
