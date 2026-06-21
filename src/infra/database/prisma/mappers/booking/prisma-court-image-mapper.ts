@@ -18,6 +18,16 @@ export class PrismaCourtImageMapper {
 	}
 
 	static toPrismaUpdateMany(images: CourtImage[]): Prisma.ImageUpdateManyArgs {
+		if (images.length === 0) {
+			throw new Error('Cannot map an empty court image collection.');
+		}
+
+		const courtId = images[0].courtId.toString();
+
+		if (images.some((image) => image.courtId.toString() !== courtId)) {
+			throw new Error('All images must belong to the same court.');
+		}
+
 		const imagesIds = images.map((image) => {
 			return image.imageId.toString();
 		});
@@ -29,7 +39,7 @@ export class PrismaCourtImageMapper {
 				},
 			},
 			data: {
-				courtId: images[0].courtId.toString(),
+				courtId,
 			},
 		};
 	}

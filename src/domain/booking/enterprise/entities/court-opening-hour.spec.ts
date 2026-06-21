@@ -1,4 +1,4 @@
-import { CourtOpeningHour } from '../court-opening-hour';
+import { CourtOpeningHour } from './court-opening-hour';
 
 describe('Court opening hour value object', () => {
 	it('should create a valid court opening hour', () => {

@@ -8,7 +8,7 @@ type PrismaCourtDetails = Prisma.CourtGetPayload<{
 	};
 }>;
 
-export class PrismaCourtWithCoverMapper {
+export class PrismaCourtDetailsMapper {
 	static toDomain(raw: PrismaCourtDetails): CourtDetails {
 		return CourtDetails.create({
 			courtId: raw.id,
