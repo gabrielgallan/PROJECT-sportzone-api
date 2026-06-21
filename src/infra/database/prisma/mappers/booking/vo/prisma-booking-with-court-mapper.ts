@@ -1,7 +1,7 @@
 import type { Prisma } from 'generated/prisma/browser';
 import { BookingWithCourt } from '@/domain/booking/enterprise/entities/value-objects/booking-with-court';
-import { PrismaBookingMapper } from './prisma-booking-mapper';
-import { PrismaImageMapper } from './prisma-image-mapper';
+import { PrismaBookingMapper } from '../prisma-booking-mapper';
+import { PrismaImageMapper } from '../prisma-image-mapper';
 
 type PrismaBookingWithCourt = Prisma.BookingGetPayload<{
 	include: {

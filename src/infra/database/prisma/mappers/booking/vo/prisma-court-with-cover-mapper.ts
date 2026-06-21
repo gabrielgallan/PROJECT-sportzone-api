@@ -1,6 +1,6 @@
 import type { Prisma } from 'generated/prisma/browser';
 import { CourtWithCover } from '@/domain/booking/enterprise/entities/value-objects/court-with-cover';
-import { PrismaImageMapper } from './prisma-image-mapper';
+import { PrismaImageMapper } from '../prisma-image-mapper';
 
 type PrismaCourtWithCover = Prisma.CourtGetPayload<{
 	include: {
