@@ -5,7 +5,9 @@ import { Customer, type CustomerProps } from '@/domain/booking/enterprise/entiti
 export function makeCustomer(override: Partial<CustomerProps> = {}, id?: UniqueEntityID) {
 	const customer = Customer.create(
 		{
+			name: faker.person.fullName(),
 			email: faker.internet.email(),
+			avatarUrl: null,
 			...override,
 		},
 		id,

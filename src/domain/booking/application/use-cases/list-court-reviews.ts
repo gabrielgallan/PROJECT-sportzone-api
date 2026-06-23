@@ -1,7 +1,7 @@
 import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { type Either, left, right } from '@/core/types/either';
 import type { PaginatedList, PaginationInput } from '@/core/types/pagination';
-import type { Review } from '../../enterprise/entities/review';
+import type { ReviewWithAuthor } from '../../enterprise/entities/value-objects/review-with-author';
 import type { CourtsRepository } from '../repositories/courts-repository';
 import type { ReviewsRepository } from '../repositories/reviews-repository';
 
@@ -13,7 +13,7 @@ interface ListCourtReviewsUseCaseRequest {
 type ListCourtReviewsUseCaseResponse = Either<
 	ResourceNotFoundError,
 	{
-		reviewsList: PaginatedList<Review[]>;
+		reviewsList: PaginatedList<ReviewWithAuthor[]>;
 	}
 >;
 

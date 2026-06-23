@@ -2,7 +2,9 @@ import { Entity } from '@/core/entities/entity';
 import type { UniqueEntityID } from '@/core/entities/unique-entity-id';
 
 export interface CustomerProps {
+	name?: string | null;
 	email: string;
+	avatarUrl?: string | null;
 }
 
 export class Customer extends Entity<CustomerProps> {
@@ -12,7 +14,15 @@ export class Customer extends Entity<CustomerProps> {
 		return customer;
 	}
 
+	get name() {
+		return this.props.name;
+	}
+
 	get email() {
 		return this.props.email;
+	}
+
+	get avatarUrl() {
+		return this.props.avatarUrl;
 	}
 }

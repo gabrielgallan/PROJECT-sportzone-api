@@ -1,6 +1,9 @@
+import { makeCustomer } from 'test/unit/factories/make-customer';
 import { InMemoryCourtImagesRepository } from 'test/unit/repositories/in-memory-court-images-repository';
 import { InMemoryReviewsRepository } from 'test/unit/repositories/in-memory-court-reviews-repository';
 import { InMemoryCourtsRepository } from 'test/unit/repositories/in-memory-courts-repository';
+import { InMemoryCustomersRepository } from 'test/unit/repositories/in-memory-customers-repository';
+import { InMemoryImagesRepository } from 'test/unit/repositories/in-memory-images-repository';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { Cash } from '@/core/shared/value-objects/cash';
@@ -8,12 +11,13 @@ import { Court } from '../../enterprise/entities/court';
 import { CourtImagesList } from '../../enterprise/entities/court-images-list';
 import { Review } from '../../enterprise/entities/review';
 import { ListCourtReviewsUseCase } from './list-court-reviews';
-import { InMemoryImagesRepository } from 'test/unit/repositories/in-memory-images-repository';
 
 let reviewsRepository: InMemoryReviewsRepository;
 let courtsRepository: InMemoryCourtsRepository;
 let courtImagesRepository: InMemoryCourtImagesRepository;
 let imagesRepository: InMemoryImagesRepository;
+
+let customersRepository: InMemoryCustomersRepository
 
 let sut: ListCourtReviewsUseCase;
 
@@ -22,7 +26,9 @@ describe('List court reviews use case', () => {
 		courtImagesRepository = new InMemoryCourtImagesRepository();
 		imagesRepository = new InMemoryImagesRepository();
 		courtsRepository = new InMemoryCourtsRepository(courtImagesRepository, imagesRepository);
-		reviewsRepository = new InMemoryReviewsRepository();
+
+		customersRepository = new InMemoryCustomersRepository()
+		reviewsRepository = new InMemoryReviewsRepository(customersRepository);
 
 		sut = new ListCourtReviewsUseCase(courtsRepository, reviewsRepository);
 	});
@@ -44,6 +50,9 @@ describe('List court reviews use case', () => {
 			),
 		);
 
+		customersRepository.items.push(makeCustomer({ name: 'John Doe' }, new UniqueEntityID('user-1')))
+		customersRepository.items.push(makeCustomer({ name: 'Gabriel Gallan' }, new UniqueEntityID('user-2')))
+
 		await reviewsRepository.create(
 			Review.create({
 				courtId: new UniqueEntityID('court-1'),
@@ -62,15 +71,6 @@ describe('List court reviews use case', () => {
 			}),
 		);
 
-		await reviewsRepository.create(
-			Review.create({
-				courtId: new UniqueEntityID('court-2'),
-				authorId: new UniqueEntityID('user-3'),
-				comment: 'Another court',
-				rating: 3,
-			}),
-		);
-
 		const result = await sut.execute({
 			courtId: 'court-1',
 			pagination: {
@@ -83,7 +83,11 @@ describe('List court reviews use case', () => {
 
 		if (result.isRight()) {
 			expect(result.value.reviewsList.data).toHaveLength(2);
-			expect(result.value.reviewsList.data.map((review) => review.comment)).toEqual([
+			expect(result.value.reviewsList.data.map((review) => review.author.name)).toEqual([
+				'John Doe',
+				'Gabriel Gallan',
+			]);
+			expect(result.value.reviewsList.data.map((review) => review.review.comment)).toEqual([
 				'Great court',
 				'Nice place',
 			]);
