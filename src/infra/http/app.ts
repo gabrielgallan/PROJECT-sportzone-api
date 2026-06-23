@@ -12,6 +12,7 @@ import {
 } from 'fastify-type-provider-zod';
 import { env } from '../env';
 import { errorHandler } from './error-handler';
+import { bookingsRoutes } from './routes/bookings';
 import { identityRoutes } from './routes/identity';
 import { notificationsRoutes } from './routes/notifications';
 
@@ -70,6 +71,7 @@ await app.register(
 	() => {
 		app.register(identityRoutes);
 		app.register(notificationsRoutes);
+		app.register(bookingsRoutes);
 	},
 	{ prefix: 'api' },
 );

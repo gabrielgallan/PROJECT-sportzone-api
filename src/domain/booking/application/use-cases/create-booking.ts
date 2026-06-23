@@ -186,7 +186,23 @@ export class CreateBookingUseCase {
 			expiresAt: new Date(now.getTime() + 15 * 60 * 1000),
 		});
 
-		await this.bookingsRepository.create(booking);
+		const creationResult = await this.bookingsRepository.create(booking, {
+			dayStartsAt,
+			dayEndsAt,
+			now,
+		});
+
+		if (creationResult?.status === 'COURT_CONFLICT') {
+			return left(new CourtAlreadyReservedError());
+		}
+
+		if (creationResult?.status === 'CUSTOMER_DAILY_LIMIT') {
+			return left(
+				new CustomerBookingLimitError(
+					'Customer already has an active booking on the requested day.',
+				),
+			);
+		}
 
 		return right({ booking });
 	}

@@ -72,8 +72,6 @@ export class CreateCourtUseCase {
 			courtId: court.id,
 		});
 
-		await this.courtsRepository.create(court);
-
 		const openingHours = weekDays.map((weekDay) =>
 			CourtOpeningHour.create({
 				courtId: court.id.toString(),
@@ -83,7 +81,12 @@ export class CreateCourtUseCase {
 			}),
 		);
 
-		await this.courtOpeningHoursRepository.createMany(openingHours);
+		if (this.courtsRepository.createWithOpeningHours) {
+			await this.courtsRepository.createWithOpeningHours(court, openingHours);
+		} else {
+			await this.courtsRepository.create(court);
+			await this.courtOpeningHoursRepository.createMany(openingHours);
+		}
 
 		return right({
 			court,

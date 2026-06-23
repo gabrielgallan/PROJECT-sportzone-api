@@ -59,11 +59,6 @@ export class EditCourtUseCase {
 		court.name = name;
 		court.description = description;
 
-		await this.courtsRepository.save(court);
-		await this.courtImagesRepository.deleteManyByCourtId(courtId);
-		await this.courtImagesRepository.createMany(courtImages);
-		await this.courtOpeningHoursRepository.deleteManyByCourtId(courtId);
-
 		const openingHours = weekDays.map((weekDay) =>
 			CourtOpeningHour.create({
 				courtId,
@@ -73,7 +68,16 @@ export class EditCourtUseCase {
 			}),
 		);
 
-		await this.courtOpeningHoursRepository.createMany(openingHours);
+		if (this.courtsRepository.saveWithOpeningHours) {
+			await this.courtsRepository.saveWithOpeningHours(court, openingHours);
+		} else if (this.courtOpeningHoursRepository.replaceManyByCourtId) {
+			await this.courtsRepository.save(court);
+			await this.courtOpeningHoursRepository.replaceManyByCourtId(courtId, openingHours);
+		} else {
+			await this.courtsRepository.save(court);
+			await this.courtOpeningHoursRepository.deleteManyByCourtId(courtId);
+			await this.courtOpeningHoursRepository.createMany(openingHours);
+		}
 
 		return right({
 			court,

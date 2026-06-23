@@ -36,6 +36,8 @@ export class CloudinaryStorage implements Uploader {
 
 			return { url: result.secure_url };
 		} catch (error: any) {
+			console.log(error);
+
 			throw new BadGatewayError(error.message ?? 'Cloudinary upload error');
 		}
 	}

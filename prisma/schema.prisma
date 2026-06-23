@@ -198,7 +198,7 @@ model CourtOpeningHour {
 
   court Court @relation(fields: [courtId], references: [id], onDelete: Cascade)
 
-  @@index([courtId, weekDay])
+  @@unique([courtId, weekDay])
   @@map("court_opening_hours")
 }
 
@@ -226,6 +226,8 @@ model Booking {
   court Court @relation(fields: [courtId], references: [id])
 
   @@map("bookings")
+  @@index([courtId, startsAt, endsAt, status])
+  @@index([userId, startsAt, endsAt, status])
 }
 
 model Review {

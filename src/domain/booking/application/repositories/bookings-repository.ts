@@ -3,8 +3,22 @@ import type { Booking, BookingStatus } from '../../enterprise/entities/booking';
 import type { BookingWithCourt } from '../../enterprise/entities/value-objects/booking-with-court';
 import type { OrganizationBooking } from '../../enterprise/entities/value-objects/organization-booking';
 
+export type BookingCreationResult =
+	| { status: 'CREATED' }
+	| { status: 'COURT_CONFLICT' }
+	| { status: 'CUSTOMER_DAILY_LIMIT' };
+
+export interface BookingCreationConstraints {
+	dayStartsAt: Date;
+	dayEndsAt: Date;
+	now: Date;
+}
+
 export interface BookingsRepository {
-	create(booking: Booking): Promise<void>;
+	create(
+		booking: Booking,
+		constraints?: BookingCreationConstraints,
+	): Promise<BookingCreationResult | void>;
 	findById(bookingId: string): Promise<Booking | null>;
 	findByIdWithCourt(bookingId: string): Promise<BookingWithCourt | null>;
 	listByOrganizationId(
