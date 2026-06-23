@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { InvalidImageTypeError } from '@/domain/booking/application/use-cases/errors/invalid-image-type-error';
-import { makeUploadImageUseCase } from '@/domain/booking/application/use-cases/factories/make-upload-and-create-image';
+import { makeUploadImageUseCase } from '@/domain/booking/application/use-cases/factories/make-upload-and-create-image-use-case';
 import { BadRequestError } from '../../errors/bad-request-error';
 import { httpErrorSchema } from '../../errors/types/http-error';
 

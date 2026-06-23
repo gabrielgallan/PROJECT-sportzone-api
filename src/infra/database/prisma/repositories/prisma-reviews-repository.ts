@@ -2,6 +2,7 @@ import type { PaginationInput } from '@/core/types/pagination';
 import type { ReviewsRepository } from '@/domain/booking/application/repositories/reviews-repository';
 import type { Review } from '@/domain/booking/enterprise/entities/review';
 import { PrismaReviewMapper } from '../mappers/booking/prisma-review-mapper';
+import { PrismaReviewWithAuthorMapper } from '../mappers/booking/vo/prisma-review-with-author-mapper';
 import { prisma } from '../prisma';
 
 export class PrismaReviewsRepository implements ReviewsRepository {
@@ -17,6 +18,15 @@ export class PrismaReviewsRepository implements ReviewsRepository {
 		const [reviews, total] = await Promise.all([
 			prisma.review.findMany({
 				where: { courtId },
+				include: {
+					author: {
+						select: {
+							name: true,
+							email: true,
+							avatarUrl: true
+						}
+					}
+				},
 				skip: (page - 1) * limit,
 				take: limit,
 			}),
@@ -26,7 +36,7 @@ export class PrismaReviewsRepository implements ReviewsRepository {
 		]);
 
 		return {
-			data: reviews.map(PrismaReviewMapper.toDomain),
+			data: reviews.map(PrismaReviewWithAuthorMapper.toDomain),
 			meta: {
 				page,
 				limit,
