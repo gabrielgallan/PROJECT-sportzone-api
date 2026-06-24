@@ -11,8 +11,8 @@ import type { CourtsRepository } from '../repositories/courts-repository';
 
 interface EditCourtUseCaseRequest {
 	courtId: string;
-	name: string;
-	description: string;
+	name?: string;
+	description?: string;
 	imagesIds: string[];
 	opensAtInMinutes: number;
 	closesAtInMinutes: number;
@@ -48,6 +48,12 @@ export class EditCourtUseCase {
 			return left(new ResourceNotFoundError());
 		}
 
+		const currentCourtImages = await this.courtImagesRepository.findManyByCourtId(
+			court.id.toString(),
+		);
+
+		const courtImagesList = new CourtImagesList(currentCourtImages);
+
 		const courtImages = imagesIds.map((imageId) =>
 			CourtImage.create({
 				imageId: new UniqueEntityID(imageId),
@@ -55,9 +61,17 @@ export class EditCourtUseCase {
 			}),
 		);
 
-		court.images = new CourtImagesList(courtImages);
-		court.name = name;
-		court.description = description;
+		courtImagesList.update(courtImages);
+
+		court.images = courtImagesList;
+
+		if (name) {
+			court.name = name;
+		}
+
+		if (description) {
+			court.description = description;
+		}
 
 		const openingHours = weekDays.map((weekDay) =>
 			CourtOpeningHour.create({
