@@ -13,13 +13,14 @@ export function reviewCourtController(app: FastifyInstance) {
 			schema: {
 				summary: 'Review court',
 				tags: ['booking'],
+				security: [{ bearerAuth: [] }],
 				params: z.object({
 					courtId: z.string(),
 				}),
-                body: z.object({
-                    comment: z.string().min(3),
-                    rating: z.number().int().min(1).max(5)
-                }),
+				body: z.object({
+					comment: z.string(),
+					rating: z.number(),
+				}),
 				response: {
 					201: z.null(),
 					404: httpErrorSchema,
@@ -27,19 +28,19 @@ export function reviewCourtController(app: FastifyInstance) {
 			},
 		},
 		async (request, reply) => {
-            const userId = await request.getUserId()
+			const userId = await request.getUserId();
 
 			const reviewCourt = makeReviewCourtUseCase();
 
 			const { courtId } = request.params;
 
-            const { comment, rating } = request.body
+			const { comment, rating } = request.body;
 
 			const result = await reviewCourt.execute({
-                userId,
+				userId,
 				courtId,
-                comment,
-                rating
+				comment,
+				rating,
 			});
 
 			if (result.isLeft()) {

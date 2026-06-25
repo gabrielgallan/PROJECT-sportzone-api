@@ -58,3 +58,8 @@
 * [x] It should be able to list organization bookings
 * [x] It should be able to create courts
 * [x] It should be able to edit courts
+
+## TO FIX
+* [ ] Get time slot use-case
+* [ ] Edit court
+* [ ] Test search by location
