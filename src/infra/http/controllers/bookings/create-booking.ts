@@ -14,10 +14,15 @@ export function createBookingController(app: FastifyInstance) {
 				summary: 'Create booking',
 				tags: ['booking'],
 				security: [{ bearerAuth: [] }],
-				body: z.object({
-					startDate: z.date(),
-					endDate: z.date(),
-				}),
+				body: z
+					.object({
+						startDate: z.coerce.date(),
+						endDate: z.coerce.date(),
+					})
+					.refine((data) => data.endDate > data.startDate, {
+						message: 'endDate must be after startDate',
+						path: ['endDate'],
+					}),
 				params: z.object({
 					courtId: z.string(),
 				}),

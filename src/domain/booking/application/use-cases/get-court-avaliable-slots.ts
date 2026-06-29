@@ -1,18 +1,13 @@
 import dayjs from 'dayjs';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
+
 import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { type Either, left, right } from '@/core/types/either';
+
 import type { BookingsRepository } from '../repositories/bookings-repository';
 import type { CourtOpeningHoursRepository } from '../repositories/court-opening-hours-repository';
 import type { CourtsRepository } from '../repositories/courts-repository';
 
-dayjs.extend(utc);
-dayjs.extend(timezone);
-
-const COURT_TIMEZONE = 'America/Sao_Paulo';
 const SLOT_DURATION_IN_MINUTES = 60;
-const SLOT_DURATION_IN_MS = SLOT_DURATION_IN_MINUTES * 60 * 1000;
 
 interface GetCourtAvaliableSlotsUseCaseRequest {
 	courtId: string;
@@ -48,24 +43,25 @@ export class GetCourtAvaliableSlotsUseCase {
 			return left(new ResourceNotFoundError());
 		}
 
-		const selectedDate = dayjs.tz(`${date}T00:00:00`, COURT_TIMEZONE);
+		const selectedDate = dayjs(date).startOf('day');
+
 		const openingHour = await this.courtOpeningHoursRepository.findByCourtIdAndWeekDay(
 			courtId,
 			selectedDate.day(),
 		);
 
 		if (!openingHour) {
-			return right({
-				timeSlots: [],
-			});
+			return right({ timeSlots: [] });
 		}
 
-		const dayStartsAt = selectedDate.startOf('day');
+		const dayStartsAt = selectedDate;
 		const dayEndsAt = dayStartsAt.add(1, 'day');
+
 		const openingSlot = dayStartsAt.add(openingHour.opensAtInMinutes, 'minute');
+
 		const closingSlot = dayStartsAt.add(openingHour.closesAtInMinutes, 'minute');
-		const now = dayjs().tz(COURT_TIMEZONE);
-		const isCurrentDay = selectedDate.isSame(now, 'day');
+
+		const now = dayjs();
 
 		const bookings = await this.bookingsRepository.findManyByCourtIdBetweenDates(
 			courtId,
@@ -83,21 +79,21 @@ export class GetCourtAvaliableSlotsUseCase {
 			currentSlot.isBefore(closingSlot);
 			currentSlot = currentSlot.add(SLOT_DURATION_IN_MINUTES, 'minute')
 		) {
-			const slotStart = currentSlot.toDate();
-			const slotEnd = new Date(slotStart.getTime() + SLOT_DURATION_IN_MS);
+			const slotStart = currentSlot;
+			const slotEnd = currentSlot.add(SLOT_DURATION_IN_MINUTES, 'minute');
 
 			const hasBlockingBooking = bookings.some((booking) => {
-				if (
-					booking.status === 'PENDING' &&
-					(!booking.expiresAt || booking.expiresAt <= now.toDate())
-				) {
+				const isExpiredPendingBooking =
+					booking.status === 'PENDING' && (!booking.expiresAt || booking.expiresAt <= now.toDate());
+
+				if (isExpiredPendingBooking) {
 					return false;
 				}
 
-				return booking.startsAt < slotEnd && booking.endsAt > slotStart;
+				return booking.startsAt < slotEnd.toDate() && booking.endsAt > slotStart.toDate();
 			});
 
-			const hasSlotPassed = isCurrentDay && currentSlot.isBefore(now);
+			const hasSlotPassed = selectedDate.isSame(now, 'day') && currentSlot.isBefore(now);
 
 			timeSlots.push({
 				time: slotStart.toISOString(),

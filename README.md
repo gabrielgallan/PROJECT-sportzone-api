@@ -60,6 +60,6 @@
 * [x] It should be able to edit courts
 
 ## TO FIX
-* [ ] Get time slot use-case
-* [ ] Edit court
-* [ ] Test search by location
+* Booking Subdomain errors handler
+
+* [ ] Search by location

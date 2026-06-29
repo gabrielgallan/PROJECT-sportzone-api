@@ -6,6 +6,7 @@ import { editCourtController } from '../controllers/bookings/edit-court';
 import { getBookingDetailsController } from '../controllers/bookings/get-booking-details';
 import { getCourtAvailableTimeSlotsController } from '../controllers/bookings/get-court-available-time-slots';
 import { getCourtDetailsController } from '../controllers/bookings/get-court-details';
+import { getOrganizationCountsController } from '../controllers/bookings/get-organization-counts';
 import { listCourtReviewsController } from '../controllers/bookings/list-court-reviews';
 import { listOrganizationBookingsController } from '../controllers/bookings/list-organization-bookings';
 import { listOrganizationCourtsController } from '../controllers/bookings/list-organizations-court';
@@ -18,6 +19,7 @@ import { uploadImageController } from '../controllers/bookings/upload-image';
 export function bookingsRoutes(app: FastifyInstance) {
 	app.register(plugins.authPlugin);
 
+	app.register(getOrganizationCountsController);
 	app.register(uploadImageController);
 	app.register(createCourtController);
 	app.register(editCourtController);
