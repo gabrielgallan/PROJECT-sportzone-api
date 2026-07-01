@@ -17,8 +17,8 @@ export function searchNearbyCourtsController(app: FastifyInstance) {
 				querystring: z.object({
 					page: z.string().optional(),
 					limit: z.string().optional(),
-					latitude: z.number(),
-					longitude: z.number()
+					latitude: z.string(),
+					longitude: z.string(),
 				}),
 				response: {
 					200: z.object({
@@ -41,8 +41,8 @@ export function searchNearbyCourtsController(app: FastifyInstance) {
 			const searchCourts = makeSearchNearbyCourtsUseCase();
 
 			const result = await searchCourts.execute({
-				userLatitude: latitude,
-				userLongitude: longitude,
+				userLatitude: Number(latitude),
+				userLongitude: Number(longitude),
 				pagination,
 			});
 
