@@ -4,6 +4,7 @@ import type { Optional } from '@/core/types/optional';
 import type { Cash } from '../../../../core/shared/value-objects/cash';
 import type { CourtImage } from './court-image';
 import type { CourtImagesList } from './court-images-list';
+import { CourtSportsList } from './court-sports-list';
 
 export type CourtStatus = 'IN_MAINTENANCE' | 'PAUSED' | 'PENDING' | 'ONLINE';
 
@@ -18,6 +19,7 @@ export interface CourtProps {
 	longitude: number;
 
 	images: CourtImagesList;
+	sports: CourtSportsList;
 
 	status: CourtStatus;
 	pricePerHour: Cash;
@@ -33,7 +35,7 @@ export class Court extends AggregatedRoot<CourtProps> {
 	static create(
 		props: Optional<
 			CourtProps,
-			'createdAt' | 'status' | 'updatedAt' | 'description' | 'rating' | 'reviewsCount'
+			'createdAt' | 'status' | 'updatedAt' | 'description' | 'rating' | 'reviewsCount' | 'sports'
 		>,
 		id?: UniqueEntityID,
 	) {
@@ -41,6 +43,7 @@ export class Court extends AggregatedRoot<CourtProps> {
 			{
 				...props,
 				description: props.description ?? null,
+				sports: props.sports ?? new CourtSportsList([]),
 				status: props.status ?? 'PENDING',
 				rating: props.rating ?? 0,
 				reviewsCount: props.reviewsCount ?? 0,
@@ -84,6 +87,10 @@ export class Court extends AggregatedRoot<CourtProps> {
 
 	get images() {
 		return this.props.images;
+	}
+
+	get sports() {
+		return this.props.sports;
 	}
 
 	get status() {
@@ -149,6 +156,12 @@ export class Court extends AggregatedRoot<CourtProps> {
 
 	set images(images: CourtImagesList) {
 		this.props.images = images;
+
+		this.touch();
+	}
+
+	set sports(sports: CourtSportsList) {
+		this.props.sports = sports;
 
 		this.touch();
 	}

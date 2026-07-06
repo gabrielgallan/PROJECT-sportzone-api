@@ -4,13 +4,16 @@ import { getDistanceBetweenCordinates } from '@/domain/booking/application/geoco
 import type {
 	CourtsFilters,
 	CourtsRepository,
+	OrganizationCourtsFilters,
 } from '@/domain/booking/application/repositories/courts-repository';
 import type { Court } from '@/domain/booking/enterprise/entities/court';
 import type { Image } from '@/domain/booking/enterprise/entities/image';
 import { CourtDetails } from '@/domain/booking/enterprise/entities/value-objects/court-details';
 import { CourtWithCover } from '@/domain/booking/enterprise/entities/value-objects/court-with-cover';
 import type { InMemoryCourtImagesRepository } from './in-memory-court-images-repository';
+import type { InMemoryCourtSportsRepository } from './in-memory-court-sports-repository';
 import type { InMemoryImagesRepository } from './in-memory-images-repository';
+import type { InMemorySportsRepository } from './in-memory-sports-repository';
 
 export class InMemoryCourtsRepository implements CourtsRepository {
 	public items: Court[] = [];
@@ -18,6 +21,8 @@ export class InMemoryCourtsRepository implements CourtsRepository {
 	constructor(
 		private courtImagesRepository: InMemoryCourtImagesRepository,
 		private imagesRepository: InMemoryImagesRepository,
+		private courtSportsRepository?: InMemoryCourtSportsRepository,
+		private sportsRepository?: InMemorySportsRepository,
 	) {}
 
 	async create(court: Court) {
@@ -65,7 +70,7 @@ export class InMemoryCourtsRepository implements CourtsRepository {
 		});
 	}
 
-	async list({ page, limit }: PaginationInput, { name, address }: CourtsFilters) {
+	async list({ page, limit }: PaginationInput, { name, address, sportSlug }: CourtsFilters) {
 		let filteredCourts = [...this.items];
 
 		if (name) {
@@ -78,6 +83,14 @@ export class InMemoryCourtsRepository implements CourtsRepository {
 			filteredCourts = filteredCourts.filter((court) =>
 				court.address.toLowerCase().includes(address.toLowerCase()),
 			);
+		}
+
+		if (sportSlug) {
+			filteredCourts = filteredCourts.filter((court) => {
+				const sports = this.findSportsByCourtId(court.id.toString());
+
+				return sports.some((sport) => sport.slug.value === sportSlug);
+			});
 		}
 
 		const total = filteredCourts.length;
@@ -101,6 +114,7 @@ export class InMemoryCourtsRepository implements CourtsRepository {
 				coverImage: image ?? null,
 				pricePerHour: court.pricePerHour.toCents(),
 				rating: court.rating,
+				sports: this.findSportsByCourtId(court.id.toString()),
 			});
 		});
 
@@ -143,6 +157,7 @@ export class InMemoryCourtsRepository implements CourtsRepository {
 				coverImage: image ?? null,
 				pricePerHour: court.pricePerHour.toCents(),
 				rating: court.rating,
+				sports: this.findSportsByCourtId(court.id.toString()),
 			});
 		});
 
@@ -156,8 +171,22 @@ export class InMemoryCourtsRepository implements CourtsRepository {
 		};
 	}
 
-	async listByOrganizationId(organizationId: string, { page, limit }: PaginationInput) {
-		const orgCourts = this.items.filter((c) => c.organizationId.toString() === organizationId);
+	async listByOrganizationId(
+		organizationId: string,
+		{ name, status }: OrganizationCourtsFilters,
+		{ page, limit }: PaginationInput,
+	) {
+		let orgCourts = this.items.filter((c) => c.organizationId.toString() === organizationId);
+
+		if (name) {
+			orgCourts = orgCourts.filter((court) =>
+				court.name.toLowerCase().includes(name.toLowerCase()),
+			);
+		}
+
+		if (status) {
+			orgCourts = orgCourts.filter((court) => court.status === status);
+		}
 
 		const paginated = orgCourts.slice((page - 1) * limit, page * limit);
 
@@ -178,6 +207,7 @@ export class InMemoryCourtsRepository implements CourtsRepository {
 				coverImage: image ?? null,
 				pricePerHour: court.pricePerHour.toCents(),
 				rating: court.rating,
+				sports: this.findSportsByCourtId(court.id.toString()),
 			});
 		});
 
@@ -209,7 +239,24 @@ export class InMemoryCourtsRepository implements CourtsRepository {
 		this.items.splice(courtIndex, 1);
 
 		this.courtImagesRepository.deleteManyByCourtId(court.id.toString());
+		this.courtSportsRepository?.deleteManyByCourtId(court.id.toString());
 
 		return;
+	}
+
+	private findSportsByCourtId(courtId: string) {
+		const courtSports = this.courtSportsRepository?.items.filter(
+			(courtSport) => courtSport.courtId.toString() === courtId,
+		);
+
+		if (!courtSports || !this.sportsRepository) return [];
+
+		return courtSports.flatMap((courtSport) => {
+			const sport = this.sportsRepository?.items.find((sport) =>
+				sport.id.equals(courtSport.sportId),
+			);
+
+			return sport ? [sport] : [];
+		});
 	}
 }

@@ -105,6 +105,102 @@ describe('List organization members use case', () => {
 		}
 	});
 
+	it('should be able to list organization members by name and email', async () => {
+		await usersRepository.create(
+			await makeUser(
+				{
+					name: 'Owner User',
+					email: 'owner@email.com',
+				},
+				new UniqueEntityID('user-1'),
+			),
+		);
+
+		await usersRepository.create(
+			await makeUser(
+				{
+					name: 'John Doe',
+					email: 'john@sportzone.dev',
+				},
+				new UniqueEntityID('user-2'),
+			),
+		);
+
+		await usersRepository.create(
+			await makeUser(
+				{
+					name: 'John Billing',
+					email: 'billing@sportzone.dev',
+				},
+				new UniqueEntityID('user-3'),
+			),
+		);
+
+		await usersRepository.create(
+			await makeUser(
+				{
+					name: 'Jane Doe',
+					email: 'jane@sportzone.dev',
+				},
+				new UniqueEntityID('user-4'),
+			),
+		);
+
+		await organizationsRepository.create(
+			await makeOrganization(
+				{
+					ownerId: new UniqueEntityID('user-1'),
+					slug: Slug.createFromText('org-1'),
+				},
+				new UniqueEntityID('org-1'),
+			),
+		);
+
+		await membersRepository.create(
+			await makeMember({
+				userId: new UniqueEntityID('user-2'),
+				organizationId: new UniqueEntityID('org-1'),
+				role: 'MEMBER',
+			}),
+		);
+
+		await membersRepository.create(
+			await makeMember({
+				userId: new UniqueEntityID('user-3'),
+				organizationId: new UniqueEntityID('org-1'),
+				role: 'BILLING',
+			}),
+		);
+
+		await membersRepository.create(
+			await makeMember({
+				userId: new UniqueEntityID('user-4'),
+				organizationId: new UniqueEntityID('org-1'),
+				role: 'MEMBER',
+			}),
+		);
+
+		const result = await sut.execute({
+			userId: 'user-1',
+			organizationSlug: 'org-1',
+			name: 'john',
+			email: 'john@',
+			pagination: {
+				page: 1,
+				limit: 20,
+			},
+		});
+
+		expect(result.isRight()).toBe(true);
+
+		if (result.isRight()) {
+			expect(result.value.members.data).toHaveLength(1);
+			expect(result.value.members.data[0].user.name).toBe('John Doe');
+			expect(result.value.members.data[0].user.email).toBe('john@sportzone.dev');
+			expect(result.value.members.meta.total).toBe(1);
+		}
+	});
+
 	it('should not be able to list organization members when user is not the owner', async () => {
 		await usersRepository.create(await makeUser({}, new UniqueEntityID('user-1')));
 

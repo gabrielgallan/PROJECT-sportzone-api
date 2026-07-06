@@ -6,6 +6,8 @@ export function makeEditCourtUseCase() {
 		repositories.courts,
 		repositories.courtImages,
 		repositories.courtOpeningHours,
+		repositories.sports,
+		repositories.courtSports,
 	);
 
 	return editCourtUseCase;

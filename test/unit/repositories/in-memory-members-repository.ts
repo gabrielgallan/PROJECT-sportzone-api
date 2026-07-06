@@ -1,5 +1,8 @@
 import type { PaginationInput } from '@/core/types/pagination';
-import type { MembersRepository } from '@/domain/identity/application/repositories/members-repository';
+import type {
+	ListOrganizationMembersFilters,
+	MembersRepository,
+} from '@/domain/identity/application/repositories/members-repository';
 import type { Member } from '@/domain/identity/enterprise/entities/member';
 import { MemberWithProfile } from '@/domain/identity/enterprise/entities/value-objects/member-with-profile';
 import { OrganizationWithRole } from '@/domain/identity/enterprise/entities/value-objects/organization-with-role';
@@ -20,8 +23,28 @@ export class InMemoryMembersRepository implements MembersRepository {
 		return;
 	}
 
-	async listByOrganizationId(organizationId: string, { page, limit }: PaginationInput) {
-		const members = this.items.filter((m) => m.organizationId.toString() === organizationId);
+	async listByOrganizationId(
+		organizationId: string,
+		{ name, email }: ListOrganizationMembersFilters,
+		{ page, limit }: PaginationInput,
+	) {
+		let members = this.items.filter((m) => m.organizationId.toString() === organizationId);
+
+		if (name) {
+			members = members.filter((member) => {
+				const user = this.usersRepository.items.find((user) => user.id.equals(member.userId));
+
+				return user?.name?.toLowerCase().includes(name.toLowerCase()) ?? false;
+			});
+		}
+
+		if (email) {
+			members = members.filter((member) => {
+				const user = this.usersRepository.items.find((user) => user.id.equals(member.userId));
+
+				return user?.email.toLowerCase().includes(email.toLowerCase()) ?? false;
+			});
+		}
 
 		const paginated = members
 			.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())

@@ -1,7 +1,9 @@
 import { InMemoryCourtImagesRepository } from 'test/unit/repositories/in-memory-court-images-repository';
 import { InMemoryCourtOpeningHoursRepository } from 'test/unit/repositories/in-memory-court-opening-hours-repository';
+import { InMemoryCourtSportsRepository } from 'test/unit/repositories/in-memory-court-sports-repository';
 import { InMemoryCourtsRepository } from 'test/unit/repositories/in-memory-courts-repository';
 import { InMemoryImagesRepository } from 'test/unit/repositories/in-memory-images-repository';
+import { InMemorySportsRepository } from 'test/unit/repositories/in-memory-sports-repository';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { Cash } from '@/core/shared/value-objects/cash';
@@ -9,25 +11,44 @@ import { Court } from '../../enterprise/entities/court';
 import { CourtImage } from '../../enterprise/entities/court-image';
 import { CourtImagesList } from '../../enterprise/entities/court-images-list';
 import { CourtOpeningHour } from '../../enterprise/entities/court-opening-hour';
+import { CourtSport } from '../../enterprise/entities/court-sport';
+import { Sport } from '../../enterprise/entities/sport';
 import { EditCourtUseCase } from './edit-court';
 
 let courtsRepository: InMemoryCourtsRepository;
 let courtImagesRepository: InMemoryCourtImagesRepository;
 let courtOpeningHoursRepository: InMemoryCourtOpeningHoursRepository;
+let courtSportsRepository: InMemoryCourtSportsRepository;
 let imagesRepository: InMemoryImagesRepository;
+let sportsRepository: InMemorySportsRepository;
 let sut: EditCourtUseCase;
 
 describe('Edit court use case', () => {
 	beforeEach(() => {
 		courtImagesRepository = new InMemoryCourtImagesRepository();
 		courtOpeningHoursRepository = new InMemoryCourtOpeningHoursRepository();
+		courtSportsRepository = new InMemoryCourtSportsRepository();
 		imagesRepository = new InMemoryImagesRepository();
-		courtsRepository = new InMemoryCourtsRepository(courtImagesRepository, imagesRepository);
+		sportsRepository = new InMemorySportsRepository();
+		courtsRepository = new InMemoryCourtsRepository(
+			courtImagesRepository,
+			imagesRepository,
+			courtSportsRepository,
+			sportsRepository,
+		);
+
+		sportsRepository.items.push(
+			Sport.create({ name: 'Soccer' }, new UniqueEntityID('soccer')),
+			Sport.create({ name: 'Volley' }, new UniqueEntityID('volley')),
+			Sport.create({ name: 'Football' }, new UniqueEntityID('football')),
+		);
 
 		sut = new EditCourtUseCase(
 			courtsRepository,
 			courtImagesRepository,
 			courtOpeningHoursRepository,
+			sportsRepository,
+			courtSportsRepository,
 		);
 	});
 
@@ -68,6 +89,7 @@ describe('Edit court use case', () => {
 			name: 'New court name',
 			description: 'New description',
 			imagesIds: ['image-2', 'image-3'],
+			sportIds: ['soccer', 'volley'],
 			opensAtInMinutes: 9 * 60,
 			closesAtInMinutes: 21 * 60,
 			weekDays: [2, 4],
@@ -79,6 +101,10 @@ describe('Edit court use case', () => {
 		expect(courtImagesRepository.items.map((image) => image.imageId.toString())).toEqual([
 			'image-2',
 			'image-3',
+		]);
+		expect(courtSportsRepository.items.map((sport) => sport.sportId.toString())).toEqual([
+			'soccer',
+			'volley',
 		]);
 		expect(courtOpeningHoursRepository.items.map((item) => item.weekDay)).toEqual([2, 4]);
 		expect(courtOpeningHoursRepository.items.map((item) => item.opensAtInMinutes)).toEqual([
@@ -143,6 +169,152 @@ describe('Edit court use case', () => {
 			'image-3',
 		]);
 		expect(courtOpeningHoursRepository.items.map((item) => item.weekDay)).toEqual([1, 3, 5]);
+	});
+
+	it('should replace previous sports with the new payload', async () => {
+		const court = Court.create(
+			{
+				organizationId: new UniqueEntityID('org-1'),
+				name: 'Old court name',
+				description: 'Old description',
+				coverImage: null,
+				address: 'Some Street, 2',
+				latitude: -23.4567,
+				longitude: -46.4567,
+				pricePerHour: Cash.fromCents(3000),
+				images: new CourtImagesList([]),
+			},
+			new UniqueEntityID('court-1'),
+		);
+
+		await courtsRepository.create(court);
+		await courtSportsRepository.createMany([
+			CourtSport.create({
+				courtId: court.id,
+				sportId: new UniqueEntityID('soccer'),
+			}),
+			CourtSport.create({
+				courtId: court.id,
+				sportId: new UniqueEntityID('football'),
+			}),
+		]);
+
+		await sut.execute({
+			courtId: 'court-1',
+			imagesIds: [],
+			sportIds: ['volley'],
+			opensAtInMinutes: 10 * 60,
+			closesAtInMinutes: 20 * 60,
+			weekDays: [1, 3, 5],
+		});
+
+		expect(courtSportsRepository.items.map((sport) => sport.sportId.toString())).toEqual([
+			'volley',
+		]);
+	});
+
+	it('should preserve previous sports when sportIds is omitted', async () => {
+		const court = Court.create(
+			{
+				organizationId: new UniqueEntityID('org-1'),
+				name: 'Old court name',
+				description: 'Old description',
+				coverImage: null,
+				address: 'Some Street, 2',
+				latitude: -23.4567,
+				longitude: -46.4567,
+				pricePerHour: Cash.fromCents(3000),
+				images: new CourtImagesList([]),
+			},
+			new UniqueEntityID('court-1'),
+		);
+
+		await courtsRepository.create(court);
+		await courtSportsRepository.createMany([
+			CourtSport.create({
+				courtId: court.id,
+				sportId: new UniqueEntityID('soccer'),
+			}),
+		]);
+
+		await sut.execute({
+			courtId: 'court-1',
+			imagesIds: [],
+			opensAtInMinutes: 10 * 60,
+			closesAtInMinutes: 20 * 60,
+			weekDays: [1, 3, 5],
+		});
+
+		expect(courtSportsRepository.items.map((sport) => sport.sportId.toString())).toEqual([
+			'soccer',
+		]);
+	});
+
+	it('should remove all sports when sportIds is empty', async () => {
+		const court = Court.create(
+			{
+				organizationId: new UniqueEntityID('org-1'),
+				name: 'Old court name',
+				description: 'Old description',
+				coverImage: null,
+				address: 'Some Street, 2',
+				latitude: -23.4567,
+				longitude: -46.4567,
+				pricePerHour: Cash.fromCents(3000),
+				images: new CourtImagesList([]),
+			},
+			new UniqueEntityID('court-1'),
+		);
+
+		await courtsRepository.create(court);
+		await courtSportsRepository.createMany([
+			CourtSport.create({
+				courtId: court.id,
+				sportId: new UniqueEntityID('soccer'),
+			}),
+		]);
+
+		await sut.execute({
+			courtId: 'court-1',
+			imagesIds: [],
+			sportIds: [],
+			opensAtInMinutes: 10 * 60,
+			closesAtInMinutes: 20 * 60,
+			weekDays: [1, 3, 5],
+		});
+
+		expect(courtSportsRepository.items).toHaveLength(0);
+	});
+
+	it('should not be able to edit a court with a non-existing sport', async () => {
+		const court = Court.create(
+			{
+				organizationId: new UniqueEntityID('org-1'),
+				name: 'Old court name',
+				description: 'Old description',
+				coverImage: null,
+				address: 'Some Street, 2',
+				latitude: -23.4567,
+				longitude: -46.4567,
+				pricePerHour: Cash.fromCents(3000),
+				images: new CourtImagesList([]),
+			},
+			new UniqueEntityID('court-1'),
+		);
+
+		await courtsRepository.create(court);
+
+		const result = await sut.execute({
+			courtId: 'court-1',
+			imagesIds: [],
+			sportIds: ['invalid-sport'],
+			opensAtInMinutes: 10 * 60,
+			closesAtInMinutes: 20 * 60,
+			weekDays: [1, 3, 5],
+		});
+
+		expect(result.isLeft()).toBe(true);
+		expect(result.value).toBeInstanceOf(ResourceNotFoundError);
 	});
 
 	it('should not be able to edit a non-existing court', async () => {

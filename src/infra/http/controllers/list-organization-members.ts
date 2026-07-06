@@ -37,6 +37,8 @@ export function listOrganizationMembersController(app: FastifyInstance) {
 				querystring: z.object({
 					page: z.string().optional(),
 					limit: z.string().optional(),
+					name: z.string().optional(),
+					email: z.string().optional(),
 				}),
 				response: {
 					200: z.object({
@@ -56,6 +58,7 @@ export function listOrganizationMembersController(app: FastifyInstance) {
 		async (request, reply) => {
 			const userId = await request.getUserId();
 			const { organizationSlug } = request.params;
+			const { name, email } = request.query;
 			const pagination = parsePaginationQuery(request.query);
 
 			const listOrganizationMembers = makeListOrganizationMembersUseCase();
@@ -63,6 +66,8 @@ export function listOrganizationMembersController(app: FastifyInstance) {
 			const result = await listOrganizationMembers.execute({
 				userId,
 				organizationSlug,
+				name,
+				email,
 				pagination,
 			});
 

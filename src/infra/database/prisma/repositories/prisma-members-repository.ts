@@ -1,5 +1,8 @@
 import type { PaginationInput } from '@/core/types/pagination';
-import type { MembersRepository } from '@/domain/identity/application/repositories/members-repository';
+import type {
+	ListOrganizationMembersFilters,
+	MembersRepository,
+} from '@/domain/identity/application/repositories/members-repository';
 import type { Member } from '@/domain/identity/enterprise/entities/member';
 import { PrismaMemberMapper } from '../mappers/prisma-member-mapper';
 import { PrismaMemberWithProfileMapper } from '../mappers/prisma-member-with-profile-mapper';
@@ -82,10 +85,32 @@ export class PrismaMembersRepository implements MembersRepository {
 		};
 	}
 
-	async listByOrganizationId(organizationId: string, { page, limit }: PaginationInput) {
+	async listByOrganizationId(
+		organizationId: string,
+		{ name, email }: ListOrganizationMembersFilters,
+		{ page, limit }: PaginationInput,
+	) {
+		const where = {
+			organizationId,
+			user: {
+				name: name
+					? {
+							contains: name,
+							mode: 'insensitive' as const,
+						}
+					: undefined,
+				email: email
+					? {
+							contains: email,
+							mode: 'insensitive' as const,
+						}
+					: undefined,
+			},
+		};
+
 		const [memberships, total] = await Promise.all([
 			prisma.member.findMany({
-				where: { organizationId },
+				where,
 				skip: (page - 1) * limit,
 				take: limit,
 				select: {
@@ -103,9 +128,7 @@ export class PrismaMembersRepository implements MembersRepository {
 				},
 			}),
 			prisma.member.count({
-				where: {
-					organizationId,
-				},
+				where,
 			}),
 		]);
 

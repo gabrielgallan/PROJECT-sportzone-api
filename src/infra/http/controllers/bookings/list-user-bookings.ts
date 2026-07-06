@@ -3,6 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { ResourceNotFoundError } from '@/core/shared/errors/resource-not-found-error';
 import { makeListUserBookingsUseCase } from '@/domain/booking/application/use-cases/factories/make-list-user-bookings-use-case';
+import { BadRequestError } from '../../errors/bad-request-error';
 import { NotFoundError } from '../../errors/not-found-error';
 import { httpErrorSchema } from '../../errors/types/http-error';
 import {
@@ -22,6 +23,9 @@ export function listUserBookingsController(app: FastifyInstance) {
 				querystring: z.object({
 					page: z.string().optional(),
 					limit: z.string().optional(),
+					dateFrom: z.coerce.date().optional(),
+					dateTo: z.coerce.date().optional(),
+					status: z.enum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED']).optional(),
 				}),
 				response: {
 					200: z.object({
@@ -40,11 +44,24 @@ export function listUserBookingsController(app: FastifyInstance) {
 		async (request, reply) => {
 			const userId = await request.getUserId();
 			const pagination = parsePaginationQuery(request.query);
+			const { dateFrom, dateTo, status } = request.query;
+
+			if ((dateFrom && !dateTo) || (!dateFrom && dateTo)) {
+				throw new BadRequestError('Invalid date range query');
+			}
 
 			const listUserBookings = makeListUserBookingsUseCase();
 
 			const result = await listUserBookings.execute({
 				userId,
+				dateRange:
+					dateFrom && dateTo
+						? {
+								from: dateFrom,
+								to: dateTo,
+							}
+						: undefined,
+				status,
 				pagination,
 			});
 

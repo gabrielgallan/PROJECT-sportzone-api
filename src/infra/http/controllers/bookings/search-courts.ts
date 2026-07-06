@@ -14,6 +14,12 @@ export const courtWithCoverSchema = z.object({
 	coverUrl: z.url().nullable(),
 	pricePerHour: z.number(),
 	rating: z.number(),
+	sports: z.array(
+		z.object({
+			name: z.string(),
+			slug: z.string(),
+		}),
+	),
 });
 
 export function searchCourtsController(app: FastifyInstance) {
@@ -28,6 +34,7 @@ export function searchCourtsController(app: FastifyInstance) {
 					limit: z.string().optional(),
 					courtName: z.string().optional(),
 					courtAddress: z.string().optional(),
+					sportSlug: z.string().optional(),
 				}),
 				response: {
 					200: z.object({
@@ -45,13 +52,14 @@ export function searchCourtsController(app: FastifyInstance) {
 		async (request, reply) => {
 			const pagination = parsePaginationQuery(request.query);
 
-			const { courtName, courtAddress } = request.query;
+			const { courtName, courtAddress, sportSlug } = request.query;
 
 			const searchCourts = makeSearchCourtsUseCase();
 
 			const result = await searchCourts.execute({
 				courtName,
 				courtAddress,
+				sportSlug,
 				pagination,
 			});
 

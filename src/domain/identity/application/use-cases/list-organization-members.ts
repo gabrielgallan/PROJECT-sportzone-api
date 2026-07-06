@@ -10,6 +10,8 @@ import { InsufficientPermissionsError } from './errors/insufficient-permissions-
 interface ListOrganizationMembersUseCaseRequest {
 	userId: string;
 	organizationSlug: string;
+	name?: string;
+	email?: string;
 	pagination?: PaginationInput;
 }
 
@@ -28,6 +30,8 @@ export class ListOrganizationMembersUseCase {
 	async execute({
 		userId,
 		organizationSlug,
+		name,
+		email,
 		pagination = { page: 1, limit: 10 },
 	}: ListOrganizationMembersUseCaseRequest): Promise<ListOrganizationMembersUseCaseResponse> {
 		const user = await this.usersRepository.findById(userId);
@@ -46,8 +50,14 @@ export class ListOrganizationMembersUseCase {
 			return left(new InsufficientPermissionsError());
 		}
 
+		const filters = {
+			name,
+			email,
+		};
+
 		const membersWithProfile = await this.membersRepository.listByOrganizationId(
 			organization.id.toString(),
+			filters,
 			pagination,
 		);
 

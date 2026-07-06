@@ -6,6 +6,7 @@ import type { CourtsRepository } from '../repositories/courts-repository';
 interface SearchCourtsUseCaseRequest {
 	courtName?: string;
 	courtAddress?: string;
+	sportSlug?: string;
 	pagination?: PaginationInput;
 }
 
@@ -22,11 +23,13 @@ export class SearchCourtsUseCase {
 	async execute({
 		courtName,
 		courtAddress,
+		sportSlug,
 		pagination = { page: 1, limit: 10 },
 	}: SearchCourtsUseCaseRequest): Promise<SearchCourtsUseCaseResponse> {
 		const filters = {
 			name: courtName,
 			address: courtAddress,
+			sportSlug,
 		};
 
 		const { data, meta } = await this.courtsRepository.list(pagination, filters);

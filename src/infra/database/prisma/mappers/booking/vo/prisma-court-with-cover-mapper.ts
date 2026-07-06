@@ -1,10 +1,16 @@
 import type { Prisma } from 'generated/prisma/browser';
 import { CourtWithCover } from '@/domain/booking/enterprise/entities/value-objects/court-with-cover';
 import { PrismaImageMapper } from '../prisma-image-mapper';
+import { PrismaSportMapper } from '../prisma-sport-mapper';
 
 type PrismaCourtWithCover = Prisma.CourtGetPayload<{
 	include: {
 		coverImage: true;
+		sports: {
+			include: {
+				sport: true;
+			};
+		};
 	};
 }>;
 
@@ -18,6 +24,7 @@ export class PrismaCourtWithCoverMapper {
 			pricePerHour: raw.pricePerHour,
 			rating: raw.rating.toNumber(),
 			coverImage: raw.coverImage ? PrismaImageMapper.toDomain(raw.coverImage) : null,
+			sports: raw.sports.map((courtSport) => PrismaSportMapper.toDomain(courtSport.sport)),
 		});
 	}
 }

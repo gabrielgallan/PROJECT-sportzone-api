@@ -18,6 +18,7 @@ export function editCourtController(app: FastifyInstance) {
 					name: z.string(),
 					description: z.string().optional(),
 					imagesIds: z.array(z.string()),
+					sportIds: z.array(z.string()).optional(),
 					opensAtInMinutes: z.number(),
 					closesAtInMinutes: z.number(),
 					weekDays: z.array(z.number()),
@@ -35,8 +36,15 @@ export function editCourtController(app: FastifyInstance) {
 		async (request, reply) => {
 			const { courtId } = request.params;
 
-			const { name, description, imagesIds, opensAtInMinutes, closesAtInMinutes, weekDays } =
-				request.body;
+			const {
+				name,
+				description,
+				imagesIds,
+				sportIds,
+				opensAtInMinutes,
+				closesAtInMinutes,
+				weekDays,
+			} = request.body;
 
 			const editCourt = makeEditCourtUseCase();
 
@@ -45,6 +53,7 @@ export function editCourtController(app: FastifyInstance) {
 				name,
 				description,
 				imagesIds,
+				sportIds,
 				opensAtInMinutes,
 				closesAtInMinutes,
 				weekDays,

@@ -158,4 +158,120 @@ describe('List organization bookings use case', () => {
 			});
 		}
 	});
+
+	it('should be able to list organization bookings by date range and status', async () => {
+		await courtsRepository.create(
+			Court.create(
+				{
+					organizationId: new UniqueEntityID('org-1'),
+					name: 'Court 1',
+					coverImage: null,
+					address: 'Street 1',
+					latitude: -23.4567,
+					longitude: -46.4567,
+					pricePerHour: Cash.fromCents(3000),
+					images: new CourtImagesList([]),
+				},
+				new UniqueEntityID('court-1'),
+			),
+		);
+
+		await courtsRepository.create(
+			Court.create(
+				{
+					organizationId: new UniqueEntityID('org-2'),
+					name: 'Court 2',
+					coverImage: null,
+					address: 'Street 2',
+					latitude: -23.5567,
+					longitude: -46.5567,
+					pricePerHour: Cash.fromCents(4000),
+					images: new CourtImagesList([]),
+				},
+				new UniqueEntityID('court-2'),
+			),
+		);
+
+		customersRepository.items.push(
+			Customer.create(
+				{
+					email: 'customer-1@sportzone.dev',
+				},
+				new UniqueEntityID('customer-1'),
+			),
+		);
+
+		await bookingsRepository.create(
+			Booking.create({
+				courtId: new UniqueEntityID('court-1'),
+				customerId: new UniqueEntityID('customer-1'),
+				startsAt: new Date('2026-06-10T10:00:00.000Z'),
+				endsAt: new Date('2026-06-10T11:00:00.000Z'),
+				status: 'CONFIRMED',
+				price: Cash.fromCents(3000),
+			}),
+		);
+
+		await bookingsRepository.create(
+			Booking.create({
+				courtId: new UniqueEntityID('court-1'),
+				customerId: new UniqueEntityID('customer-1'),
+				startsAt: new Date('2026-06-15T10:00:00.000Z'),
+				endsAt: new Date('2026-06-15T11:00:00.000Z'),
+				status: 'CANCELLED',
+				price: Cash.fromCents(3000),
+			}),
+		);
+
+		await bookingsRepository.create(
+			Booking.create({
+				courtId: new UniqueEntityID('court-1'),
+				customerId: new UniqueEntityID('customer-1'),
+				startsAt: new Date('2026-06-30T10:00:00.000Z'),
+				endsAt: new Date('2026-06-30T11:00:00.000Z'),
+				status: 'CONFIRMED',
+				price: Cash.fromCents(3000),
+			}),
+		);
+
+		await bookingsRepository.create(
+			Booking.create({
+				courtId: new UniqueEntityID('court-2'),
+				customerId: new UniqueEntityID('customer-1'),
+				startsAt: new Date('2026-06-10T10:00:00.000Z'),
+				endsAt: new Date('2026-06-10T11:00:00.000Z'),
+				status: 'CONFIRMED',
+				price: Cash.fromCents(4000),
+			}),
+		);
+
+		const result = await sut.execute({
+			organizationId: 'org-1',
+			dateRange: {
+				from: new Date('2026-06-01T00:00:00.000Z'),
+				to: new Date('2026-06-20T23:59:59.999Z'),
+			},
+			status: 'CONFIRMED',
+			pagination: {
+				page: 1,
+				limit: 10,
+			},
+		});
+
+		expect(result.isRight()).toBe(true);
+
+		if (result.isRight()) {
+			expect(result.value.bookingsList.data).toHaveLength(1);
+			expect(result.value.bookingsList.data[0].booking.courtId.toString()).toBe('court-1');
+			expect(result.value.bookingsList.data[0].booking.status).toBe('CONFIRMED');
+			expect(result.value.bookingsList.data[0].booking.startsAt).toEqual(
+				new Date('2026-06-10T10:00:00.000Z'),
+			);
+			expect(result.value.bookingsList.meta).toEqual({
+				page: 1,
+				limit: 10,
+				total: 1,
+			});
+		}
+	});
 });

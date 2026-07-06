@@ -3,6 +3,7 @@ import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { Cash } from '@/core/shared/value-objects/cash';
 import { Court, type CourtProps } from '@/domain/booking/enterprise/entities/court';
 import { CourtImagesList } from '@/domain/booking/enterprise/entities/court-images-list';
+import { CourtSportsList } from '@/domain/booking/enterprise/entities/court-sports-list';
 
 export function makeCourt(override: Partial<CourtProps> = {}, id?: UniqueEntityID) {
 	const court = Court.create(
@@ -12,6 +13,7 @@ export function makeCourt(override: Partial<CourtProps> = {}, id?: UniqueEntityI
 			address: faker.location.street(),
 			coverImage: null,
 			images: new CourtImagesList([]),
+			sports: new CourtSportsList([]),
 			latitude: -23.45,
 			longitude: -46.8,
 			createdAt: new Date(),

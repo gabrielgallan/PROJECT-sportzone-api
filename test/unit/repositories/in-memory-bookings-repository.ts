@@ -1,5 +1,9 @@
 import type { PaginationInput } from '@/core/types/pagination';
-import type { BookingsRepository } from '@/domain/booking/application/repositories/bookings-repository';
+import type {
+	BookingsRepository,
+	ListOrganizationBookingsFilters,
+	ListUserBookingsFilters,
+} from '@/domain/booking/application/repositories/bookings-repository';
 import type { Booking, BookingStatus } from '@/domain/booking/enterprise/entities/booking';
 import type { Image } from '@/domain/booking/enterprise/entities/image';
 import { BookingWithCourt } from '@/domain/booking/enterprise/entities/value-objects/booking-with-court';
@@ -57,8 +61,38 @@ export class InMemoryBookingsRepository implements BookingsRepository {
 		});
 	}
 
-	async listByUserId(userId: string, { page, limit }: PaginationInput) {
-		const userBookings = this.items.filter((item) => item.customerId.toString() === userId);
+	async listByUserId(
+		userId: string,
+		{ dateRange, status }: ListUserBookingsFilters,
+		{ page, limit }: PaginationInput,
+	) {
+		const userBookings = this.items.filter((item) => {
+			const isFromUser = item.customerId.toString() === userId;
+
+			if (!isFromUser) {
+				return false;
+			}
+
+			if (status && item.status !== status) {
+				return false;
+			}
+
+			if (!dateRange) {
+				return true;
+			}
+
+			const bookingDate = item.createdAt;
+
+			if (dateRange.from && bookingDate < dateRange.from) {
+				return false;
+			}
+
+			if (dateRange.to && bookingDate > dateRange.to) {
+				return false;
+			}
+
+			return true;
+		});
 
 		const paginated = userBookings.slice((page - 1) * limit, page * limit);
 
@@ -98,7 +132,11 @@ export class InMemoryBookingsRepository implements BookingsRepository {
 		};
 	}
 
-	async listByOrganizationId(organizationId: string, { page, limit }: PaginationInput) {
+	async listByOrganizationId(
+		organizationId: string,
+		{ dateRange, status }: ListOrganizationBookingsFilters,
+		{ page, limit }: PaginationInput,
+	) {
 		const organizationBookings = this.items.filter((item) => {
 			const court = this.courtsRepository.items.find((court) => court.id.equals(item.courtId));
 
@@ -106,7 +144,27 @@ export class InMemoryBookingsRepository implements BookingsRepository {
 				throw new Error(`Court ID ${item.courtId.toString()} does not exists!`);
 			}
 
-			return court.organizationId.toString() === organizationId;
+			if (court.organizationId.toString() !== organizationId) {
+				return false;
+			}
+
+			if (status && item.status !== status) {
+				return false;
+			}
+
+			if (!dateRange) {
+				return true;
+			}
+
+			if (item.startsAt < dateRange.from) {
+				return false;
+			}
+
+			if (item.startsAt > dateRange.to) {
+				return false;
+			}
+
+			return true;
 		});
 
 		const paginated = organizationBookings.slice((page - 1) * limit, page * limit);

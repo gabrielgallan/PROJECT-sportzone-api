@@ -1,25 +1,43 @@
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { Cash } from '@/core/shared/value-objects/cash';
 import { InMemoryCourtImagesRepository } from 'test/unit/repositories/in-memory-court-images-repository';
+import { InMemoryCourtSportsRepository } from 'test/unit/repositories/in-memory-court-sports-repository';
 import { InMemoryCourtsRepository } from 'test/unit/repositories/in-memory-courts-repository';
 import { InMemoryImagesRepository } from 'test/unit/repositories/in-memory-images-repository';
+import { InMemorySportsRepository } from 'test/unit/repositories/in-memory-sports-repository';
 import { Court } from '../../enterprise/entities/court';
 import { CourtImage } from '../../enterprise/entities/court-image';
 import { CourtImagesList } from '../../enterprise/entities/court-images-list';
+import { CourtSport } from '../../enterprise/entities/court-sport';
 import { Image } from '../../enterprise/entities/image';
+import { Sport } from '../../enterprise/entities/sport';
 import { ListOrganizationCourtsUseCase } from './list-organization-courts';
 
 let courtsRepository: InMemoryCourtsRepository;
 let courtImagesRepository: InMemoryCourtImagesRepository;
+let courtSportsRepository: InMemoryCourtSportsRepository;
 let imagesRepository: InMemoryImagesRepository;
+let sportsRepository: InMemorySportsRepository;
 
 let sut: ListOrganizationCourtsUseCase;
 
 describe('List organization courts use case', () => {
 	beforeEach(() => {
 		courtImagesRepository = new InMemoryCourtImagesRepository();
+		courtSportsRepository = new InMemoryCourtSportsRepository();
 		imagesRepository = new InMemoryImagesRepository();
-		courtsRepository = new InMemoryCourtsRepository(courtImagesRepository, imagesRepository);
+		sportsRepository = new InMemorySportsRepository();
+		courtsRepository = new InMemoryCourtsRepository(
+			courtImagesRepository,
+			imagesRepository,
+			courtSportsRepository,
+			sportsRepository,
+		);
+
+		sportsRepository.items.push(
+			Sport.create({ name: 'Soccer' }, new UniqueEntityID('soccer')),
+			Sport.create({ name: 'Volley' }, new UniqueEntityID('volley')),
+		);
 
 		sut = new ListOrganizationCourtsUseCase(courtsRepository);
 	});
@@ -55,6 +73,17 @@ describe('List organization courts use case', () => {
 				new UniqueEntityID('court-1'),
 			),
 		);
+
+		await courtSportsRepository.createMany([
+			CourtSport.create({
+				courtId: new UniqueEntityID('court-1'),
+				sportId: new UniqueEntityID('soccer'),
+			}),
+			CourtSport.create({
+				courtId: new UniqueEntityID('court-1'),
+				sportId: new UniqueEntityID('volley'),
+			}),
+		]);
 
 		await courtsRepository.create(
 			Court.create({
@@ -107,10 +136,107 @@ describe('List organization courts use case', () => {
 			expect(result.value.courtsList.data[0].coverImage?.url).toBe(
 				'https://example.com/court-1-cover.jpg',
 			);
+			expect(result.value.courtsList.data[0].sports.map((sport) => sport.id.toString())).toEqual([
+				'soccer',
+				'volley',
+			]);
 			expect(result.value.courtsList.meta).toEqual({
 				page: 1,
 				limit: 10,
 				total: 2,
+			});
+		}
+	});
+
+	it('should be able to list organization courts by name and status', async () => {
+		await courtsRepository.create(
+			Court.create(
+				{
+					organizationId: new UniqueEntityID('org-1'),
+					name: 'Central Soccer Court',
+					status: 'ONLINE',
+					coverImage: null,
+					address: 'Street 1',
+					latitude: -23.4567,
+					longitude: -46.4567,
+					pricePerHour: Cash.fromCents(3000),
+					images: new CourtImagesList([]),
+				},
+				new UniqueEntityID('court-1'),
+			),
+		);
+
+		await courtsRepository.create(
+			Court.create(
+				{
+					organizationId: new UniqueEntityID('org-1'),
+					name: 'Central Soccer Court Maintenance',
+					status: 'PAUSED',
+					coverImage: null,
+					address: 'Street 2',
+					latitude: -23.5567,
+					longitude: -46.5567,
+					pricePerHour: Cash.fromCents(4000),
+					images: new CourtImagesList([]),
+				},
+				new UniqueEntityID('court-2'),
+			),
+		);
+
+		await courtsRepository.create(
+			Court.create(
+				{
+					organizationId: new UniqueEntityID('org-1'),
+					name: 'Beach Volley Court',
+					status: 'ONLINE',
+					coverImage: null,
+					address: 'Street 3',
+					latitude: -23.6567,
+					longitude: -46.6567,
+					pricePerHour: Cash.fromCents(5000),
+					images: new CourtImagesList([]),
+				},
+				new UniqueEntityID('court-3'),
+			),
+		);
+
+		await courtsRepository.create(
+			Court.create(
+				{
+					organizationId: new UniqueEntityID('org-2'),
+					name: 'Central Soccer Court',
+					status: 'ONLINE',
+					coverImage: null,
+					address: 'Street 4',
+					latitude: -23.7567,
+					longitude: -46.7567,
+					pricePerHour: Cash.fromCents(6000),
+					images: new CourtImagesList([]),
+				},
+				new UniqueEntityID('court-4'),
+			),
+		);
+
+		const result = await sut.execute({
+			organizationId: 'org-1',
+			name: 'soccer',
+			status: 'ONLINE',
+			pagination: {
+				page: 1,
+				limit: 10,
+			},
+		});
+
+		expect(result.isRight()).toBe(true);
+
+		if (result.isRight()) {
+			expect(result.value.courtsList.data).toHaveLength(1);
+			expect(result.value.courtsList.data[0].courtId).toBe('court-1');
+			expect(result.value.courtsList.data[0].name).toBe('Central Soccer Court');
+			expect(result.value.courtsList.meta).toEqual({
+				page: 1,
+				limit: 10,
+				total: 1,
 			});
 		}
 	});

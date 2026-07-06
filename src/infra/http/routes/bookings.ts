@@ -3,6 +3,7 @@ import { plugins } from '@/infra/auth';
 import { createBookingController } from '../controllers/bookings/create-booking';
 import { createCourtController } from '../controllers/bookings/create-court';
 import { editCourtController } from '../controllers/bookings/edit-court';
+import { fetchSportsController } from '../controllers/bookings/fetch-sports';
 import { getBookingDetailsController } from '../controllers/bookings/get-booking-details';
 import { getCourtAvailableTimeSlotsController } from '../controllers/bookings/get-court-available-time-slots';
 import { getCourtDetailsController } from '../controllers/bookings/get-court-details';
@@ -35,4 +36,5 @@ export function bookingsRoutes(app: FastifyInstance) {
 	app.register(listUserBookingsController);
 	app.register(getBookingDetailsController);
 	app.register(listOrganizationBookingsController);
+	app.register(fetchSportsController);
 }

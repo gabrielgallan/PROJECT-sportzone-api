@@ -1,3 +1,4 @@
+import type { DateRange } from '@/core/types/date-range';
 import type { PaginatedList, PaginationInput } from '@/core/types/pagination';
 import type { Booking, BookingStatus } from '../../enterprise/entities/booking';
 import type { BookingWithCourt } from '../../enterprise/entities/value-objects/booking-with-court';
@@ -14,19 +15,31 @@ export interface BookingCreationConstraints {
 	now: Date;
 }
 
+export interface ListUserBookingsFilters {
+	dateRange?: DateRange;
+	status?: BookingStatus;
+}
+
+export interface ListOrganizationBookingsFilters {
+	dateRange?: DateRange;
+	status?: BookingStatus;
+}
+
 export interface BookingsRepository {
 	create(
 		booking: Booking,
 		constraints?: BookingCreationConstraints,
-	): Promise<BookingCreationResult | void>;
+	): Promise<BookingCreationResult | undefined>;
 	findById(bookingId: string): Promise<Booking | null>;
 	findByIdWithCourt(bookingId: string): Promise<BookingWithCourt | null>;
 	listByOrganizationId(
 		organizationId: string,
+		filters: ListOrganizationBookingsFilters,
 		pagination: PaginationInput,
 	): Promise<PaginatedList<OrganizationBooking[]>>;
 	listByUserId(
 		userId: string,
+		filters: ListUserBookingsFilters,
 		pagination: PaginationInput,
 	): Promise<PaginatedList<BookingWithCourt[]>>;
 	findManyByCourtIdBetweenDates(

@@ -1,5 +1,5 @@
 import type { PaginatedList, PaginationInput } from '@/core/types/pagination';
-import type { Court } from '../../enterprise/entities/court';
+import type { Court, CourtStatus } from '../../enterprise/entities/court';
 import type { CourtOpeningHour } from '../../enterprise/entities/court-opening-hour';
 import type { CourtDetails } from '../../enterprise/entities/value-objects/court-details';
 import type { CourtWithCover } from '../../enterprise/entities/value-objects/court-with-cover';
@@ -8,6 +8,12 @@ import type { Cordinate } from '../geocoding/cordinate';
 export interface CourtsFilters {
 	name?: string;
 	address?: string;
+	sportSlug?: string;
+}
+
+export interface OrganizationCourtsFilters {
+	name?: string;
+	status?: CourtStatus;
 }
 
 export interface CourtsRepository {
@@ -25,6 +31,7 @@ export interface CourtsRepository {
 	): Promise<PaginatedList<CourtWithCover[]>>;
 	listByOrganizationId(
 		organizationId: string,
+		filters: OrganizationCourtsFilters,
 		pagination: PaginationInput,
 	): Promise<PaginatedList<CourtWithCover[]>>;
 	save(court: Court): Promise<void>;

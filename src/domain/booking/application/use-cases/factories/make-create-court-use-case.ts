@@ -5,6 +5,8 @@ export function makeCreateCourtUseCase() {
 	const createCourtUseCase = new CreateCourtUseCase(
 		repositories.courts,
 		repositories.courtOpeningHours,
+		repositories.sports,
+		repositories.courtSports,
 	);
 
 	return createCourtUseCase;

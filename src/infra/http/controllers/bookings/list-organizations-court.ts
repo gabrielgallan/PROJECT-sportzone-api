@@ -17,6 +17,8 @@ export function listOrganizationCourtsController(app: FastifyInstance) {
 				querystring: z.object({
 					page: z.string().optional(),
 					limit: z.string().optional(),
+					name: z.string().optional(),
+					status: z.enum(['IN_MAINTENANCE', 'PAUSED', 'PENDING', 'ONLINE']).optional(),
 				}),
 				params: z.object({
 					organizationSlug: z.string(),
@@ -36,12 +38,15 @@ export function listOrganizationCourtsController(app: FastifyInstance) {
 		},
 		async (request, reply) => {
 			const pagination = parsePaginationQuery(request.query);
+			const { name, status } = request.query;
 			const organization = await request.getOrganizationBySlug();
 
 			const listOrgCourts = makeListOrganizationCourtsUseCase();
 
 			const result = await listOrgCourts.execute({
 				organizationId: organization.id,
+				name,
+				status,
 				pagination,
 			});
 

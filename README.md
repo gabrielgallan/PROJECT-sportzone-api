@@ -60,6 +60,27 @@
 * [x] It should be able to edit courts
 
 ## TO FIX
-* Booking Subdomain errors handler
+* [ ] Booking Subdomain errors handler
+* [ ] Booking Subdomain test search by location feature
+* [ ] Booking Subdomain implement edit-court use-case
 
-* [ ] Search by location
+* Implement filter on lists:
+* [ ] List courts
+    - sports
+
+* [ ] List user bookings
+    - status
+    - date range
+
+* [ ] List organization courts
+    - name
+    - status
+
+* [ ] List organization members
+    - name
+    - email
+    - role
+
+* [ ] List organization bookings
+    - date range
+    - status

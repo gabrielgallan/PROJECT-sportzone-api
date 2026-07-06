@@ -1,17 +1,21 @@
-import { Prisma } from 'generated/prisma/client';
+import { Prisma, type CourtSport as PrismaCourtSport } from 'generated/prisma/client';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { Cash } from '@/core/shared/value-objects/cash';
 import { Court } from '@/domain/booking/enterprise/entities/court';
 import { CourtImagesList } from '@/domain/booking/enterprise/entities/court-images-list';
+import { CourtSportsList } from '@/domain/booking/enterprise/entities/court-sports-list';
 import { PrismaCourtStatusMapper } from '../enums/prisma-court-status-mapper';
 import { PrismaCourtImageMapper } from './prisma-court-image-mapper';
+import { PrismaCourtSportMapper } from './prisma-court-sport-mapper';
 
 type PrismaCourt = Prisma.CourtGetPayload<{
 	include: {
 		coverImage: true;
 		images: true;
 	};
-}>;
+}> & {
+	sports?: PrismaCourtSport[];
+};
 
 export class PrismaCourtMapper {
 	static toDomain(raw: PrismaCourt): Court {
@@ -27,6 +31,7 @@ export class PrismaCourtMapper {
 				address: raw.address,
 				coverImage,
 				images: new CourtImagesList(raw.images.map(PrismaCourtImageMapper.toDomain)),
+				sports: new CourtSportsList((raw.sports ?? []).map(PrismaCourtSportMapper.toDomain)),
 				status: PrismaCourtStatusMapper.toDomain(raw.status),
 				latitude: raw.latitude.toNumber(),
 				longitude: raw.longitude.toNumber(),

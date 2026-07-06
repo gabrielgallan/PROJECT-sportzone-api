@@ -184,8 +184,30 @@ model Court {
   reviews      Review[]
   coverImage   Image?       @relation("coverImage", fields: [coverImageId], references: [id])
   images       Image[]
+  sports       CourtSport[]
 
   @@map("courts")
+}
+
+model Sport {
+  id   String @id
+  name String
+  slug String @unique
+
+  courts CourtSport[]
+
+  @@map("sports")
+}
+
+model CourtSport {
+  courtId String @map("court_id")
+  sportId String @map("sport_id")
+
+  court Court @relation(fields: [courtId], references: [id], onDelete: Cascade)
+  sport Sport @relation(fields: [sportId], references: [id], onDelete: Restrict)
+
+  @@id([courtId, sportId])
+  @@map("court_sports")
 }
 
 model CourtOpeningHour {

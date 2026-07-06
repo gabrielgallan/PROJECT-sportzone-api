@@ -4,6 +4,8 @@ import type {
 	BookingCreationConstraints,
 	BookingCreationResult,
 	BookingsRepository,
+	ListOrganizationBookingsFilters,
+	ListUserBookingsFilters,
 } from '@/domain/booking/application/repositories/bookings-repository';
 import type { Booking, BookingStatus } from '@/domain/booking/enterprise/entities/booking';
 import { PrismaBookingMapper } from '../mappers/booking/prisma-booking-mapper';
@@ -86,8 +88,21 @@ export class PrismaBookingsRepository implements BookingsRepository {
 		return booking ? PrismaBookingWithCourtMapper.toDomain(booking) : null;
 	}
 
-	async listByOrganizationId(organizationId: string, { page, limit }: PaginationInput) {
-		const where: Prisma.BookingWhereInput = { court: { organizationId } };
+	async listByOrganizationId(
+		organizationId: string,
+		{ dateRange, status }: ListOrganizationBookingsFilters,
+		{ page, limit }: PaginationInput,
+	) {
+		const where: Prisma.BookingWhereInput = {
+			court: { organizationId },
+			status,
+			startsAt: dateRange
+				? {
+						gte: dateRange.from,
+						lte: dateRange.to,
+					}
+				: undefined,
+		};
 		const [bookings, total] = await Promise.all([
 			prisma.booking.findMany({
 				where,
@@ -108,8 +123,21 @@ export class PrismaBookingsRepository implements BookingsRepository {
 		};
 	}
 
-	async listByUserId(userId: string, { page, limit }: PaginationInput) {
-		const where: Prisma.BookingWhereInput = { userId };
+	async listByUserId(
+		userId: string,
+		{ dateRange, status }: ListUserBookingsFilters,
+		{ page, limit }: PaginationInput,
+	) {
+		const where: Prisma.BookingWhereInput = {
+			userId,
+			status,
+			createdAt: dateRange
+				? {
+						gte: dateRange.from,
+						lte: dateRange.to,
+					}
+				: undefined,
+		};
 		const [bookings, total] = await Promise.all([
 			prisma.booking.findMany({
 				where,

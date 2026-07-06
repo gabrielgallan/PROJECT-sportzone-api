@@ -3,10 +3,16 @@ import type { Member } from '../../enterprise/entities/member';
 import type { MemberWithProfile } from '../../enterprise/entities/value-objects/member-with-profile';
 import type { OrganizationWithRole } from '../../enterprise/entities/value-objects/organization-with-role';
 
+export interface ListOrganizationMembersFilters {
+	name?: string;
+	email?: string;
+}
+
 export interface MembersRepository {
 	create(member: Member): Promise<void>;
 	listByOrganizationId(
 		organizationId: string,
+		filters: ListOrganizationMembersFilters,
 		pagination: PaginationInput,
 	): Promise<PaginatedList<MemberWithProfile[]>>;
 	listWithOrganizationByUserId(

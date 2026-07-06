@@ -14,6 +14,10 @@ export class CourtWithCoverPresenter {
 			coverUrl: court.coverImage ? court.coverImage.url : null,
 			pricePerHour: court.pricePerHour,
 			rating: court.rating,
+			sports: court.sports.map((sport) => ({
+				name: sport.name,
+				slug: sport.slug.value,
+			})),
 		};
 	}
 }

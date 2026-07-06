@@ -24,6 +24,7 @@ export function createCourtController(app: FastifyInstance) {
 					closesAtInMinutes: z.number(),
 					coverImageId: z.string(),
 					imagesIds: z.array(z.string()),
+					sportIds: z.array(z.string()).optional(),
 					pricePerHour: z.number(),
 					weekDays: z.array(z.number()),
 				}),
@@ -48,6 +49,7 @@ export function createCourtController(app: FastifyInstance) {
 				opensAtInMinutes,
 				closesAtInMinutes,
 				imagesIds,
+				sportIds,
 				coverImageId,
 				pricePerHour,
 				weekDays,
@@ -66,6 +68,7 @@ export function createCourtController(app: FastifyInstance) {
 				closesAtInMinutes,
 				coverImageId,
 				imagesIds,
+				sportIds,
 				pricePerHour,
 				weekDays,
 			});

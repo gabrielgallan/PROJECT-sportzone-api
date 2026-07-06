@@ -4,6 +4,7 @@ import type { Cordinate } from '@/domain/booking/application/geocoding/cordinate
 import type {
 	CourtsFilters,
 	CourtsRepository,
+	OrganizationCourtsFilters,
 } from '@/domain/booking/application/repositories/courts-repository';
 import type { Court } from '@/domain/booking/enterprise/entities/court';
 import type { CourtOpeningHour } from '@/domain/booking/enterprise/entities/court-opening-hour';
@@ -13,6 +14,7 @@ import { PrismaCourtDetailsMapper } from '../mappers/booking/vo/prisma-court-det
 import { PrismaCourtWithCoverMapper } from '../mappers/booking/vo/prisma-court-with-cover-mapper';
 import { prisma } from '../prisma';
 import { linkCourtImages, unlinkCourtImages } from './prisma-court-images-repository';
+import { linkCourtSports, unlinkCourtSports } from './prisma-court-sports-repository';
 
 interface NearbyCourtRow {
 	id: string;
@@ -31,6 +33,7 @@ export class PrismaCourtsRepository implements CourtsRepository {
 			});
 
 			await linkCourtImages(transaction, court.images.getItems());
+			await linkCourtSports(transaction, court.sports.getItems());
 		});
 
 		return;
@@ -43,6 +46,7 @@ export class PrismaCourtsRepository implements CourtsRepository {
 			});
 
 			await linkCourtImages(transaction, court.images.getItems());
+			await linkCourtSports(transaction, court.sports.getItems());
 
 			if (openingHours.length > 0) {
 				await transaction.courtOpeningHour.createMany({
@@ -58,6 +62,7 @@ export class PrismaCourtsRepository implements CourtsRepository {
 			include: {
 				coverImage: true,
 				images: true,
+				sports: true,
 			},
 		});
 
@@ -80,7 +85,7 @@ export class PrismaCourtsRepository implements CourtsRepository {
 		return PrismaCourtDetailsMapper.toDomain(court);
 	}
 
-	async list({ page, limit }: PaginationInput, { name, address }: CourtsFilters) {
+	async list({ page, limit }: PaginationInput, { name, address, sportSlug }: CourtsFilters) {
 		const where: Prisma.CourtWhereInput = {
 			name: name
 				? {
@@ -95,6 +100,15 @@ export class PrismaCourtsRepository implements CourtsRepository {
 						mode: 'insensitive' as const,
 					}
 				: undefined,
+			sports: sportSlug
+				? {
+						some: {
+							sport: {
+								slug: sportSlug,
+							},
+						},
+					}
+				: undefined,
 			status: 'ONLINE',
 		};
 
@@ -103,6 +117,11 @@ export class PrismaCourtsRepository implements CourtsRepository {
 				where,
 				include: {
 					coverImage: true,
+					sports: {
+						include: {
+							sport: true,
+						},
+					},
 				},
 				skip: (page - 1) * limit,
 				take: limit,
@@ -155,7 +174,14 @@ export class PrismaCourtsRepository implements CourtsRepository {
 		const ids = nearbyRows.map((row) => row.id);
 		const courts = await prisma.court.findMany({
 			where: { id: { in: ids } },
-			include: { coverImage: true },
+			include: {
+				coverImage: true,
+				sports: {
+					include: {
+						sport: true,
+					},
+				},
+			},
 		});
 		const courtsById = new Map(courts.map((court) => [court.id, court]));
 		const orderedCourts = ids.flatMap((id) => {
@@ -173,19 +199,39 @@ export class PrismaCourtsRepository implements CourtsRepository {
 		};
 	}
 
-	async listByOrganizationId(organizationId: string, { page, limit }: PaginationInput) {
+	async listByOrganizationId(
+		organizationId: string,
+		{ name, status }: OrganizationCourtsFilters,
+		{ page, limit }: PaginationInput,
+	) {
+		const where: Prisma.CourtWhereInput = {
+			organizationId,
+			name: name
+				? {
+						contains: name,
+						mode: 'insensitive' as const,
+					}
+				: undefined,
+			status,
+		};
+
 		const [courts, total] = await Promise.all([
 			prisma.court.findMany({
-				where: { organizationId },
+				where,
 				include: {
 					coverImage: true,
+					sports: {
+						include: {
+							sport: true,
+						},
+					},
 				},
 				skip: (page - 1) * limit,
 				take: limit,
 				orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
 			}),
 			prisma.court.count({
-				where: { organizationId },
+				where,
 			}),
 		]);
 
@@ -210,6 +256,8 @@ export class PrismaCourtsRepository implements CourtsRepository {
 
 			await unlinkCourtImages(transaction, court.images.getRemovedItems());
 			await linkCourtImages(transaction, court.images.getNewItems());
+			await unlinkCourtSports(transaction, court.sports.getRemovedItems());
+			await linkCourtSports(transaction, court.sports.getNewItems());
 		});
 	}
 
@@ -225,6 +273,8 @@ export class PrismaCourtsRepository implements CourtsRepository {
 
 			await unlinkCourtImages(transaction, court.images.getRemovedItems());
 			await linkCourtImages(transaction, court.images.getNewItems());
+			await unlinkCourtSports(transaction, court.sports.getRemovedItems());
+			await linkCourtSports(transaction, court.sports.getNewItems());
 			await transaction.courtOpeningHour.deleteMany({ where: { courtId } });
 
 			if (openingHours.length > 0) {

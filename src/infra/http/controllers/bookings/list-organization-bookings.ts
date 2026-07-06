@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { makeListOrganizationBookingsUseCase } from '@/domain/booking/application/use-cases/factories/make-list-organization-bookings-use-case';
+import { BadRequestError } from '../../errors/bad-request-error';
 import { httpErrorSchema } from '../../errors/types/http-error';
 import {
 	OrganizationBookingPresenter,
@@ -20,6 +21,9 @@ export function listOrganizationBookingsController(app: FastifyInstance) {
 				querystring: z.object({
 					page: z.string().optional(),
 					limit: z.string().optional(),
+					dateFrom: z.coerce.date().optional(),
+					dateTo: z.coerce.date().optional(),
+					status: z.enum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED']).optional(),
 				}),
 				params: z.object({
 					organizationSlug: z.string(),
@@ -40,12 +44,26 @@ export function listOrganizationBookingsController(app: FastifyInstance) {
 		},
 		async (request, reply) => {
 			const pagination = parsePaginationQuery(request.query);
+			const { dateFrom, dateTo, status } = request.query;
+
+			if ((dateFrom && !dateTo) || (!dateFrom && dateTo)) {
+				throw new BadRequestError('Invalid date range query');
+			}
+
 			const organization = await request.getOrganizationBySlug();
 
 			const listOrganizationBookings = makeListOrganizationBookingsUseCase();
 
 			const result = await listOrganizationBookings.execute({
 				organizationId: organization.id,
+				dateRange:
+					dateFrom && dateTo
+						? {
+								from: dateFrom,
+								to: dateTo,
+							}
+						: undefined,
+				status,
 				pagination,
 			});
 

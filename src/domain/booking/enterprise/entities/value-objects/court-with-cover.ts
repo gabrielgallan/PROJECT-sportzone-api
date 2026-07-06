@@ -1,5 +1,6 @@
 import { ValueObject } from '@/core/entities/value-object';
 import type { Image } from '../image';
+import type { Sport } from '../sport';
 
 interface CourtWithCoverProps {
 	courtId: string;
@@ -9,6 +10,7 @@ interface CourtWithCoverProps {
 	address: string;
 	pricePerHour: number;
 	rating: number;
+	sports: Sport[];
 }
 
 export class CourtWithCover extends ValueObject<CourtWithCoverProps> {
@@ -38,6 +40,10 @@ export class CourtWithCover extends ValueObject<CourtWithCoverProps> {
 
 	get rating() {
 		return this.props.rating;
+	}
+
+	get sports() {
+		return this.props.sports;
 	}
 
 	static create(props: CourtWithCoverProps) {

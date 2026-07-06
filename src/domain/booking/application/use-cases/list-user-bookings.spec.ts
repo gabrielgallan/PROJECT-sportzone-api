@@ -159,4 +159,108 @@ describe('List user bookings use case', () => {
 			});
 		}
 	});
+
+	it('should be able to list user bookings by date range', async () => {
+		await courtsRepository.create(
+			Court.create(
+				{
+					organizationId: new UniqueEntityID('org-1'),
+					name: 'Court 1',
+					coverImage: null,
+					address: 'Street 1',
+					latitude: -23.4567,
+					longitude: -46.4567,
+					pricePerHour: Cash.fromCents(3000),
+					images: new CourtImagesList([]),
+				},
+				new UniqueEntityID('court-1'),
+			),
+		);
+
+		await bookingsRepository.create(
+			Booking.create({
+				courtId: new UniqueEntityID('court-1'),
+				customerId: new UniqueEntityID('user-1'),
+				startsAt: new Date('2026-06-11T10:00:00.000Z'),
+				endsAt: new Date('2026-06-11T11:00:00.000Z'),
+				price: Cash.fromCents(3000),
+				createdAt: new Date('2026-06-01T10:00:00.000Z'),
+			}),
+		);
+
+		await bookingsRepository.create(
+			Booking.create({
+				courtId: new UniqueEntityID('court-1'),
+				customerId: new UniqueEntityID('user-1'),
+				startsAt: new Date('2026-06-12T10:00:00.000Z'),
+				endsAt: new Date('2026-06-12T11:00:00.000Z'),
+				status: 'CONFIRMED',
+				price: Cash.fromCents(3000),
+				createdAt: new Date('2026-06-15T10:00:00.000Z'),
+			}),
+		);
+
+		await bookingsRepository.create(
+			Booking.create({
+				courtId: new UniqueEntityID('court-1'),
+				customerId: new UniqueEntityID('user-1'),
+				startsAt: new Date('2026-06-12T12:00:00.000Z'),
+				endsAt: new Date('2026-06-12T13:00:00.000Z'),
+				status: 'CANCELLED',
+				price: Cash.fromCents(3000),
+				createdAt: new Date('2026-06-15T12:00:00.000Z'),
+			}),
+		);
+
+		await bookingsRepository.create(
+			Booking.create({
+				courtId: new UniqueEntityID('court-1'),
+				customerId: new UniqueEntityID('user-1'),
+				startsAt: new Date('2026-06-13T10:00:00.000Z'),
+				endsAt: new Date('2026-06-13T11:00:00.000Z'),
+				price: Cash.fromCents(3000),
+				createdAt: new Date('2026-06-30T10:00:00.000Z'),
+			}),
+		);
+
+		await bookingsRepository.create(
+			Booking.create({
+				courtId: new UniqueEntityID('court-1'),
+				customerId: new UniqueEntityID('user-2'),
+				startsAt: new Date('2026-06-14T10:00:00.000Z'),
+				endsAt: new Date('2026-06-14T11:00:00.000Z'),
+				price: Cash.fromCents(3000),
+				createdAt: new Date('2026-06-15T10:00:00.000Z'),
+			}),
+		);
+
+		const result = await sut.execute({
+			userId: 'user-1',
+			dateRange: {
+				from: new Date('2026-06-10T00:00:00.000Z'),
+				to: new Date('2026-06-20T23:59:59.999Z'),
+			},
+			status: 'CONFIRMED',
+			pagination: {
+				page: 1,
+				limit: 10,
+			},
+		});
+
+		expect(result.isRight()).toBe(true);
+
+		if (result.isRight()) {
+			expect(result.value.bookingsList.data).toHaveLength(1);
+			expect(result.value.bookingsList.data[0].booking.customerId.toString()).toBe('user-1');
+			expect(result.value.bookingsList.data[0].booking.status).toBe('CONFIRMED');
+			expect(result.value.bookingsList.data[0].booking.createdAt).toEqual(
+				new Date('2026-06-15T10:00:00.000Z'),
+			);
+			expect(result.value.bookingsList.meta).toEqual({
+				page: 1,
+				limit: 10,
+				total: 1,
+			});
+		}
+	});
 });
